@@ -119,21 +119,57 @@ Buka http://localhost:8000
 
 ## ✈️ Menambahkan Pesawat Baru
 
-### Langkah 1: Tambah Config
+> ⚠️ **Penting:** Ada 2 kondisi saat menambahkan pesawat baru!
+
+---
+
+### 🔄 KONDISI A: Layout SAMA dengan Pesawat Lain
+
+Jika layout kursi **sama persis** dengan pesawat yang sudah ada (misal: PK-XXX sama dengan PK-GHE):
+
+#### Langkah 1: Tambah Config
 📁 **File:** `config/aircraft_layouts.php`
 
 ```php
-return [
-    // ... pesawat lain ...
-
-    'PK-XXX' => [
-        'type' => 'A330-300',  // Tipe pesawat
-        'icon' => '🛩️',        // Icon (emoji)
-    ],
-];
+'PK-XXX' => [
+    'type' => 'A330-900',
+    'icon' => '🛩️',
+],
 ```
 
-### Langkah 2: Buat Template Blade
+#### Langkah 2: Update Routing (Pakai Template yang Sama)
+📁 **File:** `app/Http/Controllers/AircraftController.php`
+
+```php
+$template = match ($registration) {
+    'PK-GFD' => 'aircraft.b737',
+    'PK-GIA' => 'aircraft.b777-gia',
+    'PK-GIF' => 'aircraft.b777-gif',
+    'PK-GHE', 'PK-XXX' => 'aircraft.a330',  // ← Gabungkan di sini
+    'PK-GPZ' => 'aircraft.a330-gpz',
+    default => 'aircraft.show',
+};
+```
+
+**Selesai!** Tidak perlu buat template baru.
+
+---
+
+### 📝 KONDISI B: Layout BERBEDA (Buat Template Baru)
+
+Jika layout kursi **berbeda** dengan yang sudah ada:
+
+#### Langkah 1: Tambah Config
+📁 **File:** `config/aircraft_layouts.php`
+
+```php
+'PK-XXX' => [
+    'type' => 'A330-300',
+    'icon' => '🛩️',
+],
+```
+
+#### Langkah 2: Buat Template Baru
 📁 **File:** `resources/views/aircraft/a330-xxx.blade.php`
 
 Copy dari template yang mirip (misal `a330-gpz.blade.php`) lalu edit:
@@ -172,7 +208,7 @@ Copy dari template yang mirip (misal `a330-gpz.blade.php`) lalu edit:
 @endif
 ```
 
-5. **Untuk kolom berbeda per baris:**
+5. **Untuk kolom berbeda per baris (tail section):**
 ```blade
 @php
     if ($row == 55) {
@@ -183,7 +219,7 @@ Copy dari template yang mirip (misal `a330-gpz.blade.php`) lalu edit:
 @endphp
 ```
 
-### Langkah 3: Update Routing Controller
+#### Langkah 3: Update Routing Controller
 📁 **File:** `app/Http/Controllers/AircraftController.php`
 
 ```php
@@ -198,8 +234,8 @@ $template = match ($registration) {
 };
 ```
 
-### Langkah 4: Pastikan Template Memiliki Script Config
-Di bagian akhir template, pastikan ada:
+#### Langkah 4: Pastikan Ada Script Config
+Di bagian akhir template, **WAJIB** ada:
 
 ```blade
 @push('scripts')
@@ -213,7 +249,7 @@ Di bagian akhir template, pastikan ada:
 @endpush
 ```
 
-### Langkah 5: Test
+#### Langkah 5: Test
 1. Refresh browser
 2. Buka dashboard - pesawat baru muncul di fleet
 3. Klik pesawat baru - pastikan seat map tampil
@@ -262,8 +298,3 @@ lifevest-laravel/
 - **Database:** MySQL
 - **Build Tool:** Vite
 
----
-
-## 📞 Kontak
-
-Untuk pertanyaan atau bantuan, hubungi tim IT GMF AeroAsia.
