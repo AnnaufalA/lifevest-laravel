@@ -1,0 +1,1239 @@
+/* ========================================
+   Life Vest Tracker - CSS Stylesheet
+   Modern, Professional Airline Theme
+   ======================================== */
+
+/* CSS Variables - Design Tokens */
+:root {
+    /* Colors */
+    --primary: #0ea5e9;
+    --primary-dark: #0284c7;
+    --primary-light: #38bdf8;
+    
+    --success: #22c55e;
+    --success-dark: #16a34a;
+    
+    --warning: #f59e0b;
+    --warning-dark: #d97706;
+    
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    
+    --expired: #7c3aed;
+    
+    /* Neutrals */
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --border: #475569;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+/* App Container */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Small button for header */
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.header-left .btn-sm {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.header-left .btn-sm:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo {
+    text-decoration: none;
+}
+
+.badge {
+    background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.aircraft-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.last-update {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--bg-hover);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+}
+
+.last-update-label {
+    color: var(--text-secondary);
+}
+
+.last-update-value {
+    color: var(--primary-light);
+    font-weight: 500;
+}
+
+.aircraft-info label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.aircraft-info select {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+/* ========================================
+   TOOLBAR
+   ======================================== */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 var(--spacing-sm);
+}
+
+.selection-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-hover);
+    border-radius: var(--radius-sm);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--border);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), var(--success-dark));
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+}
+
+/* ========================================
+   LEGEND
+   ======================================== */
+.legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+}
+
+.legend-color.safe { background: var(--success); }
+.legend-color.warning { background: var(--warning); }
+.legend-color.critical { background: var(--danger); }
+.legend-color.expired { background: var(--expired); }
+.legend-color.empty { background: var(--bg-hover); border: 2px dashed var(--border); }
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Section Headers */
+.cabin-section h2,
+.cockpit-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-sm);
+    border-left: 3px solid var(--primary);
+}
+
+/* ========================================
+   COCKPIT SECTION
+   ======================================== */
+.cockpit-section {
+    background: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.cockpit-grid {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.cockpit-seat {
+    min-width: 150px;
+    text-align: center;
+}
+
+.cockpit-seat .seat-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* ========================================
+   CABIN SEAT GRID
+   ======================================== */
+.cabin-section {
+    background: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.grid-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* 2+2 Grid Layout */
+.grid-2-2 .grid-header {
+    display: grid;
+    grid-template-columns: 80px 80px 60px 80px 80px;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
+
+.grid-2-2 .seat-row {
+    display: grid;
+    grid-template-columns: 80px 80px 60px 80px 80px;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
+
+/* 3+3 Grid Layout */
+.grid-3-3 .grid-header {
+    display: grid;
+    grid-template-columns: 70px 70px 70px 50px 70px 70px 70px;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+.grid-3-3 .seat-row {
+    display: grid;
+    grid-template-columns: 70px 70px 70px 50px 70px 70px 70px;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+/* Grid Row Classes for Laravel dynamic layouts */
+
+/* 2-2: A C - Row - H K */
+.grid-row-2-2 {
+    display: grid;
+    grid-template-columns: 70px 70px 50px 70px 70px;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3-3: A B C - Row - H J K */
+.grid-row-3-3 {
+    display: grid;
+    grid-template-columns: 65px 65px 65px 50px 65px 65px 65px;
+    gap: var(--spacing-xs);
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2-4-2: A C - Row - D E F G - Row - H K */
+.grid-row-2-4-2 {
+    display: grid;
+    grid-template-columns: 60px 60px 45px 60px 60px 60px 60px 45px 60px 60px;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3-4-3: A B C - Row - D E F G - Row - H J K */
+.grid-row-3-4-3 {
+    display: grid;
+    grid-template-columns: 55px 55px 55px 40px 55px 55px 55px 55px 40px 55px 55px 55px;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3-3-3: A B C - Row - D F G - Row - H J K */
+.grid-row-3-3-3 {
+    display: grid;
+    grid-template-columns: 55px 55px 55px 40px 55px 55px 55px 40px 55px 55px 55px;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 1-1-1-1: A - D - Row - G - K */
+.grid-row-1-1-1-1 {
+    display: grid;
+    grid-template-columns: 90px 90px 50px 90px 90px;
+    gap: var(--spacing-md);
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2-2-2: A C D E - Row - G H K */
+.grid-row-2-2-2 {
+    display: grid;
+    grid-template-columns: 65px 65px 65px 65px 45px 65px 65px 65px;
+    gap: var(--spacing-xs);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Row label styling */
+.row-label {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Seat placeholder for missing seats */
+.seat-placeholder {
+    min-width: 55px;
+    min-height: 50px;
+    background: transparent;
+}
+
+/* Staggered 1-2-1 Business Class Grid */
+.grid-staggered {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+}
+
+/* Economy Class Grid with Aisle Gaps (3-3-3 config) */
+.grid-economy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+}
+
+.grid-header-economy,
+.seat-row-economy {
+    display: grid;
+    grid-template-columns: 65px 65px 65px 40px 65px 65px 65px 40px 65px 65px 65px;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-header-economy {
+    margin-bottom: var(--spacing-sm);
+}
+
+.grid-header-economy .col-label {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Clickable column headers */
+.grid-header-economy .col-header {
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.grid-header-economy .col-header:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.grid-header-economy .aisle-gap {
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.5;
+}
+
+.seat-row-economy .seat-card {
+    min-width: 60px;
+    min-height: 55px;
+    font-size: 0.85rem;
+}
+
+.seat-row-economy .aisle-gap {
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.03), transparent);
+    height: 100%;
+    border-radius: var(--radius-sm);
+}
+
+.seat-row-economy .row-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.seat-row-economy .row-number:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* First Class Grid (1-1-1-1 layout: A - D - G - K) */
+.grid-first {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+}
+
+.grid-header-first,
+.seat-row-first {
+    display: grid;
+    grid-template-columns: 100px 50px 100px 50px 100px 50px 100px;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-header-first {
+    margin-bottom: var(--spacing-sm);
+}
+
+.grid-header-first .col-label {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.grid-header-first .col-header {
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.grid-header-first .col-header:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.seat-row-first .seat-card {
+    min-width: 95px;
+    min-height: 70px;
+}
+
+.seat-row-first .row-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.seat-row-first .row-number:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* A330 Economy Grid (2-4-2 layout: A C - Row - D E F G - Row - H K) */
+.grid-economy-a330 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+}
+
+.grid-header-economy-a330,
+.seat-row-economy-a330 {
+    display: grid;
+    grid-template-columns: 60px 60px 45px 60px 60px 60px 60px 45px 60px 60px;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-header-economy-a330 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.grid-header-economy-a330 .col-label {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.grid-header-economy-a330 .col-header {
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.grid-header-economy-a330 .col-header:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.seat-row-economy-a330 .seat-card {
+    min-width: 55px;
+    min-height: 50px;
+    font-size: 0.85rem;
+}
+
+.seat-row-economy-a330 .row-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.seat-row-economy-a330 .row-number:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Business Class Grid with Aisle Gaps */
+.grid-business {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+}
+
+.grid-header-business,
+.seat-row-business {
+    display: grid;
+    grid-template-columns: 80px 40px 80px 50px 80px 40px 80px;
+    gap: var(--spacing-xs);
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-header-business {
+    margin-bottom: var(--spacing-sm);
+}
+
+.grid-header-business .col-label {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.grid-header-business .aisle-gap {
+    text-align: center;
+    font-size: 1rem;
+    opacity: 0.5;
+}
+
+.seat-row-business .aisle-gap {
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.05), transparent);
+    height: 100%;
+    border-radius: var(--radius-sm);
+}
+
+.seat-row-business .row-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.seat-row-business .row-number:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Empty seat placeholder for missing seats (like Row 12) */
+.seat-placeholder {
+    width: 80px;
+    height: 65px;
+}
+
+.col-label {
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.col-label.row-num {
+    color: var(--text-muted);
+}
+
+/* Clickable column headers */
+.col-header {
+    cursor: pointer;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.col-header:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Clickable row numbers */
+.row-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.row-number:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Toolbar hint */
+.toolbar-hint {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin: 0;
+}
+
+/* ========================================
+   SEAT CARD
+   ======================================== */
+.seat-card {
+    background: var(--bg-hover);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.seat-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.seat-card.selected {
+    border: 3px solid white !important;
+    box-shadow: 0 0 0 3px var(--primary), 0 0 15px rgba(14, 165, 233, 0.6);
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Checkmark indicator for selected seats */
+.seat-card.selected::before {
+    content: '✓';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--primary);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 11;
+}
+
+.seat-id {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.seat-date {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Seat Status Colors */
+.seat-card.status-safe {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+    border-color: var(--success);
+}
+
+.seat-card.status-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+    border-color: var(--warning);
+}
+
+.seat-card.status-critical {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+    border-color: var(--danger);
+    animation: pulse-critical 2s infinite;
+}
+
+.seat-card.status-expired {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(124, 58, 237, 0.1));
+    border-color: var(--expired);
+    animation: pulse-expired 1.5s infinite;
+}
+
+@keyframes pulse-critical {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+@keyframes pulse-expired {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
+}
+
+/* Days remaining tooltip */
+.seat-card::after {
+    content: attr(data-days);
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+    animation: fadeIn var(--transition-fast);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 450px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp var(--transition-normal);
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.modal-close:hover {
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+}
+
+.modal-info {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+}
+
+.date-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--bg-hover);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.quick-dates {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border);
+}
+
+.quick-dates p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.quick-dates .btn {
+    margin-right: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--border);
+}
+
+/* ========================================
+   IMPORT MODAL
+   ======================================== */
+.import-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.import-zone:hover,
+.import-zone.dragover {
+    border-color: var(--primary);
+    background: rgba(14, 165, 233, 0.1);
+}
+
+.import-zone p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.import-preview {
+    margin-top: var(--spacing-md);
+}
+
+.import-preview h4 {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.import-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.import-preview th,
+.import-preview td {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.import-preview th {
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   TOAST NOTIFICATION
+   ======================================== */
+.toast {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: all var(--transition-normal);
+    z-index: 1001;
+    border-left: 4px solid var(--success);
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast.error {
+    border-left-color: var(--danger);
+}
+
+.toast.warning {
+    border-left-color: var(--warning);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.footer {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: var(--spacing-xl);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+    
+    .toolbar {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .toolbar-left,
+    .toolbar-right {
+        justify-content: center;
+    }
+    
+    .legend {
+        gap: var(--spacing-md);
+    }
+    
+    .grid-3-3 .grid-header,
+    .grid-3-3 .seat-row {
+        grid-template-columns: 50px 50px 50px 40px 50px 50px 50px;
+    }
+    
+    .grid-2-2 .grid-header,
+    .grid-2-2 .seat-row {
+        grid-template-columns: 60px 60px 50px 60px 60px;
+    }
+    
+    .seat-card {
+        min-height: 40px;
+        padding: var(--spacing-xs);
+    }
+    
+    .seat-date {
+        font-size: 0.65rem;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
