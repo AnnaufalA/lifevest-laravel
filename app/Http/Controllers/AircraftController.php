@@ -23,15 +23,8 @@ class AircraftController extends Controller
             ->get()
             ->keyBy('seat_id');
 
-        // Determine template based on aircraft type
-        $template = match ($registration) {
-            'PK-GFD' => 'aircraft.b737',
-            'PK-GIA' => 'aircraft.b777-gia',
-            'PK-GIF' => 'aircraft.b777-gif',
-            'PK-GHE' => 'aircraft.a330',
-            'PK-GPZ' => 'aircraft.a330-gpz',
-            default => 'aircraft.show',
-        };
+        // Determine template from config layout
+        $template = 'aircraft.' . ($layout['layout'] ?? 'show');
 
         // Get last update time for this aircraft
         $lastUpdate = Seat::where('registration', $registration)->max('updated_at');

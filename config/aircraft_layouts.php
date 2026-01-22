@@ -3,37 +3,294 @@
 /**
  * Aircraft Layouts Configuration
  * ===============================
- * Simple config for aircraft metadata.
- * Layout details are now hardcoded in Blade templates:
- * - resources/views/aircraft/b737.blade.php
- * - resources/views/aircraft/b777-gia.blade.php
- * - resources/views/aircraft/b777-gif.blade.php
- * - resources/views/aircraft/a330.blade.php
+ * Config for aircraft metadata and layout mapping.
+ * 
+ * - type: Aircraft type name (e.g., B737-800)
+ * - icon: Emoji icon for dashboard
+ * - layout: Blade template name in resources/views/aircraft/
+ * 
+ * Available layouts:
+ * - b737       : B737-800 standard layout
+ * - b777-gia   : B777-300 GIA layout
+ * - b777-gif   : B777-300 GIF layout (with First Class)
+ * - a330       : A330-900 layout
+ * - a330-gpz   : A330-300 layout
  */
 
 return [
+    // ═══════════════════════════════════════════════════════════
+    // B737-800 Fleet
+    // ═══════════════════════════════════════════════════════════
     'PK-GFD' => [
         'type' => 'B737-800',
         'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFG' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFI' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFM' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFP' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMA' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMF' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMM' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFF' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFH' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFR' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFU' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFW' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFX' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNA' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNC' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNE' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNF' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNM' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNN' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNQ' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNR' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMP' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMU' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMV' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMW' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMX' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMY' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFJ' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFQ' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNG' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GNH' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GUA' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GUC' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GUG' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GFS' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GMD' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    'PK-GDC' => [
+        'type' => 'B737 MAX 8',
+        'icon' => '✈️',
+        'layout' => 'b737',
+    ],
+    // Layout A - Economy sampai row 48
+    'PK-GUH' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737-guh',
+    ],
+    'PK-GUI' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737-guh',
+    ],
+    // Layout B - Economy sampai row 47 (row 47 hanya A B C)
+    'PK-GUD' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737-gud',
+    ],
+    'PK-GUE' => [
+        'type' => 'B737-800',
+        'icon' => '✈️',
+        'layout' => 'b737-gud',
     ],
 
+    // ═══════════════════════════════════════════════════════════
+    // B777-300 Fleet
+    // ═══════════════════════════════════════════════════════════
+    // 2 Class: Business + Economy
     'PK-GIA' => [
         'type' => 'B777-300',
         'icon' => '🛫',
+        'layout' => 'b777-2class',
     ],
-
+    'PK-GIC' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-2class',
+    ],
+    'PK-GIH' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-2class',
+    ],
+    'PK-GII' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-2class',
+    ],
+    'PK-GIJ' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-2class',
+    ],
+    'PK-GIK' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-2class',
+    ],
+    // 3 Class: First + Business + Economy
     'PK-GIF' => [
         'type' => 'B777-300',
         'icon' => '🛫',
+        'layout' => 'b777-3class',
+    ],
+    'PK-GIG' => [
+        'type' => 'B777-300',
+        'icon' => '🛫',
+        'layout' => 'b777-3class',
     ],
 
+    // ═══════════════════════════════════════════════════════════
+    // A330 Fleet
+    // ═══════════════════════════════════════════════════════════
     'PK-GHE' => [
         'type' => 'A330-900',
         'icon' => '🛩️',
+        'layout' => 'a330',
     ],
-
     'PK-GPZ' => [
         'type' => 'A330-300',
         'icon' => '🛩️',
+        'layout' => 'a330-gpz',
     ],
 ];
