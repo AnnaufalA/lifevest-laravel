@@ -75,47 +75,52 @@ body {
 }
 
 /* ========================================
-   HEADER
+   NAVBAR (Sticky)
    ======================================== */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-lg);
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
     box-shadow: var(--shadow-md);
 }
 
-.header-left {
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    gap: var(--spacing-md);
+}
+
+.navbar-spacer {
+    height: 70px;
+}
+
+.navbar-left {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
 }
 
-/* Small button for header */
-.btn-sm {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.8rem;
-    border-radius: var(--radius-sm);
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
     text-decoration: none;
-    transition: all var(--transition-fast);
 }
 
-.header-left .btn-sm {
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
+.navbar-logo {
+    font-size: 1.5rem;
 }
 
-.header-left .btn-sm:hover {
-    background: var(--primary);
-    color: white;
-}
-
-.header h1 {
-    font-size: 1.75rem;
+.navbar-title {
+    font-size: 1.25rem;
     font-weight: 700;
     background: linear-gradient(135deg, var(--primary-light), var(--primary));
     -webkit-background-clip: text;
@@ -123,66 +128,140 @@ body {
     background-clip: text;
 }
 
-.logo {
-    text-decoration: none;
-}
-
-.badge {
-    background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+.navbar-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
+    border-radius: 20px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.aircraft-info {
+.navbar-center {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+    justify-content: center;
+    max-width: 500px;
+}
+
+.navbar-search {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs) var(--spacing-md);
+    flex: 1;
+    transition: all var(--transition-fast);
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
+.navbar-search:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
 }
 
-.last-update {
+.navbar-search .search-icon {
+    color: var(--text-muted);
+}
+
+.navbar-search input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+}
+
+.navbar-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.navbar-filter select {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.navbar-filter select:focus {
+    border-color: var(--primary);
+}
+
+.navbar-right {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    background: var(--bg-hover);
-    border-radius: var(--radius-sm);
+    gap: var(--spacing-md);
+}
+
+.navbar-update {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
     font-size: 0.85rem;
 }
 
-.last-update-label {
-    color: var(--text-secondary);
+.navbar-update .update-label {
+    color: var(--text-muted);
 }
 
-.last-update-value {
+.navbar-update .update-value {
     color: var(--primary-light);
     font-weight: 500;
 }
 
-.aircraft-info label {
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.9rem;
+.navbar-home {
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
 }
 
-.aircraft-info select {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    cursor: pointer;
-    min-width: 120px;
+.navbar-home:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Responsive navbar */
+@media (max-width: 900px) {
+    .navbar-container {
+        flex-wrap: wrap;
+    }
+    .navbar-center {
+        order: 3;
+        width: 100%;
+        max-width: none;
+        margin-top: var(--spacing-sm);
+    }
+    .navbar-spacer {
+        height: 110px;
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar-title {
+        display: none;
+    }
+    .navbar-badge {
+        display: none;
+    }
+    .navbar-update .update-label {
+        display: none;
+    }
 }
 
 /* ========================================
@@ -408,39 +487,9 @@ body {
     color: var(--text-secondary);
 }
 
-/* 2+2 Grid Layout */
-.grid-2-2 .grid-header {
-    display: grid;
-    grid-template-columns: 80px 80px 60px 80px 80px;
-    gap: var(--spacing-sm);
-    justify-content: center;
-}
-
-.grid-2-2 .seat-row {
-    display: grid;
-    grid-template-columns: 80px 80px 60px 80px 80px;
-    gap: var(--spacing-sm);
-    justify-content: center;
-}
-
-/* 3+3 Grid Layout */
-.grid-3-3 .grid-header {
-    display: grid;
-    grid-template-columns: 70px 70px 70px 50px 70px 70px 70px;
-    gap: var(--spacing-xs);
-    justify-content: center;
-}
-
-.grid-3-3 .seat-row {
-    display: grid;
-    grid-template-columns: 70px 70px 70px 50px 70px 70px 70px;
-    gap: var(--spacing-xs);
-    justify-content: center;
-}
-
 /* Grid Row Classes for Laravel dynamic layouts */
 
-/* 2-2: A C - Row - H K */
+/* 2-2: A C - Row - H K (B737 Business) */
 .grid-row-2-2 {
     display: grid;
     grid-template-columns: 70px 70px 50px 70px 70px;
@@ -449,7 +498,7 @@ body {
     align-items: center;
 }
 
-/* 3-3: A B C - Row - H J K */
+/* 3-3: A B C - Row - H J K (B737 Economy) */
 .grid-row-3-3 {
     display: grid;
     grid-template-columns: 65px 65px 65px 50px 65px 65px 65px;
@@ -476,29 +525,11 @@ body {
     align-items: center;
 }
 
-/* 3-4-3: A B C - Row - D E F G - Row - H J K */
-.grid-row-3-4-3 {
-    display: grid;
-    grid-template-columns: 55px 55px 55px 40px 55px 55px 55px 55px 40px 55px 55px 55px;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-}
-
 /* 3-3-3: A B C - Row - D F G - Row - H J K */
 .grid-row-3-3-3 {
     display: grid;
     grid-template-columns: 55px 55px 55px 40px 55px 55px 55px 40px 55px 55px 55px;
     gap: 4px;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 1-1-1-1: A - D - Row - G - K */
-.grid-row-1-1-1-1 {
-    display: grid;
-    grid-template-columns: 90px 90px 50px 90px 90px;
-    gap: var(--spacing-md);
     justify-content: center;
     align-items: center;
 }

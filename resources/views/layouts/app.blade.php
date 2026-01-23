@@ -11,29 +11,56 @@
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <a href="{{ route('dashboard') }}" class="logo">
-                    <h1>🛡️ Life Vest Tracker</h1>
+    <!-- Sticky Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <!-- Left: Logo -->
+            <div class="navbar-left">
+                <a href="{{ route('dashboard') }}" class="navbar-brand">
+                    <span class="navbar-logo">🛡️</span>
+                    <span class="navbar-title">Life Vest Tracker</span>
                 </a>
-                <span class="badge">GMF AeroAsia</span>
-                @if(isset($registration))
-                    <a href="{{ route('dashboard') }}" class="btn btn-sm">📊 Dashboard</a>
-                @endif
+                <span class="navbar-badge">GMF AeroAsia</span>
             </div>
-            <div class="header-right">
+
+            <!-- Center: Search & Filter (only on dashboard) -->
+            @if(request()->routeIs('dashboard'))
+                <div class="navbar-center">
+                    <div class="navbar-search">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Cari registrasi..." autocomplete="off">
+                    </div>
+                    <div class="navbar-filter">
+                        <select id="typeFilter">
+                            <option value="all">Semua Tipe</option>
+                            <option value="B737">B737</option>
+                            <option value="B777">B777</option>
+                            <option value="A330">A330</option>
+                        </select>
+                    </div>
+                </div>
+            @else
+                <div class="navbar-center">
+                    @yield('header-right')
+                </div>
+            @endif
+
+            <!-- Right: Last Update -->
+            <div class="navbar-right">
                 @if(isset($lastUpdate))
-                    <div class="last-update">
-                        <span class="last-update-label">🕐 Last Update:</span>
-                        <span class="last-update-value">{{ $lastUpdate->format('d M Y, H:i') }}</span>
+                    <div class="navbar-update">
+                        <span class="update-label">🕐 Last Update:</span>
+                        <span class="update-value">{{ $lastUpdate->format('d M Y, H:i') }}</span>
                     </div>
                 @endif
-                @yield('header-right')
             </div>
-        </header>
+        </div>
+    </nav>
 
+    <!-- Spacer for fixed navbar -->
+    <div class="navbar-spacer"></div>
+
+    <div class="app-container">
         <!-- Main Content -->
         <main class="main-content">
             @yield('content')

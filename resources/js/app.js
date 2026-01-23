@@ -422,3 +422,58 @@ function showToast(message, type = 'success') {
         elements.toast.classList.remove('show');
     }, 3000);
 }
+
+// ========================================
+// DASHBOARD SEARCH & FILTER
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+
+    // Only run on dashboard (where search exists)
+    if (!searchInput || !typeFilter) return;
+
+    function filterFleet() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const typeValue = typeFilter.value.toLowerCase();
+
+        // Get all fleet sections
+        const fleetSections = document.querySelectorAll('.fleet-section');
+
+        fleetSections.forEach(section => {
+            const sectionType = section.querySelector('h2')?.textContent.toLowerCase() || '';
+            const cards = section.querySelectorAll('.fleet-card');
+            let visibleCount = 0;
+
+            // Check if section matches type filter
+            const typeMatch = typeValue === 'all' || sectionType.includes(typeValue);
+
+            cards.forEach(card => {
+                const registration = card.querySelector('.fleet-card-reg')?.textContent.toLowerCase() || '';
+                const searchMatch = !searchTerm || registration.includes(searchTerm);
+
+                if (typeMatch && searchMatch) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Hide entire section if no visible cards or type doesn't match
+            section.style.display = (visibleCount > 0 && typeMatch) ? '' : 'none';
+        });
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterFleet);
+    typeFilter.addEventListener('change', filterFleet);
+
+    // Clear search on Escape
+    searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            filterFleet();
+        }
+    });
+});

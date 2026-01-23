@@ -57,10 +57,27 @@ class AircraftController extends Controller
             $row = $matches[1] ?: null;
             $col = $matches[2] ?: $seatId;
 
-            // Determine class type
-            $classType = 'economy';
+            // Determine class type based on layout config
+            $classType = 'economy'; // default
+
             if (in_array($seatId, ['captain', 'copilot', 'observer1', 'observer2'])) {
                 $classType = 'cockpit';
+            } elseif ($row) {
+                // Get layout for this aircraft
+                $aircraftConfig = config("aircraft_layouts.{$registration}");
+                $layout = $aircraftConfig['layout'] ?? null;
+
+                if ($layout) {
+                    $classRows = config("aircraft_class_rows.{$layout}", []);
+                    $rowNum = (int) $row;
+
+                    foreach ($classRows as $class => $rows) {
+                        if (in_array($rowNum, $rows)) {
+                            $classType = $class;
+                            break;
+                        }
+                    }
+                }
             }
 
             Seat::updateOrCreate(
