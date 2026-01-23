@@ -64,6 +64,10 @@ return [
     'a330-300c' => [
         'economy' => array_diff(range(21, 70), [24]),
     ],
+    // A330-300 Cargo (Economy only, rows 21-33, rest is cargo)
+    'a330-300cargo' => [
+        'economy' => array_diff(range(21, 33), [24]),
+    ],
 
     // ═══════════════════════════════════════════════════════════
     // A330-200 Layouts

@@ -409,6 +409,17 @@ return [
         'icon' => '🛩️',
         'layout' => 'a330-300c',
     ],
+    // A330-300 Cargo (Half passenger, half cargo)
+    'PK-GPA' => [
+        'type' => 'A330-300',
+        'icon' => '📦',
+        'layout' => 'a330-300cargo',
+    ],
+    'PK-GPD' => [
+        'type' => 'A330-300',
+        'icon' => '📦',
+        'layout' => 'a330-300cargo',
+    ],
 
     // ═══════════════════════════════════════════════════════════
     // A330-200 Fleet
