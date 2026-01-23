@@ -55,8 +55,8 @@ class DashboardController extends Controller
         // Group fleet by aircraft type
         $fleetByType = [];
         foreach ($fleet as $registration => $aircraft) {
-            // Extract base type (B737, B777, A330)
-            preg_match('/^([A-Z]\d+)/', $aircraft['type'], $matches);
+            // Extract base type (B737, B777, A330, ATR72)
+            preg_match('/^([A-Z]+\d+)/', $aircraft['type'], $matches);
             $baseType = $matches[1] ?? $aircraft['type'];
 
             if (!isset($fleetByType[$baseType])) {

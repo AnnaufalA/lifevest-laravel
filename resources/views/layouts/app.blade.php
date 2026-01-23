@@ -36,6 +36,7 @@
                             <option value="B737">B737</option>
                             <option value="B777">B777</option>
                             <option value="A330">A330</option>
+                            <option value="ATR72">ATR72</option>
                         </select>
                     </div>
                 </div>
