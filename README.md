@@ -10,6 +10,7 @@ Aplikasi pelacakan tanggal kedaluwarsa life vest untuk armada pesawat GMF AeroAs
 - [Panduan Penggunaan](#-panduan-penggunaan)
 - [Keyboard Shortcuts](#-keyboard-shortcuts)
 - [Menambahkan Pesawat Baru](#-menambahkan-pesawat-baru)
+- [Struktur File](#-struktur-file-penting)
 
 ---
 
@@ -57,6 +58,8 @@ Buka http://localhost:8000
 ### Dashboard
 - Menampilkan **Fleet Overview** (ringkasan status semua pesawat)
 - Menampilkan **Fleet Status** per tipe (B737, B777, A330)
+- **Search**: Cari pesawat berdasarkan registrasi
+- **Filter**: Filter berdasarkan tipe pesawat
 - Klik kartu pesawat untuk masuk ke halaman seat map
 
 ---
@@ -84,7 +87,7 @@ Buka http://localhost:8000
 
 ---
 
-## � SET TANGGAL EXPIRY
+## 📅 SET TANGGAL EXPIRY
 
 1. Pilih kursi yang ingin di-update (bisa multi-select)
 2. Klik tombol **"Set Date"** di toolbar
@@ -119,39 +122,24 @@ Buka http://localhost:8000
 
 ## ✈️ Menambahkan Pesawat Baru
 
-> ⚠️ **Penting:** Ada 2 kondisi saat menambahkan pesawat baru!
-
----
+> ⚠️ **Sistem sekarang menggunakan config-based layout!**
 
 ### 🔄 KONDISI A: Layout SAMA dengan Pesawat Lain
 
-Jika layout kursi **sama persis** dengan pesawat yang sudah ada (misal: PK-XXX sama dengan PK-GHE):
+Jika layout kursi **sama persis** dengan pesawat yang sudah ada:
 
-#### Langkah 1: Tambah Config
+#### Langkah 1: Tambah di Config
 📁 **File:** `config/aircraft_layouts.php`
 
 ```php
 'PK-XXX' => [
-    'type' => 'A330-900',
-    'icon' => '🛩️',
+    'type' => 'B737-800',    // atau 'B737 MAX 8', 'A330-300', dll
+    'icon' => '✈️',
+    'layout' => 'b737-e46',   // Pakai layout yang sudah ada
 ],
 ```
 
-#### Langkah 2: Update Routing (Pakai Template yang Sama)
-📁 **File:** `app/Http/Controllers/AircraftController.php`
-
-```php
-$template = match ($registration) {
-    'PK-GFD' => 'aircraft.b737',
-    'PK-GIA' => 'aircraft.b777-gia',
-    'PK-GIF' => 'aircraft.b777-gif',
-    'PK-GHE', 'PK-XXX' => 'aircraft.a330',  // ← Gabungkan di sini
-    'PK-GPZ' => 'aircraft.a330-gpz',
-    default => 'aircraft.show',
-};
-```
-
-**Selesai!** Tidak perlu buat template baru.
+**Selesai!** Controller otomatis menggunakan layout dari config.
 
 ---
 
@@ -166,72 +154,28 @@ Jika layout kursi **berbeda** dengan yang sudah ada:
 'PK-XXX' => [
     'type' => 'A330-300',
     'icon' => '🛩️',
+    'layout' => 'a330-xxx',  // Nama template baru
 ],
 ```
 
 #### Langkah 2: Buat Template Baru
 📁 **File:** `resources/views/aircraft/a330-xxx.blade.php`
 
-Copy dari template yang mirip (misal `a330-gpz.blade.php`) lalu edit:
+Copy dari template yang mirip lalu edit sesuai kebutuhan.
 
-1. **Ganti tipe pesawat di header:**
+**Penting di header:** Gunakan config lookup untuk tipe pesawat:
 ```blade
-<span class="info-value">A330-300</span>
+<span class="info-value">{{ config('aircraft_layouts.' . $registration . '.type', 'A330-300') }}</span>
 ```
 
-2. **Sesuaikan section class (Business/Economy):**
-```blade
-<!-- Business Class - Rows 6-11 -->
-<section class="cabin-section">
-    <h2>💼 Business Class - Rows 6-11</h2>
-    ...
-</section>
-
-<!-- Economy Class - Rows 21-50 -->
-<section class="cabin-section">
-    <h2>🪑 Economy Class - Rows 21-50</h2>
-    ...
-</section>
-```
-
-3. **Sesuaikan baris dan kolom:**
-```blade
-@foreach([6, 7, 8, 9, 10, 11] as $row)
-    <!-- render seats -->
-@endforeach
-```
-
-4. **Untuk skip baris tertentu:**
-```blade
-@if($row == 24)
-    @continue
-@endif
-```
-
-5. **Untuk kolom berbeda per baris (tail section):**
-```blade
-@php
-    if ($row == 55) {
-        $rowCols = ['D', 'F', 'G'];  // Hanya 3 kursi
-    } else {
-        $rowCols = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'K'];
-    }
-@endphp
-```
-
-#### Langkah 3: Update Routing Controller
-📁 **File:** `app/Http/Controllers/AircraftController.php`
+#### Langkah 3: Tambah Class Rows Config
+📁 **File:** `config/aircraft_class_rows.php`
 
 ```php
-$template = match ($registration) {
-    'PK-GFD' => 'aircraft.b737',
-    'PK-GIA' => 'aircraft.b777-gia',
-    'PK-GIF' => 'aircraft.b777-gif',
-    'PK-GHE' => 'aircraft.a330',
-    'PK-GPZ' => 'aircraft.a330-gpz',
-    'PK-XXX' => 'aircraft.a330-xxx',  // ← Tambahkan ini
-    default => 'aircraft.show',
-};
+'a330-xxx' => [
+    'business' => range(6, 11),
+    'economy' => array_diff(range(21, 50), [24]), // skip row 24
+],
 ```
 
 #### Langkah 4: Pastikan Ada Script Config
@@ -249,12 +193,6 @@ Di bagian akhir template, **WAJIB** ada:
 @endpush
 ```
 
-#### Langkah 5: Test
-1. Refresh browser
-2. Buka dashboard - pesawat baru muncul di fleet
-3. Klik pesawat baru - pastikan seat map tampil
-4. Test select kursi dan set tanggal
-
 ---
 
 ## 📁 Struktur File Penting
@@ -262,28 +200,36 @@ Di bagian akhir template, **WAJIB** ada:
 ```
 lifevest-laravel/
 ├── config/
-│   └── aircraft_layouts.php      # Config registrasi pesawat
+│   ├── aircraft_layouts.php      # Config registrasi & layout mapping
+│   └── aircraft_class_rows.php   # Config class type per layout
 ├── app/Http/Controllers/
 │   ├── DashboardController.php   # Logic dashboard
-│   └── AircraftController.php    # Logic seat map & routing
+│   └── AircraftController.php    # Logic seat map (config-based)
 ├── resources/views/
-│   ├── layouts/app.blade.php     # Master layout
+│   ├── layouts/app.blade.php     # Master layout + Navbar
 │   ├── dashboard.blade.php       # Halaman dashboard
 │   ├── aircraft/
-│   │   ├── b737.blade.php        # Template B737 (PK-GFD)
-│   │   ├── b777-gia.blade.php    # Template B777 (PK-GIA)
-│   │   ├── b777-gif.blade.php    # Template B777 (PK-GIF)
-│   │   ├── a330.blade.php        # Template A330-900 (PK-GHE)
-│   │   └── a330-gpz.blade.php    # Template A330-300 (PK-GPZ)
+│   │   ├── b737-e46.blade.php    # B737 Layout (46 rows)
+│   │   ├── b737-e47.blade.php    # B737 Layout (47 rows)
+│   │   ├── b737-e48.blade.php    # B737 Layout (48 rows)
+│   │   ├── b777-2class.blade.php # B777 2-Class
+│   │   ├── b777-3class.blade.php # B777 3-Class (First)
+│   │   ├── a330-900a.blade.php   # A330-900 Layout A
+│   │   ├── a330-900b.blade.php   # A330-900 Layout B
+│   │   ├── a330-300a.blade.php   # A330-300 Layout A
+│   │   ├── a330-300b.blade.php   # A330-300 Layout B
+│   │   ├── a330-300c.blade.php   # A330-300 Layout C (All Economy)
+│   │   ├── a330-200a.blade.php   # A330-200 Layout A
+│   │   └── a330-200b.blade.php   # A330-200 Layout B
 │   └── components/
-│       ├── cockpit-section.blade.php  # Komponen cockpit (reusable)
-│       ├── seat-cell.blade.php        # Komponen 1 kursi
-│       ├── toolbar.blade.php          # Toolbar selection
-│       ├── status-legend.blade.php    # Legend warna
-│       └── date-modal.blade.php       # Modal input tanggal
+│       ├── cockpit-section.blade.php
+│       ├── seat-cell.blade.php
+│       ├── toolbar.blade.php
+│       ├── status-legend.blade.php
+│       └── date-modal.blade.php
 └── resources/
     ├── css/
-    │   ├── style.css             # CSS global
+    │   ├── style.css             # CSS global + Navbar
     │   └── dashboard.css         # CSS dashboard
     └── js/
         └── app.js                # JavaScript interaksi
@@ -293,8 +239,23 @@ lifevest-laravel/
 
 ## 🛠️ Teknologi
 
-- **Backend:** Laravel 11
-- **Frontend:** Vanilla CSS & JavaScript
+- **Backend:** Laravel 12
+- **Frontend:** Vanilla CSS & JavaScript (Glassmorphism UI)
 - **Database:** MySQL
 - **Build Tool:** Vite
+- **Timezone:** Asia/Jakarta (GMT+7)
+
+---
+
+## 📊 Fleet Overview
+
+| Tipe | Jumlah Registrasi | Layout |
+|------|-------------------|--------|
+| B737-800 | 40+ | e46, e47, e48 |
+| B737 MAX 8 | 1 | e46 |
+| B777-300 | 8 | 2class, 3class |
+| A330-900 | 5 | 900a, 900b |
+| A330-300 | 12 | 300a, 300b, 300c |
+| A330-341 | 2 | 300c |
+| A330-200 | 5 | 200a, 200b |
 
