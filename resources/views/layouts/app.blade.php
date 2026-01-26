@@ -54,8 +54,13 @@
                 </div>
             @endif
 
-            <!-- Right: Last Update -->
-            <div class="navbar-right">
+            <!-- Right: Admin & Update -->
+            <div class="navbar-right" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary"
+                    style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                    ⚙️ Manage Fleet
+                </a>
+
                 @if(isset($lastUpdate))
                     <div class="navbar-update">
                         <span class="update-label">🕐 Last Update:</span>

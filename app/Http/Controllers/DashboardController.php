@@ -44,19 +44,14 @@ class DashboardController extends Controller
             $total = array_sum($stats) ?: 1;
             $healthPercent = round(($stats['safe'] / $total) * 100);
 
-            foreach ($aircrafts as $aircraft) {
-                $registration = $aircraft->registration;
-                // ... (stats logic) ...
-
-                $fleet[$registration] = [
-                    'type' => $aircraft->type,
-                    'registration' => $registration,
-                    'icon' => $aircraft->icon,
-                    'status' => $aircraft->status, // Pass status to view
-                    'stats' => $stats,
-                    'health' => $healthPercent,
-                ];
-            }
+            $fleet[$registration] = [
+                'type' => $aircraft->type,
+                'registration' => $registration,
+                'icon' => $aircraft->icon ?? '✈️', // Default icon if missing
+                'status' => $aircraft->status,
+                'stats' => $stats,
+                'health' => $healthPercent,
+            ];
         }
 
         // Get global last update time

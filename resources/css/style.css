@@ -336,6 +336,7 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: all var(--transition-fast);
+    text-decoration: none; /* Fix for anchor buttons */
 }
 
 .btn:disabled {
@@ -1367,4 +1368,196 @@ body {
     background-color: rgba(34, 197, 94, 0.2);
     color: #22c55e;
     border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.form-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.form-card {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+}
+
+/* Form Elements Standardization */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-input:disabled {
+    background: var(--bg-dark);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.form-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* Force Button Symmetry - SCOPED TO FORMS & HEADER ONLY */
+.form-actions .btn,
+.header-section .btn {
+    height: 48px; /* Force fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Force Wide Form */
+.form-container-wide {
+    max-width: 800px !important;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.btn-wide {
+    min-width: 120px;
+}
+
+/* Standardized Fleet Table */
+.fleet-table-wrapper {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+.fleet-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-primary);
+}
+
+.fleet-th {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-weight: 600;
+}
+
+.fleet-td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--bg-hover);
+vertical-align: middle;
+}
+
+.text-right { text-align: right; }
+.font-bold { font-weight: bold; }
+.font-mono { font-family: monospace; }
+
+.alert-box {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+/* Filter Bar Standards */
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 12px;
+    align-items: center;
+}
+
+.filter-inputs {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .filter-inputs { flex-direction: column; }
+}
+
+/* Filter Bar Inputs */
+.filter-bar .form-input,
+.filter-bar .form-select,
+.filter-bar .btn {
+    height: 48px;
+    box-sizing: border-box;
+}
+
+.filter-bar .btn { padding: 0 1.5rem; }
+
+/* Final Cleanup Utilities */
+.fleet-header-title { text-align: left; margin: 0; }
+.cursor-pointer { cursor: pointer; }
+.flex-gap-sm { display: flex; gap: 0.5rem; }
+.inline-flex-center { display: inline-flex; align-items: center; }
+.inline-block { display: inline-block; }
+
+/* Action Buttons in Table */
+.btn-action {
+    height: 32px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.mr-2 { margin-right: 0.5rem; }
+.bg-danger { background: var(--danger); color: white; }
+
+.text-note {
+    color: var(--text-muted);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Navbar Extras */
+.navbar-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+.nav-link-item {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }

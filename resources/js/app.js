@@ -484,3 +484,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// ========================================
+// FLEET MANAGER SEARCH & SORT
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('fleetSearch');
+    const sortSelect = document.getElementById('fleetSort');
+    const tableBody = document.querySelector('.fleet-table tbody');
+
+    // Only run on Fleet Manager page
+    if (!searchInput || !sortSelect || !tableBody) return;
+
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+    function filterAndSort() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const sortValue = sortSelect.value;
+
+        // 1. Filter Rows
+        const visibleRows = rows.filter(row => {
+            const reg = row.cells[0].textContent.toLowerCase();
+            const type = row.cells[1].textContent.toLowerCase();
+            const visible = reg.includes(searchTerm) || type.includes(searchTerm);
+            row.style.display = visible ? '' : 'none';
+            return visible;
+        });
+
+        // 2. Sort Visible Rows
+        visibleRows.sort((a, b) => {
+            const regA = a.cells[0].textContent.trim();
+            const regB = b.cells[0].textContent.trim();
+            const typeA = a.cells[1].textContent.trim();
+            const typeB = b.cells[1].textContent.trim();
+            const statusA = a.querySelector('.status-badge').textContent.trim();
+            const statusB = b.querySelector('.status-badge').textContent.trim();
+
+            switch (sortValue) {
+                case 'registration_desc': return regB.localeCompare(regA);
+                case 'type_asc': return typeA.localeCompare(typeB);
+                case 'type_desc': return typeB.localeCompare(typeA);
+                case 'status_active': return statusA === statusB ? 0 : (statusA === 'ACTIVE' ? -1 : 1);
+                case 'status_prolong': return statusA === statusB ? 0 : (statusA === 'PROLONG' ? -1 : 1);
+                default: return regA.localeCompare(regB); // registration_asc
+            }
+        });
+
+        // 3. Re-append sorted rows
+        visibleRows.forEach(row => tableBody.appendChild(row));
+    }
+
+    // Events
+    searchInput.addEventListener('input', filterAndSort);
+    sortSelect.addEventListener('change', filterAndSort);
+});
