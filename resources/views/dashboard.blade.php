@@ -30,12 +30,7 @@
                     <div class="summary-label">Expired</div>
                     <div class="summary-desc">Past due</div>
                 </div>
-                <div class="summary-card no-data">
-                    <div class="summary-icon">⚪</div>
-                    <div class="summary-value">{{ $totalStats['no_data'] }}</div>
-                    <div class="summary-label">No Data</div>
-                    <div class="summary-desc">Not set</div>
-                </div>
+
             </div>
     </section>
 

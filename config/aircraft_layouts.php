@@ -10,11 +10,18 @@
  * - layout: Blade template name in resources/views/aircraft/
  * 
  * Available layouts:
- * - b737       : B737-800 standard layout
- * - b777-gia   : B777-300 GIA layout
- * - b777-gif   : B777-300 GIF layout (with First Class)
- * - a330       : A330-900 layout
- * - a330-gpz   : A330-300 layout
+ * - b737-e46    : B737-800 Layout A (Standard)
+ * - b737-e47    : B737-800 Layout B (Economy until row 47)
+ * - b737-e48    : B737-800 Layout C (Economy until row 48)
+ * - b777-2class : B777-300 2 Class (Business + Economy)
+ * - b777-3class : B777-300 3 Class (First + Business + Economy)
+ * - a330-900a   : A330-900 Layout A
+ * - a330-900b   : A330-900 Layout B (Premium Economy)
+ * - a330-300a   : A330-300 Layout A
+ * - a330-300b   : A330-300 Layout B (Business 2-2-2)
+ * - a330-300c   : A330-300 Layout C (All Economy)
+ * - a330-200a   : A330-200 Layout A
+ * - a330-200b   : A330-200 Layout B (Business 6-11)
  */
 
 return [
