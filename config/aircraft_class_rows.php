@@ -23,6 +23,10 @@ return [
         'business' => range(6, 7),
         'economy' => array_diff(range(21, 48), [24]),
     ],
+    'b737-e49' => [
+        'business' => range(6, 8),
+        'economy' => array_diff(range(21, 47), [24]),
+    ],
 
     // ═══════════════════════════════════════════════════════════
     // B777 Layouts

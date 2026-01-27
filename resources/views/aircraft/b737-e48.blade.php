@@ -22,6 +22,39 @@
     <!-- Cockpit Section -->
     <x-cockpit-section :seats="$seats" />
 
+    <!-- Attendant D11 (Forward) - 2 seats near cockpit -->
+    <section class="cabin-section">
+        <h2>🧑‍✈️ Attendant D11</h2>
+        <div class="seat-grid">
+            <div class="grid-header grid-row-2-2">
+                <span class="col-label col-header" data-col="att/d11-A">A</span>
+                <span class="col-label col-header" data-col="att/d11-C">C</span>
+                <span class="row-label"></span>
+                <span class="seat-placeholder"></span>
+                <span class="seat-placeholder"></span>
+            </div>
+            <div class="seat-row grid-row-2-2">
+                @foreach(['A', 'C'] as $col)
+                    @php
+                        $seatId = 'att/d11-' . $col;
+                        $seat = $seats[$seatId] ?? null;
+                        $status = $seat?->status ?? 'no-data';
+                        $expiryDate = $seat?->expiry_date?->format('j M Y') ?? '-';
+                    @endphp
+                    <div class="seat-card status-{{ $status }}" data-seat="{{ $seatId }}" data-col="{{ $col }}">
+                        <div class="seat-id">D11-{{ $col }}</div>
+                        <div class="seat-date" data-date="{{ $seat?->expiry_date?->format('Y-m-d') ?? '' }}">
+                            {{ $expiryDate }}
+                        </div>
+                    </div>
+                @endforeach
+                <div class="row-number">D11</div>
+                <div class="seat-placeholder"></div>
+                <div class="seat-placeholder"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Business Class - Rows 6-7 (2-2 layout: A C - Row - H K) -->
     <section class="cabin-section">
         <h2>💼 Business Class - Rows 6-7</h2>
@@ -77,6 +110,111 @@
         </div>
     </section>
 
+    <!-- Attendant D12 & D22 (Rear) -->
+    <section class="cabin-section">
+        <h2>🧑‍✈️ Attendant D12 & D22</h2>
+        <div class="seat-grid">
+            <div class="grid-header grid-row-2-2">
+                <span class="col-label col-header" data-col="att/d12-A">A</span>
+                <span class="col-label col-header" data-col="att/d12-C">C</span>
+                <span class="row-label"></span>
+                <span class="col-label col-header" data-col="att/d22-H">H</span>
+                <span class="col-label col-header" data-col="att/d22-K">K</span>
+            </div>
+            <div class="seat-row grid-row-2-2">
+                @foreach(['A', 'C'] as $col)
+                    @php
+                        $seatId = 'att/d12-' . $col;
+                        $seat = $seats[$seatId] ?? null;
+                        $status = $seat?->status ?? 'no-data';
+                        $expiryDate = $seat?->expiry_date?->format('j M Y') ?? '-';
+                    @endphp
+                    <div class="seat-card status-{{ $status }}" data-seat="{{ $seatId }}" data-col="{{ $col }}">
+                        <div class="seat-id">D12-{{ $col }}</div>
+                        <div class="seat-date" data-date="{{ $seat?->expiry_date?->format('Y-m-d') ?? '' }}">
+                            {{ $expiryDate }}
+                        </div>
+                    </div>
+                @endforeach
+                <div class="row-number">D12/D22</div>
+                @foreach(['H', 'K'] as $col)
+                    @php
+                        $seatId = 'att/d22-' . $col;
+                        $seat = $seats[$seatId] ?? null;
+                        $status = $seat?->status ?? 'no-data';
+                        $expiryDate = $seat?->expiry_date?->format('j M Y') ?? '-';
+                    @endphp
+                    <div class="seat-card status-{{ $status }}" data-seat="{{ $seatId }}" data-col="{{ $col }}">
+                        <div class="seat-id">D22-{{ $col }}</div>
+                        <div class="seat-date" data-date="{{ $seat?->expiry_date?->format('Y-m-d') ?? '' }}">
+                            {{ $expiryDate }}
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- Spare Section: PAX & INF -->
+    <section class="cabin-section">
+        <h2>📦 Spare</h2>
+        <div class="spare-grid">
+            <!-- PAX Column -->
+            <div class="spare-column" id="pax-column">
+                <h3>PAX</h3>
+                <div class="spare-items" id="pax-items">
+                    @php
+                        $paxSeats = collect($seats)->filter(fn($s, $id) => str_starts_with($id, 'pax-'))->sortBy(fn($s, $id) => (int) str_replace('pax-', '', $id));
+                    @endphp
+                    @forelse($paxSeats as $seatId => $seat)
+                        @php
+                            $num = str_replace('pax-', '', $seatId);
+                            $status = $seat?->status ?? 'no-data';
+                            $expiryDate = $seat?->expiry_date?->format('j M Y') ?? '-';
+                        @endphp
+                        <div class="seat-card spare-card status-{{ $status }}" data-seat="{{ $seatId }}">
+                            <button type="button" class="btn-delete-spare" title="Delete">&times;</button>
+                            <div class="seat-id">{{ $num }}</div>
+                            <div class="seat-date" data-date="{{ $seat?->expiry_date?->format('Y-m-d') ?? '' }}">
+                                {{ $expiryDate }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="empty-message">Belum ada data PAX</p>
+                    @endforelse
+                </div>
+                <button type="button" class="btn btn-add-spare" data-type="pax">+ Add PAX</button>
+            </div>
+
+            <!-- INF Column -->
+            <div class="spare-column" id="inf-column">
+                <h3>INF</h3>
+                <div class="spare-items" id="inf-items">
+                    @php
+                        $infSeats = collect($seats)->filter(fn($s, $id) => str_starts_with($id, 'inf-'))->sortBy(fn($s, $id) => (int) str_replace('inf-', '', $id));
+                    @endphp
+                    @forelse($infSeats as $seatId => $seat)
+                        @php
+                            $num = str_replace('inf-', '', $seatId);
+                            $status = $seat?->status ?? 'no-data';
+                            $expiryDate = $seat?->expiry_date?->format('j M Y') ?? '-';
+                        @endphp
+                        <div class="seat-card spare-card status-{{ $status }}" data-seat="{{ $seatId }}">
+                            <button type="button" class="btn-delete-spare" title="Delete">&times;</button>
+                            <div class="seat-id">{{ $num }}</div>
+                            <div class="seat-date" data-date="{{ $seat?->expiry_date?->format('Y-m-d') ?? '' }}">
+                                {{ $expiryDate }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="empty-message">Belum ada data INF</p>
+                    @endforelse
+                </div>
+                <button type="button" class="btn btn-add-spare" data-type="inf">+ Add INF</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Date Modal -->
     @include('components.date-modal')
 @endsection
@@ -86,6 +224,7 @@
         window.AIRCRAFT_CONFIG = {
             registration: '{{ $registration }}',
             updateUrl: '{{ route('aircraft.updateSeats', $registration) }}',
+            deleteUrl: '{{ route('aircraft.deleteSeat', $registration) }}',
             csrfToken: '{{ csrf_token() }}'
         };
     </script>

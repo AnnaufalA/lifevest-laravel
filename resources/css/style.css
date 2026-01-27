@@ -1565,3 +1565,107 @@ vertical-align: middle;
 /* Fix Button Size in Header */
 .header-section .btn { width: auto; display: inline-flex; }
 .header-section { display: flex; justify-content: space-between; align-items: center; }
+
+/* ========================================
+   SPARE SECTION (PAX & INF)
+   ======================================== */
+.spare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.spare-column {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    border: 1px solid var(--border);
+}
+
+.spare-column h3 {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border);
+}
+
+.spare-card {
+    margin-bottom: var(--spacing-xs);
+}
+
+.spare-card .seat-id {
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.btn-add-spare {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+}
+
+.btn-add-spare:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    padding: var(--spacing-md);
+    font-style: italic;
+}
+
+.spare-items {
+    min-height: 50px;
+}
+
+.spare-card {
+    position: relative;
+}
+
+.btn-delete-spare {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    background: var(--danger);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    z-index: 5;
+}
+
+.spare-card:hover .btn-delete-spare {
+    opacity: 1;
+}
+
+.btn-delete-spare:hover {
+    background: var(--danger-dark);
+    transform: scale(1.1);
+}
+
+

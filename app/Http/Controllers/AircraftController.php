@@ -52,62 +52,127 @@ class AircraftController extends Controller
      */
     public function updateSeats(Request $request, string $registration)
     {
-        $request->validate([
-            'seat_ids' => 'required|array',
-            'seat_ids.*' => 'required|string',
-            'expiry_date' => 'required|date',
-        ]);
+        try {
+            $request->validate([
+                'seat_ids' => 'required|array',
+                'seat_ids.*' => 'required|string',
+                'expiry_date' => 'required|date',
+            ]);
 
-        $seatIds = $request->input('seat_ids');
-        $expiryDate = $request->input('expiry_date');
+            $seatIds = $request->input('seat_ids');
+            $expiryDate = $request->input('expiry_date');
 
-        foreach ($seatIds as $seatId) {
-            // Parse row and column from seat_id
-            preg_match('/^(\d+)?(.+)$/', $seatId, $matches);
-            $row = $matches[1] ?: null;
-            $col = $matches[2] ?: $seatId;
+            foreach ($seatIds as $seatId) {
+                // Determine class type based on seat ID format
+                $classType = 'economy'; // default
+                $row = null;
+                $col = null;
 
-            // Determine class type based on layout config
-            $classType = 'economy'; // default
+                // Cockpit seats
+                if (in_array($seatId, ['captain', 'copilot', 'observer1', 'observer2'])) {
+                    $classType = 'cockpit';
+                    $col = $seatId;
+                }
+                // PAX spare seats (pax-1, pax-2, etc.)
+                elseif (str_starts_with($seatId, 'pax-')) {
+                    $classType = 'spare-pax';
+                    $col = $seatId;
+                }
+                // INF spare seats (inf-1, inf-2, etc.)
+                elseif (str_starts_with($seatId, 'inf-')) {
+                    $classType = 'spare-inf';
+                    $col = $seatId;
+                }
+                // Attendant seats (att/d11-A, att/d12-C, att/d22-H, etc.)
+                elseif (str_starts_with($seatId, 'att/')) {
+                    $classType = 'attendant';
+                    $col = $seatId;
+                }
+                // Regular seats (6A, 21B, etc.)
+                else {
+                    preg_match('/^(\d+)?(.+)$/', $seatId, $matches);
+                    $row = $matches[1] ?: null;
+                    $col = $matches[2] ?: $seatId;
 
-            if (in_array($seatId, ['captain', 'copilot', 'observer1', 'observer2'])) {
-                $classType = 'cockpit';
-            } elseif ($row) {
-            } elseif ($row) {
-                // Get layout for this aircraft (FROM DB)
-                $aircraft = \App\Models\Aircraft::where('registration', $registration)->first();
-                $layout = $aircraft->layout ?? null;
+                    if ($row) {
+                        // Get layout for this aircraft (FROM DB)
+                        $aircraft = \App\Models\Aircraft::where('registration', $registration)->first();
+                        $layout = $aircraft->layout ?? null;
 
-                if ($layout) {
-                    $classRows = config("aircraft_class_rows.{$layout}", []);
-                    $rowNum = (int) $row;
+                        if ($layout) {
+                            $classRows = config("aircraft_class_rows.{$layout}", []);
+                            $rowNum = (int) $row;
 
-                    foreach ($classRows as $class => $rows) {
-                        if (in_array($rowNum, $rows)) {
-                            $classType = $class;
-                            break;
+                            foreach ($classRows as $class => $rows) {
+                                if (in_array($rowNum, $rows)) {
+                                    $classType = $class;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
+
+                Seat::updateOrCreate(
+                    [
+                        'registration' => $registration,
+                        'seat_id' => $seatId,
+                    ],
+                    [
+                        'row' => $row,
+                        'col' => $col,
+                        'class_type' => $classType,
+                        'expiry_date' => $expiryDate,
+                    ]
+                );
             }
 
-            Seat::updateOrCreate(
-                [
-                    'registration' => $registration,
-                    'seat_id' => $seatId,
-                ],
-                [
-                    'row' => $row,
-                    'col' => $col,
-                    'class_type' => $classType,
-                    'expiry_date' => $expiryDate,
-                ]
-            );
+            return response()->json([
+                'success' => true,
+                'message' => count($seatIds) . ' seat(s) updated',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a spare seat (PAX/INF)
+     */
+    public function deleteSeat(Request $request, string $registration)
+    {
+        $request->validate([
+            'seat_id' => 'required|string',
+        ]);
+
+        $seatId = $request->input('seat_id');
+
+        // Only allow deletion of spare seats (pax-*, inf-*)
+        if (!str_starts_with($seatId, 'pax-') && !str_starts_with($seatId, 'inf-')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only spare seats (PAX/INF) can be deleted',
+            ], 403);
+        }
+
+        $deleted = Seat::where('registration', $registration)
+            ->where('seat_id', $seatId)
+            ->delete();
+
+        if ($deleted) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Seat deleted successfully',
+            ]);
         }
 
         return response()->json([
-            'success' => true,
-            'message' => count($seatIds) . ' seat(s) updated',
-        ]);
+            'success' => false,
+            'message' => 'Seat not found',
+        ], 404);
     }
 }
+

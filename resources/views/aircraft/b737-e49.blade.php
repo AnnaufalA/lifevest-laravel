@@ -3,12 +3,8 @@
 @section('header-right')
     <div class="aircraft-info">
         <label>Tipe:</label>
-        <span class="info-value">
-            {{ $aircraft->type }}
-            <span class="status-badge {{ $aircraft['status'] ?? 'active' }}">
-                {{ strtoupper($aircraft['status'] ?? 'active') }}
-            </span>
-        </span>
+        <span class="info-value">{{ $aircraft->type }} <span
+                class="status-badge {{ $aircraft['status'] ?? 'active' }}">{{ strtoupper($aircraft['status'] ?? 'active') }}</span></span>
     </div>
     <div class="aircraft-info">
         <label>Registrasi:</label>
@@ -84,9 +80,9 @@
         </div>
     </section>
 
-    <!-- Economy Class - Rows 21-46 (3-3 layout: A B C - Row - H J K) -->
+    <!-- Economy Class - Rows 21-47 (3-3 layout, skip row 24, rows 46-47 only H J K) -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 21-46</h2>
+        <h2>🪑 Economy Class - Rows 21-47</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-3-3">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -97,20 +93,24 @@
                 <span class="col-label col-header" data-col="J">J</span>
                 <span class="col-label col-header" data-col="K">K</span>
             </div>
-            @for($row = 21; $row <= 46; $row++)
+            @foreach(range(21, 47) as $row)
                 @if($row == 24)
                     @continue
                 @endif
+                @php
+                    // Rows 46 and 47 only have H, J, K (right side)
+                    $rowCols = in_array($row, [46, 47]) ? ['H', 'J', 'K'] : ['A', 'B', 'C', 'H', 'J', 'K'];
+                @endphp
                 <div class="seat-row grid-row-3-3" data-row="{{ $row }}">
                     @foreach(['A', 'B', 'C'] as $col)
-                        @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => ['A', 'B', 'C', 'H', 'J', 'K'], 'seats' => $seats])
+                        @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => $rowCols, 'seats' => $seats])
                     @endforeach
                     <div class="row-number" data-row="{{ $row }}">{{ $row }}</div>
                     @foreach(['H', 'J', 'K'] as $col)
-                        @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => ['A', 'B', 'C', 'H', 'J', 'K'], 'seats' => $seats])
+                        @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => $rowCols, 'seats' => $seats])
                     @endforeach
                 </div>
-            @endfor
+            @endforeach
         </div>
     </section>
 

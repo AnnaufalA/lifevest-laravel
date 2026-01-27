@@ -88,13 +88,15 @@ function setupEventListeners() {
 
     // Click outside to clear selection
     document.addEventListener('click', (e) => {
-        // Ignore clicks on seats, toolbar, modal, or toast
+        // Ignore clicks on seats, toolbar, modal, toast, or spare buttons
         if (e.target.closest('.seat-card') ||
             e.target.closest('.toolbar') ||
             e.target.closest('.modal-content') ||
             e.target.closest('.row-number') ||
             e.target.closest('.col-header') ||
-            e.target.closest('#toast')) {
+            e.target.closest('#toast') ||
+            e.target.closest('.btn-add-spare') ||
+            e.target.closest('.btn-delete-spare')) {
             return;
         }
 
@@ -107,6 +109,16 @@ function setupEventListeners() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
+
+    // Add Spare (PAX/INF) buttons
+    document.querySelectorAll('.btn-add-spare').forEach(btn => {
+        btn.addEventListener('click', handleAddSpare);
+    });
+
+    // Delete Spare (PAX/INF) buttons (for existing cards from server)
+    document.querySelectorAll('.btn-delete-spare').forEach(btn => {
+        btn.addEventListener('click', handleDeleteSpare);
+    });
 }
 
 // Helper to select a single seat
@@ -310,6 +322,7 @@ async function applyDate() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': window.AIRCRAFT_CONFIG.csrfToken,
             },
             body: JSON.stringify({
@@ -317,6 +330,19 @@ async function applyDate() {
                 expiry_date: dateValue,
             }),
         });
+
+        // Handle non-OK responses
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server response:', response.status, errorText);
+            try {
+                const errorJson = JSON.parse(errorText);
+                showToast(errorJson.message || `Server error: ${response.status}`, 'error');
+            } catch {
+                showToast(`Server error: ${response.status}`, 'error');
+            }
+            return;
+        }
 
         const data = await response.json();
 
@@ -345,10 +371,12 @@ async function applyDate() {
             closeDateModal();
             clearSelection();
             showToast(data.message, 'success');
+        } else {
+            showToast(data.message || 'Failed to update seats', 'error');
         }
     } catch (error) {
         console.error('Error updating seats:', error);
-        showToast('Failed to update seats', 'error');
+        showToast('Network error: ' + error.message, 'error');
     }
 }
 
@@ -544,3 +572,109 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', filterAndSort);
     sortSelect.addEventListener('change', filterAndSort);
 });
+
+// ============================================
+// ADD SPARE (PAX/INF) FUNCTIONALITY
+// ============================================
+function handleAddSpare(e) {
+    const type = e.currentTarget.dataset.type; // 'pax' or 'inf'
+    const container = document.getElementById(`${type}-items`);
+
+    // Find next available number
+    const existingCards = container.querySelectorAll('.spare-card');
+    let maxNum = 0;
+    existingCards.forEach(card => {
+        const seatId = card.dataset.seat;
+        const num = parseInt(seatId.replace(`${type}-`, ''), 10);
+        if (num > maxNum) maxNum = num;
+    });
+    const newNum = maxNum + 1;
+    const newSeatId = `${type}-${newNum}`;
+
+    // Remove empty message if exists
+    const emptyMsg = container.querySelector('.empty-message');
+    if (emptyMsg) emptyMsg.remove();
+
+    // Create new card with delete button
+    const newCard = document.createElement('div');
+    newCard.className = 'seat-card spare-card status-no-data';
+    newCard.dataset.seat = newSeatId;
+    newCard.innerHTML = `
+        <button type="button" class="btn-delete-spare" title="Delete">&times;</button>
+        <div class="seat-id">${newNum}</div>
+        <div class="seat-date" data-date="">-</div>
+    `;
+
+    // Add click handler for seat selection
+    newCard.addEventListener('click', handleSeatClick);
+
+    // Add delete button handler
+    const deleteBtn = newCard.querySelector('.btn-delete-spare');
+    deleteBtn.addEventListener('click', handleDeleteSpare);
+
+    // Append to container
+    container.appendChild(newCard);
+
+    // Auto-select the new card and open date modal
+    clearSelection();
+    state.selectedSeats.add(newSeatId);
+    newCard.classList.add('selected');
+    updateUI();
+
+    showToast(`Added ${type.toUpperCase()}-${newNum}. Select a date.`, 'info');
+    openDateModal();
+}
+
+// ============================================
+// DELETE SPARE (PAX/INF) FUNCTIONALITY
+// ============================================
+async function handleDeleteSpare(e) {
+    e.stopPropagation(); // Prevent seat selection
+
+    const card = e.currentTarget.closest('.spare-card');
+    const seatId = card.dataset.seat;
+    const type = seatId.startsWith('pax-') ? 'PAX' : 'INF';
+    const num = seatId.replace(/^(pax|inf)-/, '');
+
+    if (!confirm(`Delete ${type}-${num}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(window.AIRCRAFT_CONFIG.deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': window.AIRCRAFT_CONFIG.csrfToken,
+            },
+            body: JSON.stringify({ seat_id: seatId }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Remove card from DOM
+            card.remove();
+
+            // Remove from selection if selected
+            state.selectedSeats.delete(seatId);
+            updateUI();
+
+            // Check if container is now empty
+            const container = document.getElementById(`${seatId.startsWith('pax-') ? 'pax' : 'inf'}-items`);
+            if (container.querySelectorAll('.spare-card').length === 0) {
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = 'empty-message';
+                emptyMsg.textContent = `Belum ada data ${type}`;
+                container.appendChild(emptyMsg);
+            }
+
+            showToast(`${type}-${num} deleted`, 'success');
+        } else {
+            showToast(data.message || 'Failed to delete', 'error');
+        }
+    } catch (error) {
+        console.error('Delete error:', error);
+        showToast('Failed to delete', 'error');
+    }
+}
