@@ -12,7 +12,6 @@ class AircraftController extends Controller
      */
     public function show(string $registration)
     {
-        // OLD: $layout = config("aircraft_layouts.{$registration}");
         // NEW: Database
         $aircraft = \App\Models\Aircraft::where('registration', $registration)->first();
 
@@ -76,7 +75,6 @@ class AircraftController extends Controller
             } elseif ($row) {
             } elseif ($row) {
                 // Get layout for this aircraft (FROM DB)
-                // $aircraftConfig = config("aircraft_layouts.{$registration}");
                 $aircraft = \App\Models\Aircraft::where('registration', $registration)->first();
                 $layout = $aircraft->layout ?? null;
 

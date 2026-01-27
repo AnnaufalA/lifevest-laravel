@@ -4,7 +4,7 @@
     <div class="aircraft-info">
         <label>Tipe:</label>
         <span class="info-value">
-            {{ config('aircraft_layouts.' . $registration . '.type', 'B737-800') }}
+            {{ $aircraft->type }}
             <span class="status-badge {{ $aircraft['status'] ?? 'active' }}">
                 {{ strtoupper($aircraft['status'] ?? 'active') }}
             </span>

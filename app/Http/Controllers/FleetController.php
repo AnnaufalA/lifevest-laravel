@@ -16,18 +16,21 @@ class FleetController extends Controller
     }
 
     /**
-     * Get available layouts from config
+     * Get available layouts by scanning view files
      */
     private function getLayoutOptions()
     {
-        $config = config('aircraft_layouts');
         $layouts = [];
+        $files = glob(resource_path('views/aircraft/*.blade.php'));
 
-        foreach ($config as $data) {
-            $key = $data['layout'];
-            if (!isset($layouts[$key])) {
-                $layouts[$key] = $data['type'] . ' (' . $key . ')';
-            }
+        foreach ($files as $file) {
+            $filename = basename($file, '.blade.php');
+
+            // Generate a readable name
+            // e.g. "b737-e46" -> "B737 E46"
+            $name = strtoupper(str_replace('-', ' ', $filename));
+
+            $layouts[$filename] = $name . ' (' . $filename . ')';
         }
 
         ksort($layouts);

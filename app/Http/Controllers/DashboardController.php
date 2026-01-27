@@ -9,7 +9,6 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        // OLD: $layouts = config('aircraft_layouts');
         // Load from Database (All status: active & prolong)
         $aircrafts = \App\Models\Aircraft::all();
 

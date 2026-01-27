@@ -60,6 +60,7 @@ Buka http://localhost:8000
 - Menampilkan **Fleet Status** per tipe (B737, B777, A330)
 - **Search**: Cari pesawat berdasarkan registrasi
 - **Filter**: Filter berdasarkan tipe pesawat
+- **Fleet Manager**: Kelola data pesawat (Tambah/Edit/Hapus) via tombol di kanan atas
 - Klik kartu pesawat untuk masuk ke halaman seat map
 
 ---
@@ -122,76 +123,32 @@ Buka http://localhost:8000
 
 ## ✈️ Menambahkan Pesawat Baru
 
-> ⚠️ **Sistem sekarang menggunakan config-based layout!**
+### 1. Via Fleet Manager (Cara Utama)
+Untuk menambahkan pesawat dengan layout yang sudah ada:
 
-### 🔄 KONDISI A: Layout SAMA dengan Pesawat Lain
-
-Jika layout kursi **sama persis** dengan pesawat yang sudah ada:
-
-#### Langkah 1: Tambah di Config
-📁 **File:** `config/aircraft_layouts.php`
-
-```php
-'PK-XXX' => [
-    'type' => 'B737-800',    // atau 'B737 MAX 8', 'A330-300', dll
-    'icon' => '✈️',
-    'layout' => 'b737-e46',   // Pakai layout yang sudah ada
-],
-```
-
-**Selesai!** Controller otomatis menggunakan layout dari config.
+1. Buka menu **Fleet Manager** di dashboard (atau akses `/fleet`).
+2. Klik tombol **"+ Add New Aircraft"**.
+3. Isi form:
+   - **Registration**: Nomor registrasi (misal: PK-GPC)
+   - **Type**: Tipe pesawat (misal: A330-300)
+   - **Layout**: Pilih layout kursi yang sesuai dari dropdown.
+   - **Status**: Pilih Active atau Prolong.
+4. Klik **Save**. Pesawat akan langsung muncul di dashboard.
 
 ---
 
-### 📝 KONDISI B: Layout BERBEDA (Buat Template Baru)
+### 2. Menambahkan Layout Baru (Advanced)
+Jika Anda memiliki pesawat dengan konfigurasi kursi yang **belum pernah ada** (template kursi baru):
 
-Jika layout kursi **berbeda** dengan yang sudah ada:
+1. **Buat Template Blade**:
+   Copy file di `resources/views/aircraft/` (misal `a330-300c.blade.php`), rename jadi `a330-XXX.blade.php`, lalu edit kursinya.
+2. **Auto-Detect**:
+   Sistem akan **otomatis** mendeteksi file baru tersebut.
+   Saat tambah pesawat di Fleet Manager, pilihan `a330-XXX` akan langsung muncul di dropdown layout.
+3. **Konfigurasi Baris**:
+   Edit `config/aircraft_class_rows.php` untuk menentukan mana baris bisnis/ekonomi.
 
-#### Langkah 1: Tambah Config
-📁 **File:** `config/aircraft_layouts.php`
-
-```php
-'PK-XXX' => [
-    'type' => 'A330-300',
-    'icon' => '🛩️',
-    'layout' => 'a330-xxx',  // Nama template baru
-],
-```
-
-#### Langkah 2: Buat Template Baru
-📁 **File:** `resources/views/aircraft/a330-xxx.blade.php`
-
-Copy dari template yang mirip lalu edit sesuai kebutuhan.
-
-**Penting di header:** Gunakan config lookup untuk tipe pesawat:
-```blade
-<span class="info-value">{{ config('aircraft_layouts.' . $registration . '.type', 'A330-300') }}</span>
-```
-
-#### Langkah 3: Tambah Class Rows Config
-📁 **File:** `config/aircraft_class_rows.php`
-
-```php
-'a330-xxx' => [
-    'business' => range(6, 11),
-    'economy' => array_diff(range(21, 50), [24]), // skip row 24
-],
-```
-
-#### Langkah 4: Pastikan Ada Script Config
-Di bagian akhir template, **WAJIB** ada:
-
-```blade
-@push('scripts')
-    <script>
-        window.AIRCRAFT_CONFIG = {
-            registration: '{{ $registration }}',
-            updateUrl: '{{ route('aircraft.updateSeats', $registration) }}',
-            csrfToken: '{{ csrf_token() }}'
-        };
-    </script>
-@endpush
-```
+> 💡 **Tip:** Nama file template akan otomatis dikonversi jadi nama layout (contoh: `a330-XXX.blade.php` -> `A330 XXX`).
 
 ---
 
@@ -200,11 +157,13 @@ Di bagian akhir template, **WAJIB** ada:
 ```
 lifevest-laravel/
 ├── config/
-│   ├── aircraft_layouts.php      # Config registrasi & layout mapping
 │   └── aircraft_class_rows.php   # Config class type per layout
+├── database/seeders/
+│   └── AircraftSeeder.php        # Initial Data Pesawat & Layouts
 ├── app/Http/Controllers/
 │   ├── DashboardController.php   # Logic dashboard
-│   └── AircraftController.php    # Logic seat map (config-based)
+│   ├── FleetController.php       # Logic CRUD Pesawat (Fleet Manager)
+│   └── AircraftController.php    # Logic seat map & update expiry
 ├── resources/views/
 │   ├── layouts/app.blade.php     # Master layout + Navbar
 │   ├── dashboard.blade.php       # Halaman dashboard
