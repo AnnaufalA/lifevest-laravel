@@ -209,7 +209,7 @@ function handleRowClick(e) {
     const row = e.currentTarget.dataset.row;
     const seatsInRow = document.querySelectorAll(`.seat-card[data-row="${row}"]`);
 
-    clearSelection();
+
     seatsInRow.forEach(seat => {
         state.selectedSeats.add(seat.dataset.seat);
         seat.classList.add('selected');
