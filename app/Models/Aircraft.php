@@ -11,11 +11,20 @@ class Aircraft extends Model
 
     protected $fillable = [
         'registration',
+        'airline_id',
         'type',
         'icon',
         'layout',
         'status',
     ];
+
+    /**
+     * Get the airline that owns this aircraft.
+     */
+    public function airline()
+    {
+        return $this->belongsTo(Airline::class);
+    }
 
     /**
      * The "booted" method of the model.

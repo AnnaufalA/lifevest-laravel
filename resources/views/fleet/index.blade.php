@@ -3,9 +3,15 @@
 @section('content')
     <div class="header-section">
         <h2 class="form-header" style="text-align: left; margin:0;">⚙️ Fleet Manager</h2>
-        <a href="{{ route('fleet.create') }}" class="btn btn-primary">
-            + Add New Aircraft
-        </a>
+        @if($tab === 'aircraft')
+            <a href="{{ route('fleet.create') }}" class="btn btn-primary">
+                + Add New Aircraft
+            </a>
+        @else
+            <a href="{{ route('airlines.create') }}" class="btn btn-primary">
+                + Add New Airline
+            </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -14,63 +20,220 @@
         </div>
     @endif
 
-    <!-- Client-Side Search & Sort -->
-    <div class="filter-bar">
-        <div class="filter-inputs">
-            <input type="text" id="fleetSearch" placeholder="Search Registration or Type..." class="form-input">
-            <select id="fleetSort" class="form-select" style="cursor: pointer;">
-                <option value="registration_asc">Sort by Reg (A-Z)</option>
-                <option value="registration_desc">Sort by Reg (Z-A)</option>
-                <option value="type_asc">Sort by Type (A-Z)</option>
-                <option value="type_desc">Sort by Type (Z-A)</option>
-                <option value="status_active">Stat: Active First</option>
-                <option value="status_prolong">Stat: Prolong First</option>
-            </select>
+    @if(session('error'))
+        <div class="alert-box alert-danger"
+            style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger);">
+            {{ session('error') }}
         </div>
-        <div style="display: flex; gap: 0.5rem;">
-            <!-- No buttons needed for instant search -->
-        </div>
+    @endif
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav" style="display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border);">
+        <a href="{{ route('fleet.index', ['tab' => 'aircraft']) }}"
+            class="tab-link {{ $tab === 'aircraft' ? 'active' : '' }}"
+            style="padding: 0.75rem 1.5rem; font-weight: 600; text-decoration: none; color: {{ $tab === 'aircraft' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 3px solid {{ $tab === 'aircraft' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -2px; transition: all 0.2s;">
+            ✈️ Aircraft ({{ $fleet->count() }})
+        </a>
+        <a href="{{ route('fleet.index', ['tab' => 'airlines']) }}"
+            class="tab-link {{ $tab === 'airlines' ? 'active' : '' }}"
+            style="padding: 0.75rem 1.5rem; font-weight: 600; text-decoration: none; color: {{ $tab === 'airlines' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 3px solid {{ $tab === 'airlines' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -2px; transition: all 0.2s;">
+            🏢 Airlines ({{ $airlines->count() }})
+        </a>
     </div>
 
-    <div class="fleet-table-wrapper">
-        <table class="fleet-table">
-            <thead>
-                <tr>
-                    <th class="fleet-th" style="width: 50px;">#</th>
-                    <th class="fleet-th">Registration</th>
-                    <th class="fleet-th">Type</th>
-                    <th class="fleet-th">Layout Code</th>
-                    <th class="fleet-th">Status</th>
-                    <th class="fleet-th text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($fleet as $aircraft)
-                    <tr>
-                        <td class="fleet-td text-muted">{{ $loop->iteration }}</td>
-                        <td class="fleet-td font-bold">{{ $aircraft->registration }}</td>
-                        <td class="fleet-td">{{ $aircraft->type }}</td>
-                        <td class="fleet-td font-mono">{{ $aircraft->layout }}</td>
-                        <td class="fleet-td">
-                            <span class="status-badge {{ $aircraft->status }}">
-                                {{ strtoupper($aircraft->status) }}
-                            </span>
-                        </td>
-                        <td class="fleet-td text-right">
-                            <a href="{{ route('fleet.edit', $aircraft->id) }}" class="btn btn-sm btn-secondary"
-                                style="display:inline-flex; height:32px; padding: 0 12px; margin-right: 0.5rem;">Edit</a>
-                            <form action="{{ route('fleet.destroy', $aircraft->id) }}" method="POST"
-                                style="display: inline-block;"
-                                onsubmit="return confirm('Are you sure you want to delete {{ $aircraft->registration }}?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger"
-                                    style="background: var(--danger); color: white; height:32px; padding: 0 12px;">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
+    @if($tab === 'aircraft')
+        <!-- Aircraft Tab Content -->
+        <!-- Practical Filters -->
+        <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+            <input type="text" id="fleetSearch" placeholder="🔍 Search registration..." class="form-input"
+                style="flex: 1; min-width: 200px; max-width: 300px;">
+
+            <select id="filterAirline" class="form-select" style="min-width: 180px; cursor: pointer;">
+                <option value="">All Airlines</option>
+                @foreach($airlines as $airline)
+                    <option value="{{ $airline->name }}">{{ $airline->name }}</option>
                 @endforeach
-            </tbody>
-        </table>
-    </div>
+            </select>
+
+            <select id="filterStatus" class="form-select" style="min-width: 130px; cursor: pointer;">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="prolong">Prolong</option>
+            </select>
+
+            <select id="filterType" class="form-select" style="min-width: 150px; cursor: pointer;">
+                <option value="">All Types</option>
+                @php
+                    $uniqueTypes = $fleet->pluck('type')->unique()->sort();
+                @endphp
+                @foreach($uniqueTypes as $type)
+                    <option value="{{ $type }}">{{ $type }}</option>
+                @endforeach
+            </select>
+
+            <button type="button" id="clearFilters" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Clear</button>
+        </div>
+
+        <div class="fleet-table-wrapper">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th class="fleet-th" style="width: 50px;">#</th>
+                        <th class="fleet-th">Registration</th>
+                        <th class="fleet-th">Airline</th>
+                        <th class="fleet-th">Type</th>
+                        <th class="fleet-th">Layout Code</th>
+                        <th class="fleet-th">Status</th>
+                        <th class="fleet-th text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($fleet as $aircraft)
+                        <tr>
+                            <td class="fleet-td text-muted">{{ $loop->iteration }}</td>
+                            <td class="fleet-td font-bold">{{ $aircraft->registration }}</td>
+                            <td class="fleet-td">
+                                {{ $aircraft->airline?->name ?? '-' }}
+                            </td>
+                            <td class="fleet-td">{{ $aircraft->type }}</td>
+                            <td class="fleet-td font-mono">{{ $aircraft->layout }}</td>
+                            <td class="fleet-td">
+                                <span class="status-badge {{ $aircraft->status }}">
+                                    {{ strtoupper($aircraft->status) }}
+                                </span>
+                            </td>
+                            <td class="fleet-td text-right">
+                                <a href="{{ route('fleet.edit', $aircraft->id) }}" class="btn btn-sm btn-secondary"
+                                    style="display:inline-flex; height:32px; padding: 0 12px; margin-right: 0.5rem;">Edit</a>
+                                <form action="{{ route('fleet.destroy', $aircraft->id) }}" method="POST"
+                                    style="display: inline-block;"
+                                    onsubmit="return confirm('Are you sure you want to delete {{ $aircraft->registration }}?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                        style="background: var(--danger); color: white; height:32px; padding: 0 12px;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <!-- Airlines Tab Content -->
+        <div class="fleet-table-wrapper">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th class="fleet-th" style="width: 50px;">#</th>
+                        <th class="fleet-th">Name</th>
+                        <th class="fleet-th">Code</th>
+                        <th class="fleet-th">Aircraft Count</th>
+                        <th class="fleet-th text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($airlines as $airline)
+                        <tr>
+                            <td class="fleet-td text-muted">{{ $loop->iteration }}</td>
+                            <td class="fleet-td font-bold">{{ $airline->name }}</td>
+                            <td class="fleet-td font-mono">{{ $airline->code ?? '-' }}</td>
+                            <td class="fleet-td">
+                                <span class="status-badge active">{{ $airline->aircraft_count }} aircraft</span>
+                            </td>
+                            <td class="fleet-td text-right">
+                                <a href="{{ route('airlines.edit', $airline->id) }}" class="btn btn-sm btn-secondary"
+                                    style="display:inline-flex; height:32px; padding: 0 12px; margin-right: 0.5rem;">Edit</a>
+                                <form action="{{ route('airlines.destroy', $airline->id) }}" method="POST"
+                                    style="display: inline-block;"
+                                    onsubmit="return confirm('Are you sure you want to delete {{ $airline->name }}?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                        style="background: var(--danger); color: white; height:32px; padding: 0 12px;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('fleetSearch');
+            const filterAirline = document.getElementById('filterAirline');
+            const filterStatus = document.getElementById('filterStatus');
+            const filterType = document.getElementById('filterType');
+            const clearBtn = document.getElementById('clearFilters');
+            const tableBody = document.querySelector('.fleet-table tbody');
+
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+            function applyFilters() {
+                const searchTerm = searchInput?.value.toLowerCase() || '';
+                const airlineFilter = filterAirline?.value || '';
+                const statusFilter = filterStatus?.value || '';
+                const typeFilter = filterType?.value || '';
+
+                let visibleIndex = 0;
+
+                rows.forEach(row => {
+                    const registration = row.cells[1]?.textContent.toLowerCase() || '';
+                    const airline = row.cells[2]?.textContent.trim() || '';
+                    const type = row.cells[3]?.textContent.trim() || '';
+                    const status = row.cells[5]?.textContent.trim().toLowerCase() || '';
+
+                    let show = true;
+
+                    // Search filter (registration only)
+                    if (searchTerm && !registration.includes(searchTerm)) {
+                        show = false;
+                    }
+
+                    // Airline filter
+                    if (airlineFilter && !airline.includes(airlineFilter)) {
+                        show = false;
+                    }
+
+                    // Status filter
+                    if (statusFilter && status !== statusFilter) {
+                        show = false;
+                    }
+
+                    // Type filter
+                    if (typeFilter && type !== typeFilter) {
+                        show = false;
+                    }
+
+                    row.style.display = show ? '' : 'none';
+
+                    // Update row number
+                    if (show) {
+                        visibleIndex++;
+                        row.cells[0].textContent = visibleIndex;
+                    }
+                });
+            }
+
+            // Event listeners
+            searchInput?.addEventListener('input', applyFilters);
+            filterAirline?.addEventListener('change', applyFilters);
+            filterStatus?.addEventListener('change', applyFilters);
+            filterType?.addEventListener('change', applyFilters);
+
+            clearBtn?.addEventListener('click', function () {
+                if (searchInput) searchInput.value = '';
+                if (filterAirline) filterAirline.value = '';
+                if (filterStatus) filterStatus.value = '';
+                if (filterType) filterType.value = '';
+                applyFilters();
+            });
+        });
+    </script>
+@endpush

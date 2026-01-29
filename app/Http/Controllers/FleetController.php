@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aircraft;
+use App\Models\Airline;
 use Illuminate\Http\Request;
 
 class FleetController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of aircraft and airlines (tabbed view).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $fleet = \App\Models\Aircraft::orderBy('registration', 'asc')->get();
-        return view('fleet.index', compact('fleet'));
+        $tab = $request->query('tab', 'aircraft');
+        $fleet = Aircraft::with('airline')->orderBy('registration', 'asc')->get();
+        $airlines = Airline::withCount('aircraft')->orderBy('name', 'asc')->get();
+
+        return view('fleet.index', compact('fleet', 'airlines', 'tab'));
     }
 
     /**
@@ -37,22 +42,26 @@ class FleetController extends Controller
         return $layouts;
     }
 
+    // ==================== AIRCRAFT CRUD ====================
+
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new aircraft.
      */
     public function create()
     {
         $layoutOptions = $this->getLayoutOptions();
-        return view('fleet.create', compact('layoutOptions'));
+        $airlines = Airline::orderBy('name')->get();
+        return view('fleet.create', compact('layoutOptions', 'airlines'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created aircraft in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
             'registration' => 'required|unique:aircraft,registration',
+            'airline_id' => 'required|exists:airlines,id',
             'type' => 'required',
             'layout' => 'required',
             'status' => 'required|in:active,prolong',
@@ -63,48 +72,127 @@ class FleetController extends Controller
         $data['registration'] = strtoupper($request->registration);
         $data['type'] = strtoupper($request->type);
 
-        \App\Models\Aircraft::create($data);
+        Aircraft::create($data);
 
         return redirect()->route('fleet.index')->with('success', 'Aircraft added successfully.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified aircraft.
      */
     public function edit(string $id)
     {
-        $aircraft = \App\Models\Aircraft::findOrFail($id);
+        $aircraft = Aircraft::findOrFail($id);
         $layoutOptions = $this->getLayoutOptions();
-        return view('fleet.edit', compact('aircraft', 'layoutOptions'));
+        $airlines = Airline::orderBy('name')->get();
+        return view('fleet.edit', compact('aircraft', 'layoutOptions', 'airlines'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified aircraft in storage.
      */
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'airline_id' => 'required|exists:airlines,id',
             'type' => 'required',
             'status' => 'required|in:active,prolong',
         ]);
 
-        $aircraft = \App\Models\Aircraft::findOrFail($id);
+        $aircraft = Aircraft::findOrFail($id);
 
-        // Only allow updating type and status. 
+        // Allow updating airline_id, type and status.
         // Registration and Layout are structural and shouldn't change.
-        $aircraft->update($request->only(['type', 'status']));
+        $aircraft->update($request->only(['airline_id', 'type', 'status']));
 
         return redirect()->route('fleet.index')->with('success', 'Aircraft updated successfully.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified aircraft from storage.
      */
     public function destroy(string $id)
     {
-        $aircraft = \App\Models\Aircraft::findOrFail($id);
+        $aircraft = Aircraft::findOrFail($id);
         $aircraft->delete();
 
         return redirect()->route('fleet.index')->with('success', 'Aircraft deleted successfully.');
+    }
+
+    // ==================== AIRLINE CRUD ====================
+
+    /**
+     * Show the form for creating a new airline.
+     */
+    public function createAirline()
+    {
+        return view('fleet.airline-create');
+    }
+
+    /**
+     * Store a newly created airline in storage.
+     */
+    public function storeAirline(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:airlines,name',
+            'code' => 'nullable|max:10',
+        ]);
+
+        $data = $request->all();
+        $data['code'] = strtoupper($request->code ?? '');
+
+        Airline::create($data);
+
+        return redirect()->route('fleet.index', ['tab' => 'airlines'])->with('success', 'Airline added successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified airline.
+     */
+    public function editAirline(string $id)
+    {
+        $airline = Airline::findOrFail($id);
+        return view('fleet.airline-edit', compact('airline'));
+    }
+
+    /**
+     * Update the specified airline in storage.
+     */
+    public function updateAirline(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => 'required|unique:airlines,name,' . $id,
+            'code' => 'nullable|max:10',
+        ]);
+
+        $airline = Airline::findOrFail($id);
+
+        $data = $request->only(['name', 'code', 'icon']);
+        if (isset($data['code'])) {
+            $data['code'] = strtoupper($data['code']);
+        }
+
+        $airline->update($data);
+
+        return redirect()->route('fleet.index', ['tab' => 'airlines'])->with('success', 'Airline updated successfully.');
+    }
+
+    /**
+     * Remove the specified airline from storage.
+     */
+    public function destroyAirline(string $id)
+    {
+        $airline = Airline::findOrFail($id);
+
+        // Check if airline has aircraft
+        if ($airline->aircraft()->count() > 0) {
+            return redirect()->route('fleet.index', ['tab' => 'airlines'])
+                ->with('error', 'Cannot delete airline with assigned aircraft. Please reassign aircraft first.');
+        }
+
+        $airline->delete();
+
+        return redirect()->route('fleet.index', ['tab' => 'airlines'])->with('success', 'Airline deleted successfully.');
     }
 }

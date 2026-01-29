@@ -2,30 +2,42 @@
 
 @section('content')
     <div class="form-container-wide">
-        <h2 class="form-header">✏️ Edit Aircraft: {{ $aircraft->registration }}</h2>
+        <h2 class="form-header">✈️ Edit Aircraft: {{ $aircraft->registration }}</h2>
 
         <form action="{{ route('fleet.update', $aircraft->id) }}" method="POST" class="form-card">
             @csrf
             @method('PUT')
 
             <div class="form-group">
-                <label class="form-label">Registration (Cannot be changed)</label>
-                <input type="text" value="{{ $aircraft->registration }}" disabled class="form-input">
+                <label class="form-label">Airline</label>
+                <select name="airline_id" required class="form-select">
+                    @foreach($airlines as $airline)
+                        <option value="{{ $airline->id }}" {{ old('airline_id', $aircraft->airline_id) == $airline->id ? 'selected' : '' }}>
+                            {{ $airline->name }} ({{ $airline->code }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="form-group">
-                <div class="form-group">
-                    <label class="form-label">Type (Cannot be changed)</label>
-                    <input type="text" value="{{ $aircraft->type }}" disabled class="form-input">
-                    <input type="hidden" name="type" value="{{ $aircraft->type }}">
-                </div>
+                <label class="form-label">Registration</label>
+                <input type="text" value="{{ $aircraft->registration }}" disabled class="form-input"
+                    style="background: var(--bg-tertiary); cursor: not-allowed;">
+                <small style="color: var(--text-secondary); font-size: 0.75rem;">Registration cannot be changed</small>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Layout Template (Cannot be changed)</label>
-                <input type="text" value="{{ $aircraft->layout }}" disabled class="form-input">
-                <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">To change layout, please
-                    delete and re-create the aircraft.</small>
+                <label class="form-label">Type (e.g. A330-300)</label>
+                <input type="text" name="type" value="{{ old('type', $aircraft->type) }}" required class="form-input"
+                    style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Layout Template</label>
+                <input type="text" value="{{ $aircraft->layout }}" disabled class="form-input"
+                    style="background: var(--bg-tertiary); cursor: not-allowed;">
+                <small style="color: var(--text-secondary); font-size: 0.75rem;">Layout cannot be changed after
+                    creation</small>
             </div>
 
             <div class="form-group">

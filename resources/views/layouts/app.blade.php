@@ -26,33 +26,10 @@
                 <span class="navbar-badge">GMF AeroAsia</span>
             </div>
 
-            <!-- Center: Search & Filter (only on dashboard) -->
-            @if(request()->routeIs('dashboard'))
-                <div class="navbar-center">
-                    <div class="navbar-search">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="Cari registrasi..." autocomplete="off">
-                    </div>
-                    <div class="navbar-filter">
-                        <select id="typeFilter">
-                            <option value="all">Semua Tipe</option>
-                            <option value="B737">B737</option>
-                            <option value="B777">B777</option>
-                            <option value="A330">A330</option>
-                            <option value="ATR72">ATR72</option>
-                        </select>
-                        <select id="statusFilter">
-                            <option value="all">Semua Status</option>
-                            <option value="active">Active</option>
-                            <option value="prolong">Prolong</option>
-                        </select>
-                    </div>
-                </div>
-            @else
-                <div class="navbar-center">
-                    @yield('header-right')
-                </div>
-            @endif
+            <!-- Center: Header area -->
+            <div class="navbar-center">
+                @yield('header-right')
+            </div>
 
             <!-- Right: Admin & Update -->
             <div class="navbar-right" style="display: flex; gap: 1rem; align-items: center;">

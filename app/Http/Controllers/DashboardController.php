@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Seat;
+use App\Models\Aircraft;
+use App\Models\Airline;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function __invoke()
     {
-        // Load from Database (All status: active & prolong)
-        $aircrafts = \App\Models\Aircraft::all();
+        // Load from Database (All status: active & prolong) with airline relationship
+        $aircrafts = Aircraft::with('airline')->get();
 
         $fleet = [];
         $totalStats = [
@@ -46,36 +48,60 @@ class DashboardController extends Controller
             $fleet[$registration] = [
                 'type' => $aircraft->type,
                 'registration' => $registration,
-                'icon' => $aircraft->icon ?? '✈️', // Default icon if missing
+                'icon' => $aircraft->icon ?? '✈️',
                 'status' => $aircraft->status,
                 'stats' => $stats,
                 'health' => $healthPercent,
+                'airline_id' => $aircraft->airline_id,
+                'airline_name' => $aircraft->airline?->name ?? 'Unknown',
+                'airline_icon' => $aircraft->airline?->icon ?? '🏢',
             ];
         }
 
         // Get global last update time
         $lastUpdate = Seat::max('updated_at');
 
-        // Group fleet by aircraft type
-        $fleetByType = [];
-        foreach ($fleet as $registration => $aircraft) {
-            // Extract base type (B737, B777, A330, ATR72)
-            preg_match('/^([A-Z]+\d+)/', $aircraft['type'], $matches);
-            $baseType = $matches[1] ?? $aircraft['type'];
+        // Get all airlines for grouping
+        $airlines = Airline::all();
 
-            if (!isset($fleetByType[$baseType])) {
-                $fleetByType[$baseType] = [
-                    'name' => $baseType . ' Fleet',
-                    'icon' => $aircraft['icon'],
-                    'aircraft' => [],
-                ];
+        // Group fleet by Airline -> then by Aircraft Type
+        $fleetByAirline = [];
+        foreach ($airlines as $airline) {
+            $airlineFleet = collect($fleet)->filter(fn($a) => $a['airline_id'] === $airline->id);
+
+            if ($airlineFleet->isEmpty()) {
+                continue; // Skip airlines with no aircraft
             }
-            $fleetByType[$baseType]['aircraft'][$registration] = $aircraft;
+
+            // Group by aircraft type within this airline
+            $byType = [];
+            foreach ($airlineFleet as $registration => $aircraft) {
+                // Extract base type (B737, B777, A330, ATR72)
+                preg_match('/^([A-Z]+\d+)/', $aircraft['type'], $matches);
+                $baseType = $matches[1] ?? $aircraft['type'];
+
+                if (!isset($byType[$baseType])) {
+                    $byType[$baseType] = [
+                        'name' => $baseType . ' Fleet',
+                        'icon' => $aircraft['icon'],
+                        'aircraft' => [],
+                    ];
+                }
+                $byType[$baseType]['aircraft'][$registration] = $aircraft;
+            }
+
+            $fleetByAirline[$airline->id] = [
+                'name' => $airline->name,
+                'icon' => $airline->icon,
+                'code' => $airline->code,
+                'types' => $byType,
+                'aircraft_count' => $airlineFleet->count(),
+            ];
         }
 
         return view('dashboard', [
             'fleet' => $fleet,
-            'fleetByType' => $fleetByType,
+            'fleetByAirline' => $fleetByAirline,
             'totalStats' => $totalStats,
             'lastUpdate' => $lastUpdate ? \Carbon\Carbon::parse($lastUpdate) : null,
         ]);
