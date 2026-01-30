@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Aircraft;
+use App\Models\Seat;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+
+class ReportController extends Controller
+{
+    /**
+     * Export Aircraft Seat Map Report to PDF
+     */
+    public function exportPdf($registration)
+    {
+        // 1. Ambil data pesawat & seats (mirip method show di AircraftController)
+        $aircraft = Aircraft::where('registration', $registration)->firstOrFail();
+
+        // Load seats relationship if not already loaded, or fetch manually if needed
+        // Assuming we need existing logic to fetch seats. 
+        // Ideally we reuse the logic from AircraftController or a Service.
+        // For now, I'll replicate the basic fetch or assume $aircraft->seats is enough if relation exists 
+        // but looking at AircraftController, it might be using a specific query.
+
+        // Let's check AircraftController logic later. For now, assuming $aircraft->seats is accessible.
+        // If the seat data is complex (parsed from JSON columns etc), we need that logic.
+
+        // Let's fetch the seats as an array keyed by logic ID if necessary.
+        // Based on previous views: $seats[$seatId]
+
+        $seats = Seat::where('registration', $registration)
+            ->get()
+            ->keyBy('seat_id');
+
+        // 2. Render PDF
+        $pdf = Pdf::loadView('reports.seat-map', [
+            'aircraft' => $aircraft,
+            'registration' => $registration,
+            'seats' => $seats
+        ]);
+
+        // 3. Setup paper
+        $pdf->setPaper('a4', 'portrait');
+
+        // 4. Return stream (preview di browser)
+        return $pdf->stream('Report_' . $registration . '_' . date('Y-m-d') . '.pdf');
+    }
+}

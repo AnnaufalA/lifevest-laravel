@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', DashboardController::class)->name('dashboard');
 
 // Aircraft routes
-Route::get('/aircraft/{registration}', [AircraftController::class, 'show'])->name('aircraft.show');
-Route::post('/aircraft/{registration}/update-seats', [AircraftController::class, 'updateSeats'])->name('aircraft.updateSeats');
-Route::delete('/aircraft/{registration}/delete-seat', [AircraftController::class, 'deleteSeat'])->name('aircraft.deleteSeat');
+Route::prefix('aircraft')->group(function () {
+    Route::get('/{registration}', [AircraftController::class, 'show'])->name('aircraft.show');
+    Route::post('/{registration}/update-seats', [AircraftController::class, 'updateSeats'])->name('aircraft.updateSeats');
+    Route::delete('/{registration}/delete-seat', [AircraftController::class, 'deleteSeat'])->name('aircraft.deleteSeat');
+
+    // PDF Report
+    Route::get('/{registration}/report', [\App\Http\Controllers\ReportController::class, 'exportPdf'])->name('reports.pdf');
+});
 
 // Fleet Management (CRUD)
 Route::resource('fleet', \App\Http\Controllers\FleetController::class);
