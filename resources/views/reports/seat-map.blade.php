@@ -44,6 +44,10 @@
         .cockpit-section {
             text-align: center;
             margin-bottom: 25px;
+        }
+
+        .avoid-break {
+            page-break-inside: avoid;
             break-inside: avoid;
         }
 
@@ -264,7 +268,7 @@
             $stats = $seats->countBy('status');
         @endphp
         <div class="summary-item">Total Seats: <strong>{{ $seats->count() }}</strong></div>
-        <div class="summary-item">Safe: <strong>{{ $stats['active'] ?? 0 }}</strong></div>
+        <div class="summary-item">Safe: <strong>{{ $stats['safe'] ?? 0 }}</strong></div>
         <div class="summary-item">Warning: <strong>{{ $stats['warning'] ?? 0 }}</strong></div>
         <div class="summary-item">Critical:
             <strong>{{ ($stats['critical'] ?? 0) + ($stats['expired'] ?? 0) }}</strong>

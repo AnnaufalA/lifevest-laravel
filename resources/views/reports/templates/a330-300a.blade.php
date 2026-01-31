@@ -290,9 +290,9 @@
 <!-- Attendant D14 & D24 + Aft Galley -->
 <section class="cabin-section">
     <h2>Attendant D14 & D24 + Aft Galley</h2>
-    <div class="seat-grid" style="display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto;">
+    <div class="seat-grid" style="text-align: center; max-width: 600px; margin: 0 auto;">
         <!-- D14 -->
-        <div>
+        <div style="display: inline-block; vertical-align: top; margin: 0 10px;">
             @php $seatId = 'att/d14-L';
                 $seat = $seats[$seatId] ?? null;
             $status = $seat?->status ?? 'no-data'; @endphp
@@ -302,7 +302,7 @@
             </div>
         </div>
         <!-- Galley -->
-        <div style="display: flex; gap: 0.5rem;">
+        <div style="display: inline-block; vertical-align: top; margin: 0 10px;">
             @php $seatId = 'att/aft-LC';
                 $seat = $seats[$seatId] ?? null;
             $status = $seat?->status ?? 'no-data'; @endphp
@@ -319,7 +319,7 @@
             </div>
         </div>
         <!-- D24 -->
-        <div>
+        <div style="display: inline-block; vertical-align: top; margin: 0 10px;">
             @php $seatId = 'att/d24-R';
                 $seat = $seats[$seatId] ?? null;
             $status = $seat?->status ?? 'no-data'; @endphp
