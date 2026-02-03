@@ -2,7 +2,7 @@
 
     <!-- Attendant D11 & D21 (Forward - 4 seats: D11 3 left stacked, D21 1 right) -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant D11 & D21</h2>
+        <h2>Attendant D11 & D21</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d11-LL1">LL</span>
@@ -76,10 +76,10 @@
 
     <!-- Cargo Section (Visual Only - Forward Cargo) -->
     <section class="cabin-section cargo-section">
-        <h2>📦 Cargo Area (Forward)</h2>
+        <h2>Cargo Area (Forward)</h2>
         <div class="cargo-info">
             <div class="cargo-visual">
-                <div class="cargo-icon">📦</div>
+                <div class="cargo-icon"></div>
                 <div class="cargo-text">
                     <span class="cargo-title">Forward Cargo Compartment</span>
                     <span class="cargo-subtitle">Area kargo depan</span>
@@ -90,7 +90,7 @@
 
     <!-- Attendant D12 & D22 (Door 2) - 3 seats: 1 left, 2 right -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant D12 & D22</h2>
+        <h2>Attendant D12 & D22</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d12-L">L</span>
@@ -144,10 +144,10 @@
 
     <!-- Cargo Section (Visual Only - Not Selectable) -->
     <section class="cabin-section cargo-section">
-        <h2>📦 Cargo Area (Main Deck)</h2>
+        <h2>Cargo Area (Main Deck)</h2>
         <div class="cargo-info">
             <div class="cargo-visual">
-                <div class="cargo-icon">📦</div>
+                <div class="cargo-icon"></div>
                 <div class="cargo-text">
                     <span class="cargo-title">Main Deck Cargo</span>
                     <span class="cargo-subtitle">Area ini digunakan untuk kargo - tidak ada kursi penumpang</span>
@@ -158,7 +158,7 @@
 
     <!-- Attendant D13 & D23 (Door 3) - 2 seats: L / R -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant D13 & D23</h2>
+        <h2>Attendant D13 & D23</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d13-L">L</span>
@@ -201,10 +201,10 @@
 
     <!-- Cargo Section (Visual Only - Lower Deck) -->
     <section class="cabin-section cargo-section">
-        <h2>📦 Cargo Area (Lower Deck)</h2>
+        <h2>Cargo Area (Lower Deck)</h2>
         <div class="cargo-info">
             <div class="cargo-visual">
-                <div class="cargo-icon">📦</div>
+                <div class="cargo-icon"></div>
                 <div class="cargo-text">
                     <span class="cargo-title">Lower Deck Cargo</span>
                     <span class="cargo-subtitle">Belly cargo compartment</span>
@@ -215,7 +215,7 @@
 
     <!-- Attendant D14 & D24 + Aft Galley (Aft) - 6 seats: 2 left, 2 center, 2 right -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant D14 & D24 + Aft Galley</h2>
+        <h2>Attendant D14 & D24 + Aft Galley</h2>
         <div style="display: flex; justify-content: center; align-items: flex-start; gap: 2rem;">
             <!-- D14 (Left - 2 seats) -->
             <div style="text-align: center;">
@@ -314,7 +314,7 @@
 
     <!-- Spare Section: PAX & INF -->
     <section class="cabin-section">
-        <h2>📦 Spare</h2>
+        <h2>Spare</h2>
         <div class="spare-grid">
             <!-- PAX Column -->
             <div class="spare-column" id="pax-column">

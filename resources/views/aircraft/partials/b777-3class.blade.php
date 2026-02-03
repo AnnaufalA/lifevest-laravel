@@ -2,7 +2,7 @@
 
     <!-- Attendant Door 1 (Forward) - 4 seats: L, CL, CR, R -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant Door 1</h2>
+        <h2>Attendant Door 1</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d1-L">L</span>
@@ -47,7 +47,7 @@
 
     <!-- First Class - Rows 1-2 (A D G K) -->
     <section class="cabin-section">
-        <h2>👑 First Class - Rows 1-2</h2>
+        <h2>First Class - Rows 1-2</h2>
         <div class="seat-grid grid-business">
             <div class="grid-header-business">
                 <span class="col-label">A</span>
@@ -98,7 +98,7 @@
 
     <!-- Business Class Section 1 - Rows 6-8 (Staggered) -->
     <section class="cabin-section">
-        <h2>💼 Business Class - Rows 6-8</h2>
+        <h2>Business Class - Rows 6-8</h2>
         <div class="seat-grid grid-business">
             <div class="grid-header-business">
                 <span class="col-label">A/C</span>
@@ -167,7 +167,7 @@
 
     <!-- Attendant Door 2 (Between Business row 8-9) - 2 seats: L and R -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant Door 2</h2>
+        <h2>Attendant Door 2</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d2-L">L</span>
@@ -210,7 +210,7 @@
 
     <!-- Business Class Section 2 - Rows 9-16 (Staggered) -->
     <section class="cabin-section">
-        <h2>💼 Business Class - Rows 9-16</h2>
+        <h2>Business Class - Rows 9-16</h2>
         <div class="seat-grid grid-business">
             <div class="grid-header-business">
                 <span class="col-label">A/C</span>
@@ -264,7 +264,7 @@
 
     <!-- Economy Class 1 - Rows 21-25 -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 21-25</h2>
+        <h2>Economy Class - Rows 21-25</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-3-3-3">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -308,7 +308,7 @@
 
     <!-- Attendant Door 3 (Between row 25-26) - 2 seats: L and R -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant Door 3</h2>
+        <h2>Attendant Door 3</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d3-L">L</span>
@@ -351,7 +351,7 @@
 
     <!-- Economy Class 2 - Rows 26-38 -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 26-38</h2>
+        <h2>Economy Class - Rows 26-38</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-3-3-3">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -392,7 +392,7 @@
 
     <!-- Attendant Door 4 (Between row 38-39) - 2 seats: L and R -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant Door 4</h2>
+        <h2>Attendant Door 4</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-2">
                 <span class="col-label col-header" data-col="att/d4-L">L</span>
@@ -435,7 +435,7 @@
 
     <!-- Economy Class 3 - Rows 39-52 -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 39-52</h2>
+        <h2>Economy Class - Rows 39-52</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-3-3-3">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -476,7 +476,7 @@
 
     <!-- Attendant Door 5 (Aft, below row 52) - 6 seats: LL, LC, LR, RL, RC, RR -->
     <section class="cabin-section">
-        <h2>🧑‍✈️ Attendant Door 5</h2>
+        <h2>Attendant Door 5</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-3-3">
                 <span class="col-label col-header" data-col="att/d5-LL">LL</span>
@@ -523,7 +523,7 @@
 
     <!-- Spare Section: PAX & INF -->
     <section class="cabin-section">
-        <h2>📦 Spare</h2>
+        <h2>Spare</h2>
         <div class="spare-grid">
             <!-- PAX Column -->
             <div class="spare-column" id="pax-column">

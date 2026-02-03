@@ -2,7 +2,7 @@
 
     <!-- Economy Premium - Rows 21-27 (2-3-2 layout: A C - D F G - H K) -->
     <section class="cabin-section">
-        <h2>💎 Economy Premium - Rows 21-27</h2>
+        <h2>Economy Premium - Rows 21-27</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-3-2">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -41,7 +41,7 @@
 
     <!-- Economy Class - Rows 28-51 (2-4-2 layout with exceptions) -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 28-51</h2>
+        <h2>Economy Class - Rows 28-51</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-4-2">
                 <span class="col-label col-header" data-col="A">A</span>
@@ -83,7 +83,7 @@
 
     <!-- Economy Class - Rows 52-69 (2-4-2 layout with tail exceptions) -->
     <section class="cabin-section">
-        <h2>🪑 Economy Class - Rows 52-69</h2>
+        <h2>Economy Class - Rows 52-69</h2>
         <div class="seat-grid">
             <div class="grid-header grid-row-2-4-2">
                 <span class="col-label col-header" data-col="A">A</span>

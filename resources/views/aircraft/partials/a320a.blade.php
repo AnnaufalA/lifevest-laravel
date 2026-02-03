@@ -3,7 +3,7 @@
 
 <!-- Attendant D11 (Forward - 2 seats left) -->
 <section class="cabin-section">
-    <h2>🧑‍✈️ Attendant D11</h2>
+    <h2>Attendant D11</h2>
     <div class="seat-grid">
         <div class="grid-header grid-row-3-3">
             <span class="col-label col-header" data-col="att/d11-LL">LL</span>
@@ -50,7 +50,7 @@
 
 <!-- Economy Class - Rows 1-31 (3-3 layout: A B C - D E F, skip row 13) -->
 <section class="cabin-section">
-    <h2>🪑 Economy Class - Rows 1-31</h2>
+    <h2>Economy Class - Rows 1-31</h2>
     <div class="seat-grid">
         <div class="grid-header grid-row-3-3">
             <span class="col-label col-header" data-col="A">A</span>
@@ -83,7 +83,7 @@
 
 <!-- Attendant D12 & D22 (Aft - 1 left, 2 right) -->
 <section class="cabin-section">
-    <h2>🧑‍✈️ Attendant D12 & D22</h2>
+    <h2>Attendant D12 & D22</h2>
     <div class="seat-grid">
         <div class="grid-header grid-row-3-3">
             <span class="col-label col-header" data-col="att/d12-L">L</span>
@@ -141,7 +141,7 @@
 
 <!-- Spare Section: PAX & INF -->
 <section class="cabin-section">
-    <h2>📦 Spare</h2>
+    <h2>Spare</h2>
     <div class="spare-grid">
         <!-- PAX Column -->
         <div class="spare-column" id="pax-column">
