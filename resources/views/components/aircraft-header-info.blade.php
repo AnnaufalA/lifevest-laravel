@@ -22,4 +22,11 @@
             <span>📄</span> Export PDF
         </a>
     @endif
+
+    @if(Route::has('reports.blank'))
+        <a href="{{ route('reports.blank', $registration) }}" target="_blank" class="btn"
+            style="background: #718096; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;">
+            <span>📝</span> Blank Form
+        </a>
+    @endif
 </div>

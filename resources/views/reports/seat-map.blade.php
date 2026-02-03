@@ -239,6 +239,26 @@
             margin: 0 10px;
             font-size: 10pt;
         }
+
+        /* =============================================
+           PDF FIX: Attendant section flex layout fix
+           DomPDF doesn't support flexbox, so sections 
+           using inline style="display: flex" need override.
+           This is a MINIMAL fix targeting only those sections.
+           ============================================= */
+        
+        /* Force inline-block for column wrappers inside flex containers */
+        .cabin-section > div[style] > div[style] {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 20px;
+        }
+
+        /* Force inline-block for seat cards in nested flex containers */
+        .cabin-section > div[style] > div[style] > div[style] > .seat-card {
+            display: inline-block;
+            margin: 0 3px;
+        }
     </style>
 </head>
 

@@ -46,4 +46,29 @@ class ReportController extends Controller
         // 4. Return stream (preview di browser)
         return $pdf->stream('Report_' . $registration . '_' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+     * Export Blank Form for Technicians (larger boxes, no dates)
+     */
+    public function exportBlankForm($registration)
+    {
+        $aircraft = Aircraft::where('registration', $registration)->firstOrFail();
+
+        // Pass empty seats collection - the view will show blank boxes
+        $seats = collect();
+
+        // Render PDF with blank form template
+        $pdf = Pdf::loadView('reports.blank-form', [
+            'aircraft' => $aircraft,
+            'registration' => $registration,
+            'seats' => $seats,
+            'isBlankForm' => true,
+        ]);
+
+        // Setup paper
+        $pdf->setPaper('a4', 'portrait');
+
+        // Return stream
+        return $pdf->stream('BlankForm_' . $registration . '_' . date('Y-m-d') . '.pdf');
+    }
 }

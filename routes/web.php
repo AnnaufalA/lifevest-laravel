@@ -15,6 +15,9 @@ Route::prefix('aircraft')->group(function () {
 
     // PDF Report
     Route::get('/{registration}/report', [\App\Http\Controllers\ReportController::class, 'exportPdf'])->name('reports.pdf');
+
+    // Blank Form for Technicians (larger boxes for handwriting)
+    Route::get('/{registration}/blank-form', [\App\Http\Controllers\ReportController::class, 'exportBlankForm'])->name('reports.blank');
 });
 
 // Fleet Management (CRUD)

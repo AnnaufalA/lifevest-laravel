@@ -14,6 +14,11 @@
     <!-- Collapsible Filter Bar -->
     <div id="filterPanel" class="filter-bar"
         style="display: none; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+
+        <!-- Search Registration -->
+        <input type="text" id="searchInput" class="form-input" placeholder="🔍 Search registration..."
+            style="min-width: 200px; max-width: 250px;">
+
         <select id="filterAirline" class="form-select" style="min-width: 180px; cursor: pointer;">
             <option value="">All Airlines</option>
             @foreach($fleetByAirline as $airlineId => $airline)
@@ -209,6 +214,7 @@
             const filterType = document.getElementById('filterType');
             const filterStatus = document.getElementById('filterStatus');
             const filterHealth = document.getElementById('filterHealth');
+            const searchInput = document.getElementById('searchInput');
             const clearBtn = document.getElementById('clearFilters');
             const filterCount = document.getElementById('filterCount');
 
@@ -228,6 +234,7 @@
                 const typeFilter = filterType?.value || '';
                 const statusFilter = filterStatus?.value || '';
                 const healthFilter = filterHealth?.value || '';
+                const searchQuery = (searchInput?.value || '').toLowerCase().trim();
 
                 let visibleCount = 0;
                 const totalCount = cards.length;
@@ -237,8 +244,16 @@
                     const cardType = card.dataset.type || '';
                     const cardStatus = card.dataset.status || '';
                     const cardHealth = card.dataset.health || '';
+                    // Get registration from the card (looking for fleet-card-reg class)
+                    const cardRegElement = card.querySelector('.fleet-card-reg');
+                    const cardReg = (cardRegElement?.textContent || '').toLowerCase();
 
                     let show = true;
+
+                    // Registration search filter
+                    if (searchQuery && !cardReg.includes(searchQuery)) {
+                        show = false;
+                    }
 
                     // Airline filter
                     if (airlineFilter && cardAirline !== airlineFilter) {
@@ -289,7 +304,7 @@
                 });
 
                 // Update filter count display
-                if (airlineFilter || typeFilter || statusFilter || healthFilter) {
+                if (airlineFilter || typeFilter || statusFilter || healthFilter || searchQuery) {
                     filterCount.textContent = `Showing ${visibleCount} of ${totalCount} aircraft`;
                 } else {
                     filterCount.textContent = '';
@@ -301,12 +316,14 @@
             filterType?.addEventListener('change', applyFilters);
             filterStatus?.addEventListener('change', applyFilters);
             filterHealth?.addEventListener('change', applyFilters);
+            searchInput?.addEventListener('input', applyFilters); // Real-time search
 
             clearBtn?.addEventListener('click', function () {
                 if (filterAirline) filterAirline.value = '';
                 if (filterType) filterType.value = '';
                 if (filterStatus) filterStatus.value = '';
                 if (filterHealth) filterHealth.value = '';
+                if (searchInput) searchInput.value = '';
                 applyFilters();
             });
         });
