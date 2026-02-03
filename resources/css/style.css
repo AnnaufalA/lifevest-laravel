@@ -157,6 +157,26 @@ body {
     border: 1px solid rgba(255,255,255,0.1);
 }
 
+.btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary); /* Muted color by default */
+    transition: all var(--transition-fast);
+    padding: 0;
+    margin-right: 8px; /* Added breathing room */
+    opacity: 0.8;
+}
+
+.btn-back:hover {
+    color: var(--primary-light); /* Highlight on hover */
+    transform: translateX(-3px); /* Subtle slide left */
+    opacity: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
 /* Center Section */
 .navbar-center {
     display: flex;

@@ -17,8 +17,14 @@
     <!-- Sticky Navbar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-container">
-            <!-- Left: Logo -->
-            <div class="navbar-left">
+            <!-- Left: Logo & Back Button -->
+            <div class="navbar-left" style="display: flex; align-items: center; gap: 4px;">
+                @if(!request()->routeIs('dashboard'))
+                    <a href="{{ route('dashboard') }}" class="btn-back" title="Back to Dashboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </a>
+                @endif
+                
                 <a href="{{ route('dashboard') }}" class="navbar-brand">
                     <span class="navbar-logo">🛡️</span>
                     <span class="navbar-title">Life Vest Tracker</span>
@@ -33,10 +39,12 @@
 
             <!-- Right: Admin & Update -->
             <div class="navbar-right" style="display: flex; gap: 1rem; align-items: center;">
-                <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary"
-                    style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
-                    ⚙️ Manage Fleet
-                </a>
+                @if(request()->routeIs('dashboard'))
+                    <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary"
+                        style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                        ⚙️ Manage Fleet
+                    </a>
+                @endif
 
                 @if(isset($lastUpdate))
                     <div class="navbar-update">
