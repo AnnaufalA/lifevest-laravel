@@ -499,11 +499,15 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: var(--spacing-md);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     background: var(--bg-card);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-md);
     box-shadow: var(--shadow-sm);
+    /* Sticky positioning */
+    position: sticky;
+    top: 70px; /* Below header */
+    z-index: 90;
 }
 
 .toolbar-left,
@@ -518,15 +522,40 @@ body {
     width: 1px;
     height: 24px;
     background: var(--border);
-    margin: 0 var(--spacing-sm);
+    margin: 0 var(--spacing-xs);
 }
 
 .selection-info {
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
     background: var(--bg-hover);
     border-radius: var(--radius-sm);
+}
+
+/* Export buttons in toolbar */
+.btn-export-pdf {
+    background: var(--danger);
+    color: white;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.btn-export-pdf:hover {
+    background: #c53030;
+}
+
+.btn-export-blank {
+    background: var(--text-muted);
+    color: white;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.btn-export-blank:hover {
+    background: #5a6270;
 }
 
 /* Buttons */

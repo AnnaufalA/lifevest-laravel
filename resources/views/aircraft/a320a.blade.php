@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('header-right')
     <x-aircraft-header-info :aircraft="$aircraft" :registration="$registration" />
@@ -6,7 +6,7 @@
 
 @section('content')
     <!-- Toolbar -->
-    <x-toolbar />
+    <x-toolbar :registration="$registration" />
 
     <!-- Status Legend -->
     <x-status-legend />
