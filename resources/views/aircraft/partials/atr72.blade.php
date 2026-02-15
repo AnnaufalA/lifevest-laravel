@@ -39,14 +39,14 @@
     <div class="seat-grid">
         <div class="grid-header grid-row-2-2">
             <span class="col-label col-header" data-col="A">A</span>
-            <span class="col-label col-header" data-col="C">C</span>
+            <span class="col-label col-header" data-col="B">B</span>
             <span class="row-label">Row</span>
-            <span class="col-label col-header" data-col="H">H</span>
-            <span class="col-label col-header" data-col="K">K</span>
+            <span class="col-label col-header" data-col="C">C</span>
+            <span class="col-label col-header" data-col="D">D</span>
         </div>
         @php
             $exceptions = [
-                19 => ['A', 'C'],
+                19 => ['A', 'B'],
             ];
         @endphp
         @foreach(range(1, 19) as $row)
@@ -54,14 +54,14 @@
                 @continue
             @endif
             @php
-                $rowCols = $exceptions[$row] ?? ['A', 'C', 'H', 'K'];
+                $rowCols = $exceptions[$row] ?? ['A', 'B', 'C', 'D'];
             @endphp
             <div class="seat-row grid-row-2-2" data-row="{{ $row }}">
-                @foreach(['A', 'C'] as $col)
+                @foreach(['A', 'B'] as $col)
                     @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => $rowCols, 'seats' => $seats])
                 @endforeach
                 <div class="row-number" data-row="{{ $row }}">{{ $row }}</div>
-                @foreach(['H', 'K'] as $col)
+                @foreach(['C', 'D'] as $col)
                     @include('components.seat-cell', ['row' => $row, 'col' => $col, 'rowCols' => $rowCols, 'seats' => $seats])
                 @endforeach
             </div>
