@@ -33,9 +33,9 @@
     </div>
 </section>
 
-<!-- Economy Class - Rows 21-39 (2-2 layout: A C - H K) -->
+<!-- Economy Class - Rows 1-19 (2-2 layout: A C - H K) -->
 <section class="cabin-section">
-    <h2>Economy Class - Rows 21-39</h2>
+    <h2>Economy Class - Rows 1-19</h2>
     <div class="seat-grid">
         <div class="grid-header grid-row-2-2">
             <span class="col-label col-header" data-col="A">A</span>
@@ -46,11 +46,11 @@
         </div>
         @php
             $exceptions = [
-                39 => ['A', 'C'],
+                19 => ['A', 'C'],
             ];
         @endphp
-        @foreach(range(21, 39) as $row)
-            @if($row == 24)
+        @foreach(range(1, 19) as $row)
+            @if($row == 13)
                 @continue
             @endif
             @php
