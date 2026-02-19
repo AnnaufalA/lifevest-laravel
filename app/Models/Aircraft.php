@@ -16,6 +16,9 @@ class Aircraft extends Model
         'icon',
         'layout',
         'status',
+        'pn_adult',
+        'pn_crew',
+        'pn_infant',
     ];
 
     /**

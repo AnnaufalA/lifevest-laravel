@@ -103,7 +103,7 @@ class FleetController extends Controller
 
         // Allow updating airline_id, type and status.
         // Registration and Layout are structural and shouldn't change.
-        $aircraft->update($request->only(['airline_id', 'type', 'status']));
+        $aircraft->update($request->only(['airline_id', 'type', 'status', 'pn_adult', 'pn_crew', 'pn_infant']));
 
         return redirect()->route('fleet.index')->with('success', 'Aircraft updated successfully.');
     }

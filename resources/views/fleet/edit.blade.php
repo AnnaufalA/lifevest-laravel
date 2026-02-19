@@ -19,7 +19,8 @@
                     @endforeach
                 </select>
                 <input type="hidden" name="airline_id" value="{{ $aircraft->airline_id }}">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <small
+                    style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
                     🔒 Airline cannot be changed
                 </small>
             </div>
@@ -28,7 +29,8 @@
                 <label class="form-label">Registration</label>
                 <input type="text" value="{{ $aircraft->registration }}" disabled class="form-input"
                     style="background-color: var(--bg-tertiary) !important; color: var(--text-secondary); cursor: not-allowed; opacity: 1;">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <small
+                    style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
                     🔒 Registration cannot be changed
                 </small>
             </div>
@@ -37,7 +39,8 @@
                 <label class="form-label">Type (e.g. A330-300)</label>
                 <input type="text" name="type" value="{{ old('type', $aircraft->type) }}" readonly class="form-input"
                     style="text-transform: uppercase; background-color: var(--bg-tertiary) !important; color: var(--text-secondary); cursor: not-allowed; opacity: 1;">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <small
+                    style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
                     🔒 Type cannot be changed
                 </small>
             </div>
@@ -46,9 +49,28 @@
                 <label class="form-label">Layout Template</label>
                 <input type="text" value="{{ $aircraft->layout }}" disabled class="form-input"
                     style="background-color: var(--bg-tertiary) !important; color: var(--text-secondary); cursor: not-allowed; opacity: 1;">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <small
+                    style="color: var(--text-secondary); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
                     🔒 Layout cannot be changed
                 </small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔧 Part Number - Adult (Passenger Life Vest)</label>
+                <input type="text" name="pn_adult" value="{{ old('pn_adult', $aircraft->pn_adult) }}" class="form-input"
+                    placeholder="e.g. P0723-103W" style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔧 Part Number - Crew (Cockpit + Attendant)</label>
+                <input type="text" name="pn_crew" value="{{ old('pn_crew', $aircraft->pn_crew) }}" class="form-input"
+                    placeholder="e.g. P0723-103WCN" style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔧 Part Number - Infant</label>
+                <input type="text" name="pn_infant" value="{{ old('pn_infant', $aircraft->pn_infant) }}" class="form-input"
+                    placeholder="e.g. P0640-101" style="text-transform: uppercase;">
             </div>
 
             <div class="form-group">

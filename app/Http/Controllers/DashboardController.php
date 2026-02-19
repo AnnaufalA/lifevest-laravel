@@ -99,11 +99,60 @@ class DashboardController extends Controller
             ];
         }
 
+        // Build Part Number replacement summary
+        $today = now()->startOfDay();
+        $pnSummary = [];
+
+        foreach ($aircrafts as $aircraft) {
+            $reg = $aircraft->registration;
+            $pnMap = [
+                'adult' => ['pn' => $aircraft->pn_adult, 'types' => ['business', 'economy', 'spare-pax']],
+                'crew' => ['pn' => $aircraft->pn_crew, 'types' => ['cockpit', 'attendant']],
+                'infant' => ['pn' => $aircraft->pn_infant, 'types' => ['spare-inf']],
+            ];
+
+            $acSeats = Seat::where('registration', $reg)->get();
+
+            foreach ($pnMap as $category => $info) {
+                if (empty($info['pn']))
+                    continue;
+
+                $pn = $info['pn'];
+                $catSeats = $acSeats->filter(fn($s) => in_array($s->class_type, $info['types']));
+                $total = $catSeats->count();
+                $expired = $catSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->lt($today))->count();
+
+                $key = $pn . '|' . $category;
+                if (!isset($pnSummary[$key])) {
+                    $pnSummary[$key] = [
+                        'pn' => $pn,
+                        'category' => $category,
+                        'total' => 0,
+                        'expired' => 0,
+                        'aircraft' => [],
+                    ];
+                }
+                $pnSummary[$key]['total'] += $total;
+                $pnSummary[$key]['expired'] += $expired;
+                if ($expired > 0) {
+                    $pnSummary[$key]['aircraft'][] = ['reg' => $reg, 'expired' => $expired];
+                }
+            }
+        }
+
+        // Sort: expired first (descending), then alphabetically
+        usort($pnSummary, function ($a, $b) {
+            if ($b['expired'] !== $a['expired'])
+                return $b['expired'] - $a['expired'];
+            return strcmp($a['pn'], $b['pn']);
+        });
+
         return view('dashboard', [
             'fleet' => $fleet,
             'fleetByAirline' => $fleetByAirline,
             'totalStats' => $totalStats,
             'lastUpdate' => $lastUpdate ? \Carbon\Carbon::parse($lastUpdate) : null,
+            'pnSummary' => $pnSummary,
         ]);
     }
 }

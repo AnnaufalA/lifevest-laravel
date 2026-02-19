@@ -38,12 +38,34 @@ class AircraftController extends Controller
         // Get last update time for this aircraft
         $lastUpdate = Seat::where('registration', $registration)->max('updated_at');
 
+        // Calculate life vest quantities per category (by class_type)
+        $allSeats = Seat::where('registration', $registration)->get();
+        $today = now()->startOfDay();
+
+        $adultSeats = $allSeats->filter(fn($s) => in_array($s->class_type, ['business', 'economy', 'spare-pax']));
+        $crewSeats = $allSeats->filter(fn($s) => in_array($s->class_type, ['cockpit', 'attendant']));
+        $infantSeats = $allSeats->filter(fn($s) => $s->class_type === 'spare-inf');
+
+        $qtyAdult = $adultSeats->count();
+        $qtyCrew = $crewSeats->count();
+        $qtyInfant = $infantSeats->count();
+
+        $expAdult = $adultSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->lt($today))->count();
+        $expCrew = $crewSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->lt($today))->count();
+        $expInfant = $infantSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->lt($today))->count();
+
         return view($template, [
             'registration' => $registration,
             'layout' => $layout,
             'seats' => $seats,
             'lastUpdate' => $lastUpdate ? \Carbon\Carbon::parse($lastUpdate) : null,
-            'aircraft' => $aircraft, // Pass full object too
+            'aircraft' => $aircraft,
+            'qtyAdult' => $qtyAdult,
+            'qtyCrew' => $qtyCrew,
+            'qtyInfant' => $qtyInfant,
+            'expAdult' => $expAdult,
+            'expCrew' => $expCrew,
+            'expInfant' => $expInfant,
         ]);
     }
 

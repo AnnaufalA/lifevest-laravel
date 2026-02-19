@@ -172,6 +172,41 @@
         </section>
     @endforeach
 
+    <!-- Life Vest Replacement Summary -->
+    @if(count($pnSummary) > 0)
+        <section class="replacement-section">
+            <h2>🔄 Life Vest Replacement Summary</h2>
+            <div class="replacement-grid">
+                @foreach($pnSummary as $item)
+                    <div class="replacement-card {{ $item['expired'] > 0 ? 'has-expired' : 'all-good' }}">
+                        <div class="replacement-header">
+                            <div>
+                                <span class="replacement-pn">{{ $item['pn'] }}</span>
+                                <span
+                                    class="replacement-category {{ $item['category'] }}">{{ strtoupper($item['category']) }}</span>
+                            </div>
+                            <div class="replacement-counts">
+                                <span class="replacement-total">{{ $item['total'] }} total</span>
+                                @if($item['expired'] > 0)
+                                    <span class="replacement-expired">⚠️ {{ $item['expired'] }} expired</span>
+                                @else
+                                    <span class="replacement-ok">✅ 0 expired</span>
+                                @endif
+                            </div>
+                        </div>
+                        @if(count($item['aircraft']) > 0)
+                            <div class="replacement-breakdown">
+                                @foreach($item['aircraft'] as $ac)
+                                    <span class="breakdown-item">{{ $ac['reg'] }}: {{ $ac['expired'] }}</span>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     <!-- Quick Stats -->
     <section class="stats-section">
         <h2>📊 Quick Stats</h2>
