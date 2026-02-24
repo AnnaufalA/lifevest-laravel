@@ -60,6 +60,11 @@ Buka http://localhost:8000
 
 ### Dashboard
 - Menampilkan **Fleet Overview** (ringkasan status semua pesawat)
+- **Fleet Filter Dropdown**: Klik tombol "✈️ Filter Fleet" untuk memfilter per tipe pesawat:
+  - Multi-select checkbox (B737, B777, A330, A320, ATR72)
+  - Pilih lebih dari satu tipe untuk melihat total gabungan
+  - Checkbox **"All Fleets"** untuk select/deselect semua sekaligus
+  - Default: semua tipe tercentang
 - Menampilkan **Fleet Status** per Airline, lalu per Tipe (Garuda Indonesia → B737, A330, dll)
 - **Filter**: Klik tombol "🔍 Filter" untuk menampilkan panel filter:
   - Filter berdasarkan **Airline**
@@ -139,6 +144,20 @@ Export seat map sebagai PDF report dengan warna status dan tanggal expiry.
 Export formulir kosong untuk teknisi (kotak lebih besar untuk tulisan tangan).
 - Klik tombol **"Blank Form"** di toolbar halaman seat map
 - Form menyediakan kolom untuk pengisian manual di lapangan
+- **Spare Boxes**: Kotak bernomor untuk cadangan PAX & INF, jumlah sesuai buffer per tipe:
+
+| Tipe | PAX | INF |
+|------|:---:|:---:|
+| A320 | 15 | 20 |
+| A330 | 15 | 40 |
+| ATR72 | 10 | 10 |
+| B737 | 10 | 25 |
+| B777 | 35 | 40 |
+
+### Batch Input
+Input data expiry secara massal untuk kursi economy.
+- Klik tombol **"⚡ Batch Input"** di toolbar halaman seat map
+- Halaman khusus untuk input cepat banyak kursi sekaligus
 
 ---
 
