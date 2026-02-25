@@ -15,6 +15,8 @@
 9. [Arti Warna Status](#9--arti-warna-status)
 10. [Tips & FAQ](#10--tips--faq)
 
+> 💡 Fitur utama: Dashboard → klik kartu pesawat → Seat Map → Set Date / Batch Input / Export PDF
+
 ---
 
 ## 1. 🏠 Dashboard
@@ -65,6 +67,29 @@ Setiap pesawat ditampilkan sebagai kartu yang berisi:
 
 **Klik kartu** untuk masuk ke halaman seat map pesawat tersebut.
 
+### Life Vest Replacement Summary
+
+Di bawah Fleet Status, terdapat section **🔄 Life Vest Replacement Summary** yang menampilkan:
+
+- Daftar semua **Part Number** life vest yang digunakan (Adult, Crew, Infant).
+- **Total life vest** dan **jumlah yang expired** per Part Number.
+- **Breakdown per registrasi pesawat** — menunjukkan berapa life vest expired di masing-masing pesawat.
+- Kartu berwarna **merah** jika ada expired, **hijau** jika semua aman.
+
+Gunakan section ini untuk melihat Part Number mana yang paling banyak perlu diganti.
+
+### Quick Stats
+
+Di bagian paling bawah Dashboard terdapat **📊 Quick Stats**:
+
+| Stat | Keterangan |
+|------|------------|
+| **Airlines** | Jumlah maskapai terdaftar |
+| **Aircraft** | Jumlah pesawat terdaftar |
+| **Total Seats Tracked** | Jumlah kursi yang dilacak |
+| **Health Score** | Persentase life vest yang masih safe |
+| **Needs Attention** | Jumlah life vest yang critical + expired |
+
 ---
 
 ## 2. 🪑 Seat Map — Halaman Detail Pesawat
@@ -106,6 +131,16 @@ Contoh: `/aircraft/PK-GFD`
 4. Klik **"Apply"** untuk menyimpan.
 
 > 💡 **Tips:** Bisa update banyak kursi sekaligus! Pilih semua kursi yang memiliki tanggal sama, lalu set date satu kali.
+
+### Part Number Bar
+
+Di bawah toolbar terdapat **Part Number Bar** yang menampilkan:
+
+- **ADULT**: Part Number life vest, jumlah total, dan jumlah expired
+- **CREW**: Part Number life vest, jumlah total, dan jumlah expired
+- **INFANT**: Part Number life vest, jumlah total, dan jumlah expired
+
+Jika ada yang expired, akan muncul badge **⚠️ expired** berwarna merah.
 
 ### Toolbar
 
@@ -250,11 +285,17 @@ Menampilkan daftar seluruh pesawat dalam tabel.
    - **Layout**: Pilih layout kursi dari dropdown
    - **Status**: Pilih Active atau Prolong
 3. Klik **Save**.
+4. Setelah pesawat dibuat, klik **Edit** untuk mengisi **Part Number** (lihat di bawah).
 
 #### Edit Pesawat
 
 - Klik **"Edit"** di baris pesawat.
-- Hanya **Status** yang bisa diubah (Registration, Airline, Type terkunci).
+- Yang bisa diubah:
+  - **Status** (Active / Prolong)
+  - **Part Number Adult** — P/N life vest penumpang (contoh: P0723-103W)
+  - **Part Number Crew** — P/N life vest crew (contoh: P0723-103WCN)
+  - **Part Number Infant** — P/N life vest bayi (contoh: P0640-101)
+- Registration, Airline, Type, dan Layout **terkunci** (tidak bisa diubah).
 - Klik **Save** untuk menyimpan.
 
 #### Hapus Pesawat
@@ -333,17 +374,128 @@ Menampilkan daftar maskapai yang terdaftar.
 
 ### FAQ
 
-**Q: Kenapa tombol Set Date tidak aktif (disabled)?**
-A: Anda belum memilih kursi. Pilih minimal 1 kursi terlebih dahulu.
+#### 📅 Tanggal & Expiry
 
-**Q: Bisakah saya mengubah registrasi atau tipe pesawat?**
-A: Tidak bisa dari halaman Edit. Hapus pesawat lalu tambahkan ulang dengan data yang benar.
+**Q: Bagaimana cara mengubah tanggal expiry yang sudah di-set?**
+A: Pilih kursi yang ingin diubah → klik **Set Date** → pilih tanggal baru → klik **Apply**. Tanggal lama akan langsung ditimpa dengan tanggal baru.
 
-**Q: Berapa format tanggal yang didukung di Batch Input?**
-A: Tiga format: `Oct-25`, `24-Jan-25`, dan `01/03/2030`.
+**Q: Bisa set tanggal untuk banyak kursi sekaligus?**
+A: Ya. Pilih semua kursi (gunakan Ctrl+Klik, Shift+Klik, atau klik baris/kolom), lalu klik **Set Date** sekali. Semua kursi yang dipilih akan mendapat tanggal yang sama.
 
-**Q: Apa bedanya Export PDF dan Blank Form?**
-A: Export PDF berisi data lengkap (dengan tanggal & warna status). Blank Form adalah form kosong untuk diisi manual oleh teknisi.
+**Q: Bagaimana cara menghapus tanggal expiry yang salah?**
+A: Saat ini tidak ada fitur hapus tanggal. Set ulang dengan tanggal yang benar menggunakan **Set Date**.
 
-**Q: Bagaimana jika layout pesawat belum tersedia?**
-A: Hubungi developer untuk membuat layout baru. Lihat Developer Manual untuk panduan teknis.
+**Q: Apakah tanggal expiry langsung tersimpan ke database setelah klik Apply?**
+A: Ya, langsung tersimpan. Tidak perlu save atau submit tambahan. Warna kursi juga langsung berubah sesuai status baru.
+
+---
+
+#### 🪑 Seat Map & Spare
+
+**Q: Bagaimana cara menambah life vest spare?**
+A: Klik tombol **"+ Add PAX"** atau **"+ Add INF"** di bagian Spare. Spare baru otomatis bernomor urut.
+
+**Q: Bagaimana cara menghapus spare seat?**
+A: Klik tombol **✕** di pojok spare card yang ingin dihapus. Data spare tersebut akan terhapus dari database.
+
+**Q: Kalau spare dihapus, apakah nomor urutnya otomatis berubah?**
+A: Tidak. Nomor urut spare tidak berubah setelah dihapus. Spare baru akan menggunakan nomor urut berikutnya.
+
+**Q: Apakah bisa select kursi dari class yang berbeda sekaligus (misalnya Business + Economy)?**
+A: Ya, bisa. Gunakan Ctrl+Klik untuk memilih kursi dari class manapun, lalu Set Date sekaligus.
+
+---
+
+#### 📊 Dashboard, Replacement Summary & Part Number
+
+**Q: Replacement Summary menampilkan data dari pesawat mana saja?**
+A: Dari **semua pesawat** yang terdaftar. Data di-generate otomatis dari database setiap kali dashboard dibuka.
+
+**Q: Angka expired di Replacement Summary tidak cocok. Kenapa?**
+A: Pastikan data expiry di seat map sudah benar. Angka dihitung otomatis dari seluruh kursi yang tanggal expirynya sudah lewat.
+
+**Q: Di Replacement Summary ada breakdown per registrasi. Klik bisa tidak?**
+A: Tidak bisa diklik langsung. Catat registrasinya, lalu buka pesawat tersebut di dashboard untuk melihat detail.
+
+**Q: Part Number Bar di seat map menampilkan angka apa?**
+A: Menampilkan **jumlah total life vest** dan **jumlah expired** per kategori (Adult / Crew / Infant) untuk pesawat yang sedang dibuka.
+
+**Q: Part Number tidak muncul di Part Number Bar, kenapa?**
+A: Part Number diisi di database pesawat (kolom `pn_adult`, `pn_crew`, `pn_infant`). Jika belum diisi, bar tidak muncul.
+
+**Q: Health Score di Quick Stats dihitung dari apa?**
+A: `(jumlah safe ÷ total yang punya data) × 100%`. Life vest tanpa data (abu-abu) tidak dihitung.
+
+**Q: Part Number diisi / diedit di mana?**
+A: Buka **Fleet Manager** → klik **Edit** pada pesawat → isi field **Part Number Adult**, **Part Number Crew**, dan **Part Number Infant**. Part Number hanya bisa diisi di halaman Edit, bukan saat pertama kali menambahkan pesawat.
+
+**Q: Alur menambah pesawat baru yang lengkap bagaimana?**
+A: Tambah pesawat di Fleet Manager → klik **Edit** pada pesawat yang baru ditambahkan → isi Part Number → kembali ke seat map → isi expiry via **Set Date** atau **Batch Input**.
+
+**Q: Part Number bisa diubah setelah diisi?**
+A: Ya, tinggal buka **Edit** pesawat lagi dan ganti isinya.
+
+---
+
+#### ✈️ Pesawat & Fleet Manager
+
+**Q: Jika pesawat dihapus dari Fleet Manager, apakah semua data seat juga ikut terhapus?**
+A: Ya, **semua data expiry kursi pesawat tersebut akan terhapus permanen** dari database. Pastikan data sudah tidak diperlukan sebelum menghapus.
+
+**Q: Bisakah mengubah registrasi, tipe, atau airline pesawat?**
+A: Tidak bisa dari halaman Edit (hanya status yang bisa diubah). Hapus pesawat dan tambahkan ulang dengan data yang benar.
+
+**Q: Kenapa airline tidak bisa dihapus?**
+A: Airline hanya bisa dihapus jika **tidak ada pesawat** yang terdaftar di airline tersebut. Hapus semua pesawatnya terlebih dahulu.
+
+**Q: Pesawat baru ditambahkan, tapi data kursinya kosong semua?**
+A: Benar. Pesawat baru tidak memiliki data expiry. Gunakan **Batch Input** untuk mengisi dari Excel, atau **Set Date** per kursi.
+
+**Q: Bagaimana jika layout pesawat belum tersedia di dropdown?**
+A: Hubungi developer untuk membuat layout baru. Panduannya ada di **Developer Manual**.
+
+**Q: Dua pesawat bisa pakai layout yang sama?**
+A: Ya. Layout hanya menentukan susunan kursi, data expiry masing-masing pesawat tetap terpisah.
+
+---
+
+#### 📄 PDF & Blank Form
+
+**Q: PDF dan Blank Form dibuka di mana?**
+A: Keduanya terbuka di **tab baru** browser. Dari situ bisa langsung **Ctrl+P** untuk print atau download.
+
+**Q: Apakah PDF otomatis update jika data expiry diubah?**
+A: PDF di-generate ulang setiap kali tombol diklik. Jadi selalu menampilkan data terbaru saat tombol ditekan.
+
+**Q: Kertas apa yang direkomendasikan untuk print?**
+A: **A4 Portrait**. PDF sudah diatur untuk ukuran tersebut.
+
+**Q: Kenapa kotak spare di Blank Form jumlahnya berbeda per tipe pesawat?**
+A: Jumlah kotak sudah disesuaikan dengan buffer per tipe. B777 lebih banyak dibanding ATR72 karena kapasitas lebih besar.
+
+---
+
+#### ⚡ Batch Input
+
+**Q: Batch Input mengupdate kursi apa saja?**
+A: Hanya kursi **Economy** dan **Spare** (PAX & INF). Cockpit dan Business harus di-update via **Set Date** di seat map.
+
+**Q: Urutan data di textarea harus bagaimana?**
+A: Sesuai **nomor baris kursi** dari atas ke bawah. Baris pertama di textarea = baris pertama di section economy.
+
+**Q: Jika hanya update sebagian kolom, apakah kolom lain terhapus?**
+A: Tidak. Kolom yang textarea-nya kosong tidak diproses. Data lama tetap aman.
+
+**Q: Kalau ada baris kosong di tengah data paste, apa yang terjadi?**
+A: Baris kosong di-skip. Tidak mengubah data kursi pada posisi tersebut.
+
+**Q: Data yang sudah ada akan ditimpa atau ditambahkan?**
+A: **Ditimpa**. Jika kursi sudah punya data expiry, Batch Input akan mengganti dengan tanggal baru.
+
+**Q: Format tanggal apa yang didukung?**
+A: Tiga format: `Oct-25`, `24-Jan-25`, dan `01/03/2030`. Format lain tidak dikenali dan akan dilewati.
+
+**Q: Ada error setelah Save, apa yang harus dilakukan?**
+A: Periksa format tanggal. Coba paste ulang satu kolom untuk identifikasi data yang bermasalah.
+
+
