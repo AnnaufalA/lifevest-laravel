@@ -14,6 +14,7 @@ Aplikasi pelacakan tanggal kedaluwarsa life vest untuk armada pesawat GMF AeroAs
 - [Airlines Management](#-airlines-management)
 - [Menambahkan Pesawat Baru](#-menambahkan-pesawat-baru)
 - [Struktur File](#-struktur-file-penting)
+- [📚 Dokumentasi Lengkap](#-dokumentasi-lengkap)
 
 ---
 
@@ -320,4 +321,17 @@ lifevest-laravel/
 |---------|-----------|
 | Garuda Indonesia | GA |
 | Citilink | QG |
+
+---
+
+## 📚 Dokumentasi Lengkap
+
+Dokumentasi lengkap tersedia di folder **[`dokumentasi/`](dokumentasi/)**:
+
+| Dokumen | Markdown | PDF |
+|---------|----------|-----|
+| **User Manual** — Panduan penggunaan untuk end-user / teknisi | [📄 USER_MANUAL.md](dokumentasi/USER_MANUAL.md) | [📕 PDF](dokumentasi/Buku%20Panduan%20Pengguna%20(User%20Manual).pdf) |
+| **Developer Manual** — Panduan teknis untuk developer | [📄 DEVELOPER_MANUAL.md](dokumentasi/DEVELOPER_MANUAL.md) | [📕 PDF](dokumentasi/Developer%20Manual.pdf) |
+
+> 💡 File `.md` bisa dibaca langsung di GitHub. File `.pdf` bisa di-download untuk print.
 
