@@ -2137,28 +2137,47 @@ vertical-align: middle;
     font-weight: 600;
 }
 
-/* Status Badges Row */
+/* Status Badges Row (Clickable) */
 .replacement-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
     margin-top: 8px;
+    padding-bottom: 6px;
+}
+
+.badge-btn {
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 14px;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.badge-btn:hover {
+    opacity: 0.8;
+}
+
+.badge-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
 }
 
 .badge-expired {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     color: #c4b5fd;
     font-weight: 700;
 }
 
 .badge-critical {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     color: #f87171;
     font-weight: 700;
 }
 
 .badge-warning {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     color: #fbbf24;
     font-weight: 700;
 }
@@ -2216,6 +2235,8 @@ vertical-align: middle;
 /* Breakdown */
 .replacement-breakdown {
     margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -2303,6 +2324,7 @@ html {
     scroll-behavior: smooth;
 }
 
+#top,
 #replacement-summary,
 #quick-stats {
     scroll-margin-top: 80px;

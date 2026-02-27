@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Filter Toggle Button -->
-    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+    <div id="top" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
         <button type="button" id="toggleFilters" class="btn btn-secondary"
             style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
             <span>🔍 Filter</span>
@@ -219,7 +219,10 @@
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
         <section class="replacement-section" id="replacement-summary">
-            <h2>🔄 Life Vest Replacement Summary</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>🔄 Life Vest Replacement Summary</h2>
+                <a href="#top" class="btn-jump-pn">⬆ Back to Top</a>
+            </div>
             <div class="replacement-grid">
                 @foreach($pnSummary as $idx => $item)
                     @php
@@ -237,41 +240,29 @@
                             </div>
                         </div>
 
-                        {{-- Status badges --}}
+                        {{-- Clickable status badges (act as filter tabs) --}}
                         <div class="replacement-badges">
                             @if($item['expired'] > 0)
-                                <span class="badge-expired">🟣 {{ $item['expired'] }} expired</span>
+                                <span class="badge-btn badge-expired {{ $item['expired'] > 0 ? 'active' : '' }}" data-tab="expired"
+                                    data-card="{{ $idx }}">🟣 {{ $item['expired'] }} expired</span>
                             @endif
                             @if($item['critical'] > 0)
-                                <span class="badge-critical">🔴 {{ $item['critical'] }} critical</span>
+                                <span
+                                    class="badge-btn badge-critical {{ $item['expired'] == 0 && $item['critical'] > 0 ? 'active' : '' }}"
+                                    data-tab="critical" data-card="{{ $idx }}">🔴 {{ $item['critical'] }} critical</span>
                             @endif
                             @if($item['warning'] > 0)
-                                <span class="badge-warning">🟡 {{ $item['warning'] }} warning</span>
+                                <span
+                                    class="badge-btn badge-warning {{ $item['expired'] == 0 && $item['critical'] == 0 && $item['warning'] > 0 ? 'active' : '' }}"
+                                    data-tab="warning" data-card="{{ $idx }}">🟡 {{ $item['warning'] }} warning</span>
                             @endif
                             @if(!$hasAttention)
                                 <span class="replacement-ok">✅ All safe</span>
                             @endif
                         </div>
 
-                        {{-- Tab filter + breakdown --}}
+                        {{-- Breakdowns --}}
                         @if(count($item['aircraft']) > 0)
-                            <div class="replacement-tabs" data-card="{{ $idx }}">
-                                <button class="tab-btn {{ $item['expired'] > 0 ? 'active' : '' }}" data-tab="expired"
-                                    data-card="{{ $idx }}" {{ $item['expired'] == 0 ? 'disabled' : '' }}>
-                                    Expired ({{ $item['expired'] }})
-                                </button>
-                                <button class="tab-btn {{ $item['expired'] == 0 && $item['critical'] > 0 ? 'active' : '' }}"
-                                    data-tab="critical" data-card="{{ $idx }}" {{ $item['critical'] == 0 ? 'disabled' : '' }}>
-                                    Critical ({{ $item['critical'] }})
-                                </button>
-                                <button
-                                    class="tab-btn {{ $item['expired'] == 0 && $item['critical'] == 0 && $item['warning'] > 0 ? 'active' : '' }}"
-                                    data-tab="warning" data-card="{{ $idx }}" {{ $item['warning'] == 0 ? 'disabled' : '' }}>
-                                    Warning ({{ $item['warning'] }})
-                                </button>
-                            </div>
-
-                            {{-- Expired breakdown --}}
                             <div class="replacement-breakdown" data-card="{{ $idx }}" data-type="expired"
                                 style="{{ $item['expired'] > 0 ? '' : 'display:none' }}">
                                 @foreach($item['aircraft'] as $ac)
@@ -281,7 +272,6 @@
                                 @endforeach
                             </div>
 
-                            {{-- Critical breakdown --}}
                             <div class="replacement-breakdown" data-card="{{ $idx }}" data-type="critical"
                                 style="{{ $item['expired'] == 0 && $item['critical'] > 0 ? '' : 'display:none' }}">
                                 @foreach($item['aircraft'] as $ac)
@@ -291,7 +281,6 @@
                                 @endforeach
                             </div>
 
-                            {{-- Warning breakdown --}}
                             <div class="replacement-breakdown" data-card="{{ $idx }}" data-type="warning"
                                 style="{{ $item['expired'] == 0 && $item['critical'] == 0 && $item['warning'] > 0 ? '' : 'display:none' }}">
                                 @foreach($item['aircraft'] as $ac)
@@ -551,15 +540,14 @@
                 applyFilters();
             });
 
-            // Replacement Summary Tab Switching
-            document.querySelectorAll('.tab-btn').forEach(btn => {
+            // Replacement Summary - Clickable Badge Filtering
+            document.querySelectorAll('.badge-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    if (this.disabled) return;
                     const cardIdx = this.dataset.card;
                     const tab = this.dataset.tab;
 
-                    // Toggle active tab
-                    document.querySelectorAll(`.tab-btn[data-card="${cardIdx}"]`).forEach(b => b.classList.remove('active'));
+                    // Toggle active badge
+                    document.querySelectorAll(`.badge-btn[data-card="${cardIdx}"]`).forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
 
                     // Toggle breakdown visibility
