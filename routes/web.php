@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 // Dashboard (homepage)
 Route::get('/', DashboardController::class)->name('dashboard');
 
+// Excel Export - Replacement Plan
+Route::get('/export/replacement-plan', [\App\Http\Controllers\ExcelReportController::class, 'exportReplacementPlan'])->name('reports.excel');
+
 // Aircraft routes
 Route::prefix('aircraft')->group(function () {
     Route::get('/{registration}', [AircraftController::class, 'show'])->name('aircraft.show');

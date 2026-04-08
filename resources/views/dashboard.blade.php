@@ -308,6 +308,9 @@
                     <span class="monthly-plan-subtitle">Timeline kebutuhan penggantian life vest per bulan</span>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a href="{{ route('reports.excel') }}" class="btn-excel-export" title="Download Excel Report">
+                        📥 Export Excel
+                    </a>
                     <button type="button" id="toggleAllMonths" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Expand All</button>
                     <a href="#top" class="btn-jump-pn">⬆ Back to Top</a>
                 </div>
