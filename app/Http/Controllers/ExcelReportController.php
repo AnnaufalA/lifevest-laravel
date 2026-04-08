@@ -48,7 +48,7 @@ class ExcelReportController extends Controller
             $airlineName = $aircraft->airline?->name ?? 'Unknown';
 
             $pnMap = [
-                'adult'  => ['pn' => $aircraft->pn_adult,  'types' => ['business', 'economy', 'spare-pax']],
+                'adult'  => ['pn' => $aircraft->pn_adult,  'types' => ['business', 'economy', 'first', 'spare-pax']],
                 'crew'   => ['pn' => $aircraft->pn_crew,   'types' => ['cockpit', 'attendant']],
                 'infant' => ['pn' => $aircraft->pn_infant, 'types' => ['spare-inf']],
             ];
@@ -66,14 +66,18 @@ class ExcelReportController extends Controller
                 }
 
                 // Determine P/N
-                $seatPn = 'N/A';
-                $seatCategory = 'unknown';
+                $seatPn = null;
+                $seatCategory = null;
                 foreach ($pnMap as $category => $info) {
                     if (in_array($seat->class_type, $info['types'])) {
-                        $seatPn = $info['pn'] ?: 'N/A';
+                        $seatPn = $info['pn'] ?: null;
                         $seatCategory = $category;
                         break;
                     }
+                }
+                // Skip if no PN or unknown class_type (same as DashboardController)
+                if (!$seatPn || !$seatCategory) {
+                    continue;
                 }
 
                 // Determine status
