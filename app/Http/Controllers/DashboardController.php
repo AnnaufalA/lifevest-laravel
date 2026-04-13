@@ -191,11 +191,10 @@ class DashboardController extends Controller
 
         // ============================================================
         // Build Monthly Replacement Plan
-        // Cutoff: same as dashboard warning boundary (< 180 days)
-        // so totals match the Fleet Overview summary exactly
+        // Cutoff: Include all data up to end of March 2027
         // ============================================================
         $monthlyPlan = [];
-        $cutoff = $today->copy()->addDays(179); // < 180 days = warning threshold
+        $cutoff = \Carbon\Carbon::createFromDate(2027, 3, 31)->endOfDay(); // Include all data up to end of March 2027
 
         foreach ($aircrafts as $aircraft) {
             $reg = $aircraft->registration;

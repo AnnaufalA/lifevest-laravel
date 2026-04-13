@@ -379,14 +379,17 @@
                             {{-- P/N Breakdown --}}
                             @foreach($month['pn_breakdown'] as $pnKey => $pnData)
                                 <div class="monthly-pn-row">
-                                    <div class="monthly-pn-header">
-                                        <div class="monthly-pn-info">
-                                            <span class="monthly-pn-name">{{ $pnData['pn'] }}</span>
-                                            <span class="monthly-pn-category {{ $pnData['category'] }}">{{ strtoupper($pnData['category']) }}</span>
+                                    <div class="monthly-pn-header" onclick="togglePnDetails('{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}'); event.stopPropagation();">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; flex: 1;">
+                                            <span class="monthly-pn-toggle" id="toggle-{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}">▶</span>
+                                            <div class="monthly-pn-info">
+                                                <span class="monthly-pn-name">{{ $pnData['pn'] }}</span>
+                                                <span class="monthly-pn-category {{ $pnData['category'] }}">{{ strtoupper($pnData['category']) }}</span>
+                                            </div>
                                         </div>
                                         <span class="monthly-pn-count">× {{ $pnData['count'] }}</span>
                                     </div>
-                                    <div class="monthly-aircraft-list">
+                                    <div class="monthly-aircraft-list" id="details-{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}" style="display: none;">
                                         @foreach($pnData['aircraft'] as $reg => $count)
                                             <a href="{{ route('aircraft.show', $reg) }}" class="monthly-aircraft-chip" title="Open {{ $reg }}">
                                                 {{ $reg }}: {{ $count }}
@@ -773,6 +776,18 @@
                 body.style.display = isHidden ? 'block' : 'none';
                 if (card) card.classList.toggle('expanded', isHidden);
                 if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // Monthly Plan - Toggle P/N details within month
+        function togglePnDetails(pnId) {
+            const detailsEl = document.getElementById('details-' + pnId);
+            const toggleEl = document.getElementById('toggle-' + pnId);
+
+            if (detailsEl) {
+                const isHidden = detailsEl.style.display === 'none';
+                detailsEl.style.display = isHidden ? 'block' : 'none';
+                if (toggleEl) toggleEl.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
             }
         }
 

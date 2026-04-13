@@ -32,7 +32,7 @@ class ExcelReportController extends Controller
     public function exportReplacementPlan()
     {
         $today = now()->startOfDay();
-        $cutoff = $today->copy()->addDays(179); // Match Seat model: < 180 days = warning
+        $cutoff = Carbon::createFromDate(2027, 3, 31)->endOfDay(); // Include all data up to end of March 2027
         $threeMonthsBoundary = $today->copy()->addDays(89); // < 90 days = critical
 
         $aircrafts = Aircraft::with('airline')->get();
@@ -152,11 +152,6 @@ class ExcelReportController extends Controller
         // --- Sheet 1: Summary ---
         $this->buildSummarySheet($spreadsheet, $allRows, $monthlyData, $today, $threeMonthsBoundary);
 
-        // --- Sheet per month ---
-        foreach ($monthlyData as $monthKey => $mData) {
-            $this->buildMonthSheet($spreadsheet, $monthKey, $mData, $today, $threeMonthsBoundary);
-        }
-
         // Activate first sheet
         $spreadsheet->setActiveSheetIndex(0);
 
@@ -236,133 +231,30 @@ class ExcelReportController extends Controller
             $row++;
         }
 
-        // --- Monthly Breakdown Table ---
-        $row += 2;
-        $sheet->setCellValue("A{$row}", 'MONTHLY BREAKDOWN');
-        $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(12);
-        $row++;
-
-        // Table header
-        $monthHeaders = ['Month', 'Status', 'Total Vests', 'Adult', 'Crew', 'Infant', 'Aircraft Count', 'Sheet Tab'];
-        $colWidths = [18, 12, 13, 10, 10, 10, 15, 18];
-        
-        foreach ($monthHeaders as $i => $h) {
-            $cCol = Coordinate::stringFromColumnIndex($i + 1);
-            $sheet->setCellValue("{$cCol}{$row}", $h);
-            $sheet->getColumnDimension($cCol)->setWidth($colWidths[$i]);
-        }
-        $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-            'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 10],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorHeader]],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF424242']]],
-        ]);
-        $sheet->getRowDimension($row)->setRowHeight(25);
-        $row++;
-
-        $grandTotal = 0;
-        $grandAdult = 0;
-        $grandCrew = 0;
-        $grandInfant = 0;
-        
-        $sheetIndex = 1; // Sheet index for hyperlinks
-
-        foreach ($monthlyData as $monthKey => $mData) {
-            $rows = $mData['rows'];
-            $total = count($rows);
-            $adult  = count(array_filter($rows, fn($r) => $r['category'] === 'ADULT'));
-            $crew   = count(array_filter($rows, fn($r) => $r['category'] === 'CREW'));
-            $infant = count(array_filter($rows, fn($r) => $r['category'] === 'INFANT'));
-            $acCount = count(array_unique(array_column($rows, 'reg')));
-
-            // Determine urgency
-            if ($monthKey === '0000-00-Overdue') {
-                $urgency = 'OVERDUE';
-                $bgColor = $this->colorExpired;
-            } else {
-                $monthDate = Carbon::createFromFormat('Y-m', $monthKey)->startOfMonth();
-                if ($monthDate->lt($threeMonthsBoundary)) {
-                    $urgency = 'CRITICAL';
-                    $bgColor = $this->colorCritical;
-                } else {
-                    $urgency = 'WARNING';
-                    $bgColor = $this->colorWarning;
-                }
-            }
-
-            $tabName = $this->getSheetName($monthKey, $mData['label']);
-
-            $colIdx = 1;
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $mData['label']);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $urgency);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $total);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $adult);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $crew);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $infant);
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIdx++) . $row, $acCount);
-            
-            $tabColStr = Coordinate::stringFromColumnIndex($colIdx);
-            $sheet->setCellValue("{$tabColStr}{$row}", '→ ' . $tabName);
-
-            // Hyperlink to the month sheet tab
-            $sheet->getCell("{$tabColStr}{$row}")->getHyperlink()->setUrl("sheet://'{$tabName}'!A1");
-            $sheet->getStyle("{$tabColStr}{$row}")->applyFromArray([
-                'font' => ['color' => ['argb' => 'FF1565C0'], 'underline' => true],
-            ]);
-
-            $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
-            ]);
-
-            for ($c = 2; $c <= 7; $c++) {
-                $sheet->getStyle(Coordinate::stringFromColumnIndex($c) . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            }
-
-            // Bold + colored status
-            $urgencyColor = match ($urgency) {
-                'OVERDUE'  => 'FF7B1FA2',
-                'CRITICAL' => 'FFC62828',
-                'WARNING'  => 'FFF57F17',
-                default    => 'FF000000',
-            };
-            $sheet->getStyle("B{$row}")->getFont()->setBold(true);
-            $sheet->getStyle("B{$row}")->getFont()->getColor()->setARGB($urgencyColor);
-
-            $grandTotal += $total;
-            $grandAdult += $adult;
-            $grandCrew  += $crew;
-            $grandInfant += $infant;
-
-            $sheetIndex++;
-            $row++;
-        }
-
-        // Grand total
-        $sheet->setCellValue("A{$row}", 'GRAND TOTAL');
-        $sheet->setCellValue("C{$row}", $grandTotal);
-        $sheet->setCellValue("D{$row}", $grandAdult);
-        $sheet->setCellValue("E{$row}", $grandCrew);
-        $sheet->setCellValue("F{$row}", $grandInfant);
-
-        $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-            'font' => ['bold' => true, 'size' => 11],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFE3F2FD']],
-            'borders' => [
-                'top'    => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => $this->colorHeader]],
-                'bottom' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => $this->colorHeader]],
-            ],
-        ]);
-        for ($c = 3; $c <= 6; $c++) {
-            $sheet->getStyle(Coordinate::stringFromColumnIndex($c) . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        }
-        $sheet->getRowDimension($row)->setRowHeight(25);
-
-        // --- NEW SECTION: P/N MONTHLY SUMMARY ---
+        // --- NEW SECTION: P/N MONTHLY SUMMARY (April 2026 - March 2027) ---
         $row += 3;
         $sheet->setCellValue("A{$row}", 'P/N MONTHLY SUMMARY');
         $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(12);
         $row++;
+
+        // Filter monthlyData untuk April 2026 - Maret 2027 + include Overdue di awal
+        $startFilter = Carbon::createFromDate(2026, 4, 1)->startOfMonth();
+        $endFilter = Carbon::createFromDate(2027, 3, 31)->endOfMonth();
+        $filteredMonthlyData = [];
+        
+        // Add Overdue first if exists
+        if (isset($monthlyData['0000-00-Overdue'])) {
+            $filteredMonthlyData['0000-00-Overdue'] = $monthlyData['0000-00-Overdue'];
+        }
+        
+        // Then add April 2026 - Maret 2027
+        foreach ($monthlyData as $monthKey => $mData) {
+            if ($monthKey === '0000-00-Overdue') continue;
+            $monthDate = Carbon::createFromFormat('Y-m', $monthKey)->startOfMonth();
+            if ($monthDate->gte($startFilter) && $monthDate->lte($endFilter)) {
+                $filteredMonthlyData[$monthKey] = $mData;
+            }
+        }
 
         $monthRow = $row;
         $urgencyRow = $row + 1;
@@ -376,19 +268,19 @@ class ExcelReportController extends Controller
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF424242']]],
         ]);
-        $sheet->getColumnDimension('A')->setWidth(20);
+        $sheet->getColumnDimension('A')->setWidth(22);
 
         $monthUrgencies = [];
         $colIdx = 2;
 
-        foreach ($monthlyData as $monthKey => $mData) {
+        foreach ($filteredMonthlyData as $monthKey => $mData) {
             $colStr = Coordinate::stringFromColumnIndex($colIdx);
             $sheet->setCellValue("{$colStr}{$monthRow}", $mData['label']);
-            $sheet->getColumnDimension($colStr)->setWidth(15);
+            $sheet->getColumnDimension($colStr)->setWidth(16);
             
             // Header 1 style (Dark Blue)
             $sheet->getStyle("{$colStr}{$monthRow}")->applyFromArray([
-                'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 10],
+                'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 11],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorHeader]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF424242']]],
@@ -433,31 +325,33 @@ class ExcelReportController extends Controller
         $gtColStr = Coordinate::stringFromColumnIndex($colIdx);
         $sheet->setCellValue("{$gtColStr}{$monthRow}", 'Grand Total');
         $sheet->mergeCells("{$gtColStr}{$monthRow}:{$gtColStr}{$urgencyRow}");
-        $sheet->getColumnDimension($gtColStr)->setWidth(15);
+        $sheet->getColumnDimension($gtColStr)->setWidth(16);
         $sheet->getStyle("{$gtColStr}{$monthRow}:{$gtColStr}{$urgencyRow}")->applyFromArray([
-            'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 10],
+            'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 11],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorHeader]],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF424242']]],
         ]);
 
         $pnLastCol = $gtColStr;
-        $sheet->getRowDimension($monthRow)->setRowHeight(25);
-        $sheet->getRowDimension($urgencyRow)->setRowHeight(20);
+        $sheet->getRowDimension($monthRow)->setRowHeight(30);
+        $sheet->getRowDimension($urgencyRow)->setRowHeight(25);
         
         $row = $dataStartRow;
-        $grandTotalPnArr = array_fill(0, count($monthlyData) + 1, 0);
+        $grandTotalPnArr = array_fill(0, count($filteredMonthlyData) + 1, 0);
 
         foreach ($allPns as $pn) {
             $sheet->setCellValue("A{$row}", $pn);
             $sheet->getStyle("A{$row}")->applyFromArray([
+                'font' => ['size' => 10, 'bold' => false],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorLightGray]],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
             $pnGrandTotal = 0;
             $monthIdx = 0;
-            foreach ($monthlyData as $monthKey => $mData) {
+            foreach ($filteredMonthlyData as $monthKey => $mData) {
                 $c = count(array_filter($mData['rows'], fn($r) => $r['pn'] === $pn));
                 $uData = $monthUrgencies[$monthKey];
                 $cColStr = $uData['colStr'];
@@ -465,8 +359,9 @@ class ExcelReportController extends Controller
                 $sheet->setCellValue("{$cColStr}{$row}", $c);
                 // Color the cell background based on urgency
                 $sheet->getStyle("{$cColStr}{$row}")->applyFromArray([
+                    'font' => ['size' => 10, 'bold' => false],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $uData['bgColor']]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
                 ]);
                 
@@ -478,10 +373,12 @@ class ExcelReportController extends Controller
             // Grand Total for this PN
             $sheet->setCellValue("{$gtColStr}{$row}", $pnGrandTotal);
             $sheet->getStyle("{$gtColStr}{$row}")->applyFromArray([
+                'font' => ['size' => 10, 'bold' => false],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorLightGray]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
             ]);
+            $sheet->getRowDimension($row)->setRowHeight(22);
             $grandTotalPnArr[$monthIdx] += $pnGrandTotal;
 
             $row++;
@@ -489,10 +386,13 @@ class ExcelReportController extends Controller
 
         // Grand Total row for P/N summary
         $sheet->setCellValue("A{$row}", 'GRAND TOTAL');
-        $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("A{$row}")->applyFromArray([
+            'font' => ['bold' => true, 'size' => 11],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+        ]);
 
         $monthIdx = 0;
-        foreach ($monthlyData as $monthKey => $mData) {
+        foreach ($filteredMonthlyData as $monthKey => $mData) {
             $uData = $monthUrgencies[$monthKey];
             $cColStr = $uData['colStr'];
             $sheet->setCellValue("{$cColStr}{$row}", $grandTotalPnArr[$monthIdx]);
@@ -508,10 +408,10 @@ class ExcelReportController extends Controller
                 'bottom' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => $this->colorHeader]],
                 'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']],
             ],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
         ]);
         $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-        $sheet->getRowDimension($row)->setRowHeight(25);
+        $sheet->getRowDimension($row)->setRowHeight(28);
 
         // --- Legend ---
         $row += 2;
