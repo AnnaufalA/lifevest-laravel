@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="form-container-wide">
-        <h2 class="form-header">✈️ Add New Aircraft</h2>
+        <h2 class="form-header">Add New Aircraft</h2>
 
         <form action="{{ route('fleet.store') }}" method="POST" class="form-card">
             @csrf

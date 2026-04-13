@@ -31,8 +31,8 @@ class ExcelReportController extends Controller
     public function exportReplacementPlan()
     {
         $today = now()->startOfDay();
-        $sixMonthsAhead = $today->copy()->addMonths(6)->endOfMonth();
-        $threeMonthsBoundary = $today->copy()->addMonths(3);
+        $cutoff = $today->copy()->addDays(179); // Match Seat model: < 180 days = warning
+        $threeMonthsBoundary = $today->copy()->addDays(89); // < 90 days = critical
 
         $aircrafts = Aircraft::with('airline')->get();
 
@@ -61,7 +61,7 @@ class ExcelReportController extends Controller
             foreach ($seats as $seat) {
                 $expiryDate = Carbon::parse($seat->expiry_date);
 
-                if ($expiryDate->gt($sixMonthsAhead)) {
+                if ($expiryDate->gt($cutoff)) {
                     continue;
                 }
 
@@ -192,7 +192,7 @@ class ExcelReportController extends Controller
         $sheet->getRowDimension(1)->setRowHeight(40);
 
         $sheet->mergeCells('A2:H2');
-        $sheet->setCellValue('A2', 'Generated: ' . now()->format('d M Y, H:i') . ' | Coverage: Overdue + 6 months ahead');
+        $sheet->setCellValue('A2', 'Generated: ' . now()->format('d M Y, H:i') . ' | Coverage: Overdue + up to 180 days ahead (Critical & Warning)');
         $sheet->getStyle('A2')->applyFromArray([
             'font' => ['italic' => true, 'size' => 10, 'color' => ['argb' => $this->colorWhite]],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorSubHeader]],

@@ -2,13 +2,14 @@
 
 @section('content')
     <!-- Filter Toggle Button -->
-    <div id="top" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+    <div id="top" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
         <button type="button" id="toggleFilters" class="btn btn-secondary"
-            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
-            <span>🔍 Filter</span>
-            <span id="filterArrow" style="transition: transform 0.2s;">▼</span>
+            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <span>Filter</span>
+            <span id="filterArrow" style="transition: transform 0.2s; font-size: 0.65rem;">▼</span>
         </button>
-        <span id="filterCount" style="color: var(--text-secondary); font-size: 0.875rem;"></span>
+        <span id="filterCount" style="color: var(--text-muted); font-size: 0.8rem;"></span>
     </div>
 
     <!-- Collapsible Filter Bar -->
@@ -16,7 +17,7 @@
         style="display: none; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
 
         <!-- Search Registration -->
-        <input type="text" id="searchInput" class="form-input" placeholder="🔍 Search registration..."
+        <input type="text" id="searchInput" class="form-input" placeholder="Search registration..."
             style="min-width: 200px; max-width: 250px;">
 
         <select id="filterAirline" class="form-select" style="min-width: 180px; cursor: pointer;">
@@ -55,23 +56,23 @@
     <!-- Summary Section -->
     <section class="summary-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <h2>📈 Fleet Overview</h2>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h2>Fleet Overview</h2>
                 @if(count($pnSummary) > 0)
-                    <a href="#replacement-summary" class="btn-jump-pn" title="Jump to Replacement Summary">🔄 P/N Summary ↓</a>
+                    <a href="#replacement-summary" class="btn-jump-pn" title="Jump to Replacement Summary">P/N Summary ↓</a>
                 @endif
                 @if(count($monthlyPlan) > 0)
-                    <a href="#monthly-plan" class="btn-jump-pn" title="Jump to Monthly Plan">📅 Monthly Plan ↓</a>
+                    <a href="#monthly-plan" class="btn-jump-pn" title="Jump to Monthly Plan">Monthly Plan ↓</a>
                 @endif
-                <a href="#quick-stats" class="btn-jump-pn" title="Jump to Quick Stats">📊 Quick Stats ↓</a>
+                <a href="#quick-stats" class="btn-jump-pn" title="Jump to Quick Stats">Quick Stats ↓</a>
             </div>
 
             <!-- Fleet Multi-Select Dropdown -->
             <div class="fleet-dropdown" style="position: relative;">
                 <button type="button" id="fleetDropdownBtn" class="btn btn-secondary"
-                    style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 8px;">
-                    <span>✈️ Filter Fleet</span>
-                    <span style="font-size: 0.7em;">▼</span>
+                    style="padding: 0.45rem 0.9rem; display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
+                    <span>Filter Fleet</span>
+                    <span style="font-size: 0.6em;">▼</span>
                 </button>
                 <div id="fleetDropdownMenu" class="fleet-dropdown-menu">
                     <!-- Select All Option -->
@@ -135,20 +136,20 @@
     @foreach($fleetByAirline as $airlineId => $airline)
         <section class="airline-section" data-airline="{{ $airline['name'] }}" style="margin-bottom: 2rem;">
             <div class="airline-header"
-                style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);">
+                style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
                 <div>
-                    <h2 style="margin: 0; font-size: 1.5rem;">{{ $airline['name'] }}</h2>
-                    <span style="color: var(--text-secondary); font-size: 0.875rem;">{{ $airline['code'] }} •
+                    <h2 style="margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em;">{{ $airline['name'] }}</h2>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">{{ $airline['code'] }} ·
                         <span class="airline-count">{{ $airline['aircraft_count'] }}</span> aircraft</span>
                 </div>
             </div>
 
             @foreach($airline['types'] as $baseType => $typeGroup)
-                <section class="fleet-section" style="margin-left: 1rem;">
-                    <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 1.125rem;">
+                <section class="fleet-section" style="margin-left: 0.5rem;">
+                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 600; color: var(--text-secondary);">
                         {{ $typeGroup['icon'] }} {{ $typeGroup['name'] }}
                         <span class="type-count"
-                            style="color: var(--text-secondary); font-weight: normal; font-size: 0.875rem;">({{ count($typeGroup['aircraft']) }})</span>
+                            style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">({{ count($typeGroup['aircraft']) }})</span>
                     </h3>
                     <div class="fleet-cards">
                         @foreach($typeGroup['aircraft'] as $registration => $aircraft)
@@ -223,8 +224,8 @@
     @if(count($pnSummary) > 0)
         <section class="replacement-section" id="replacement-summary">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>🔄 Life Vest Replacement Summary</h2>
-                <a href="#top" class="btn-jump-pn">⬆ Back to Top</a>
+                <h2>Life Vest Replacement Summary</h2>
+                <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
             </div>
             <div class="replacement-grid">
                 @foreach($pnSummary as $idx => $item)
@@ -304,15 +305,15 @@
         <section class="monthly-plan-section" id="monthly-plan">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <h2>📅 Monthly Replacement Plan</h2>
+                    <h2>Monthly Replacement Plan</h2>
                     <span class="monthly-plan-subtitle">Timeline kebutuhan penggantian life vest per bulan</span>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <a href="{{ route('reports.excel') }}" class="btn-excel-export" title="Download Excel Report">
-                        📥 Export Excel
+                        Export Excel
                     </a>
                     <button type="button" id="toggleAllMonths" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Expand All</button>
-                    <a href="#top" class="btn-jump-pn">⬆ Back to Top</a>
+                    <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
                 </div>
             </div>
 
@@ -422,7 +423,7 @@
 
     <!-- Quick Stats -->
     <section class="stats-section" id="quick-stats">
-        <h2>📊 Quick Stats</h2>
+        <h2>Quick Stats</h2>
         <div class="stats-grid">
             <div class="stat-item">
                 <div class="stat-value">{{ count($fleetByAirline) }}</div>

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="form-container-wide">
-        <h2 class="form-header">🏢 Edit Airline: {{ $airline->name }}</h2>
+        <h2 class="form-header">Edit Airline: {{ $airline->name }}</h2>
 
         <form action="{{ route('airlines.update', $airline->id) }}" method="POST" class="form-card">
             @csrf

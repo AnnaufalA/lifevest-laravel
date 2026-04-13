@@ -191,10 +191,11 @@ class DashboardController extends Controller
 
         // ============================================================
         // Build Monthly Replacement Plan
-        // Groups all seats by expiry month with P/N + aircraft breakdown
+        // Cutoff: same as dashboard warning boundary (< 180 days)
+        // so totals match the Fleet Overview summary exactly
         // ============================================================
         $monthlyPlan = [];
-        $sixMonthsAhead = $today->copy()->addMonths(6)->endOfMonth();
+        $cutoff = $today->copy()->addDays(179); // < 180 days = warning threshold
 
         foreach ($aircrafts as $aircraft) {
             $reg = $aircraft->registration;
@@ -210,8 +211,8 @@ class DashboardController extends Controller
             foreach ($acSeats as $seat) {
                 $expiryDate = \Carbon\Carbon::parse($seat->expiry_date);
 
-                // Only include seats expiring within 6 months ahead (and overdue)
-                if ($expiryDate->gt($sixMonthsAhead)) {
+                // Only include seats expiring within warning window (expired + < 180 days)
+                if ($expiryDate->gt($cutoff)) {
                     continue;
                 }
 
@@ -290,10 +291,10 @@ class DashboardController extends Controller
         });
 
         // Determine urgency level for each month
-        // Match dashboard color scheme: overdue=purple, critical(<3mo)=red, warning(3-6mo)=yellow
+        // Match Seat model exactly: expired=overdue, <90d=critical, <180d=warning
         $currentMonth = $today->format('Y-m');
-        $threeMonthsBoundary = $today->copy()->addMonths(3);
-        $sixMonthsBoundary = $today->copy()->addMonths(6);
+        $criticalBoundary = $today->copy()->addDays(89);  // < 90 days
+        $warningBoundary  = $today->copy()->addDays(179); // < 180 days
 
         foreach ($monthlyPlan as $key => &$month) {
             $month['isCurrentMonth'] = ($key === $currentMonth);
@@ -302,10 +303,10 @@ class DashboardController extends Controller
                 $month['urgency'] = 'overdue'; // 🟣 Expired - purple
             } else {
                 $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $key)->startOfMonth();
-                if ($monthStart->lt($threeMonthsBoundary)) {
-                    $month['urgency'] = 'critical'; // 🔴 < 3 months - red
+                if ($monthStart->lte($criticalBoundary)) {
+                    $month['urgency'] = 'critical'; // 🔴 < 90 days
                 } else {
-                    $month['urgency'] = 'warning'; // 🟡 3-6 months - yellow
+                    $month['urgency'] = 'warning';  // 🟡 90-180 days
                 }
             }
         }

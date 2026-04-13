@@ -7,7 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Life Vest Tracker' }} - GMF AeroAsia</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
     <!-- CSS & JS -->
     @vite(['resources/css/app.css', 'resources/css/style.css', 'resources/css/dashboard.css', 'resources/js/app.js'])
@@ -18,15 +20,21 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <!-- Left: Logo & Back Button -->
-            <div class="navbar-left" style="display: flex; align-items: center; gap: 4px;">
+            <div class="navbar-left">
                 @if(!request()->routeIs('dashboard'))
                     <a href="{{ route('dashboard') }}" class="btn-back" title="Back to Dashboard">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                     </a>
                 @endif
                 
                 <a href="{{ route('dashboard') }}" class="navbar-brand">
-                    <span class="navbar-logo">🛡️</span>
+                    <div class="navbar-logo-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L3 7L12 12L21 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M3 12L12 17L21 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M3 17L12 22L21 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <span class="navbar-title">Life Vest Tracker</span>
                 </a>
                 <span class="navbar-badge">GMF AeroAsia</span>
@@ -38,23 +46,23 @@
             </div>
 
             <!-- Right: Admin & Update -->
-            <div class="navbar-right" style="display: flex; gap: 1rem; align-items: center;">
+            <div class="navbar-right">
                 <!-- Theme Toggle Switch -->
-                <label class="theme-switch" title="Toggle Theme (Green = Light)">
+                <label class="theme-switch" title="Toggle Theme">
                     <input type="checkbox" id="theme-toggle-checkbox">
                     <span class="slider"></span>
                 </label>
 
                 @if(request()->routeIs('dashboard'))
-                    <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary"
-                        style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
-                        ⚙️ Manage Fleet
+                    <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary nav-manage-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                        Manage Fleet
                     </a>
                 @endif
 
                 @if(isset($lastUpdate))
                     <div class="navbar-update">
-                        <span class="update-label">🕐 Last Update:</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span class="update-value">{{ $lastUpdate->format('d M Y, H:i') }}</span>
                     </div>
                 @endif
@@ -84,27 +92,23 @@
     @stack('scripts')
     
     <script>
-        // Theme Toggle Logic (Switch)
         document.addEventListener('DOMContentLoaded', () => {
             const toggleCheckbox = document.getElementById('theme-toggle-checkbox');
             const html = document.documentElement;
 
-            // Check saved theme
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 html.setAttribute('data-theme', 'light');
-                toggleCheckbox.checked = true; // Set switch to ON (Green)
+                toggleCheckbox.checked = true;
             } else {
-                toggleCheckbox.checked = false; // Set switch to OFF (Dark)
+                toggleCheckbox.checked = false;
             }
 
             toggleCheckbox.addEventListener('change', () => {
                 if (toggleCheckbox.checked) {
-                    // Switch to Light Mode
                     html.setAttribute('data-theme', 'light');
                     localStorage.setItem('theme', 'light');
                 } else {
-                    // Switch to Dark Mode
                     html.removeAttribute('data-theme');
                     localStorage.setItem('theme', 'dark');
                 }

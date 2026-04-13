@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 py-8" style="max-width: 1600px;">
         <div class="mb-6 flex justify-between items-center flex-wrap gap-4">
             <div>
-                <h1 class="text-2xl font-bold mb-2">⚡ Batch Input: {{ $aircraft->type }}</h1>
+                <h1 class="text-2xl font-bold mb-2">Batch Input: {{ $aircraft->type }}</h1>
                 <p class="text-gray-400">
                     Registration: <span class="font-bold text-white">{{ $registration }}</span> |
                     Layout: <span class="font-bold text-white">{{ $aircraft->layout }}</span>
@@ -19,7 +19,7 @@
         <div
             style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; margin-bottom: 2rem; border-radius: 0.5rem;">
             <p style="color: #93c5fd; font-size: 0.9rem;">
-                <strong>📋 Cara Pakai:</strong> Copy kolom tanggal dari Excel, paste ke kolom yang sesuai.
+                <strong>Cara Pakai:</strong> Copy kolom tanggal dari Excel, paste ke kolom yang sesuai.
                 <br>
                 Format: <strong>Oct-25</strong>, <strong>24-Jan-25</strong>, atau <strong>01/03/2030</strong>
             </p>

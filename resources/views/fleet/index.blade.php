@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="header-section">
-        <h2 class="form-header" style="text-align: left; margin:0;">⚙️ Fleet Manager</h2>
+        <h2 class="form-header" style="text-align: left; margin:0;">Fleet Manager</h2>
         @if($tab === 'aircraft')
             <a href="{{ route('fleet.create') }}" class="btn btn-primary">
                 + Add New Aircraft
@@ -28,16 +28,16 @@
     @endif
 
     <!-- Tab Navigation -->
-    <div class="tab-nav" style="display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border);">
+    <div class="tab-nav" style="display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
         <a href="{{ route('fleet.index', ['tab' => 'aircraft']) }}"
             class="tab-link {{ $tab === 'aircraft' ? 'active' : '' }}"
-            style="padding: 0.75rem 1.5rem; font-weight: 600; text-decoration: none; color: {{ $tab === 'aircraft' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 3px solid {{ $tab === 'aircraft' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -2px; transition: all 0.2s;">
-            ✈️ Aircraft ({{ $fleet->count() }})
+            style="padding: 0.65rem 1.25rem; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: {{ $tab === 'aircraft' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 2px solid {{ $tab === 'aircraft' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -1px; transition: all 0.2s;">
+            Aircraft ({{ $fleet->count() }})
         </a>
         <a href="{{ route('fleet.index', ['tab' => 'airlines']) }}"
             class="tab-link {{ $tab === 'airlines' ? 'active' : '' }}"
-            style="padding: 0.75rem 1.5rem; font-weight: 600; text-decoration: none; color: {{ $tab === 'airlines' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 3px solid {{ $tab === 'airlines' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -2px; transition: all 0.2s;">
-            🏢 Airlines ({{ $airlines->count() }})
+            style="padding: 0.65rem 1.25rem; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: {{ $tab === 'airlines' ? 'var(--primary)' : 'var(--text-secondary)' }}; border-bottom: 2px solid {{ $tab === 'airlines' ? 'var(--primary)' : 'transparent' }}; margin-bottom: -1px; transition: all 0.2s;">
+            Airlines ({{ $airlines->count() }})
         </a>
     </div>
 
@@ -45,7 +45,7 @@
         <!-- Aircraft Tab Content -->
         <!-- Practical Filters -->
         <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
-            <input type="text" id="fleetSearch" placeholder="🔍 Search registration..." class="form-input"
+            <input type="text" id="fleetSearch" placeholder="Search registration..." class="form-input"
                 style="flex: 1; min-width: 200px; max-width: 300px;">
 
             <select id="filterAirline" class="form-select" style="min-width: 180px; cursor: pointer;">

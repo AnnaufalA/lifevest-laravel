@@ -2,7 +2,7 @@
 <div class="modal" id="dateModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📅 Set Expiry Date</h3>
+            <h3>Set Expiry Date</h3>
             <button class="modal-close" id="modalClose">&times;</button>
         </div>
         <div class="modal-body">

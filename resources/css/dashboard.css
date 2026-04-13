@@ -1,5 +1,41 @@
-/* Dashboard Specific Styles */
+/* ============================================
+   Dashboard - Professional Redesign
+   ============================================ */
 
+/* Entry Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.summary-section,
+.airline-section,
+.replacement-section,
+.monthly-plan-section,
+.stats-section {
+    animation: fadeInUp 0.4s ease-out both;
+}
+
+.airline-section:nth-child(2) { animation-delay: 0.05s; }
+.airline-section:nth-child(3) { animation-delay: 0.1s; }
+.replacement-section { animation-delay: 0.15s; }
+.monthly-plan-section { animation-delay: 0.2s; }
+.stats-section { animation-delay: 0.25s; }
+
+/* ============================================
+   Layout
+   ============================================ */
 .dashboard-container {
     min-height: 100vh;
     display: flex;
@@ -16,7 +52,7 @@
     display: flex;
     gap: var(--spacing-sm);
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .dashboard-content {
@@ -33,124 +69,151 @@
 .dashboard-content h2 {
     margin-bottom: var(--spacing-md);
     color: var(--text-primary);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
-/* Summary Section */
+/* ============================================
+   Summary Section
+   ============================================ */
 .summary-section {
-    background: var(--surface);
+    background: transparent;
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    padding: 0;
+    border: none;
 }
 
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-md);
 }
 
 .summary-card {
-    background: var(--background);
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
+    padding: 1.25rem 1rem;
     text-align: center;
-    border: 2px solid transparent;
+    border: 1px solid var(--border-subtle);
     transition: all var(--transition-normal);
     cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
 }
 
 .summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border);
 }
 
 .summary-card.safe {
-    border-color: var(--success);
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), transparent);
+    border-color: rgba(16, 185, 129, 0.2);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--bg-card) 60%);
 }
+.summary-card.safe::before { background: var(--success); }
+.summary-card.safe:hover { box-shadow: var(--shadow-lg), var(--shadow-glow-success); }
 
 .summary-card.warning {
-    border-color: var(--warning);
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), transparent);
+    border-color: rgba(245, 158, 11, 0.2);
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, var(--bg-card) 60%);
 }
+.summary-card.warning::before { background: var(--warning); }
 
 .summary-card.critical {
-    border-color: var(--danger);
-    background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), transparent);
+    border-color: rgba(239, 68, 68, 0.2);
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, var(--bg-card) 60%);
 }
+.summary-card.critical::before { background: var(--danger); }
+.summary-card.critical:hover { box-shadow: var(--shadow-lg), var(--shadow-glow-danger); }
 
 .summary-card.expired {
-    border-color: var(--expired);
-    background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), transparent);
+    border-color: rgba(139, 92, 246, 0.2);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.06) 0%, var(--bg-card) 60%);
 }
+.summary-card.expired::before { background: var(--expired); }
 
 .summary-card.no-data {
-    border-color: var(--text-secondary);
-    background: linear-gradient(135deg, rgba(158, 158, 158, 0.1), transparent);
+    border-color: var(--border-subtle);
+    background: var(--bg-card);
 }
+.summary-card.no-data::before { background: var(--text-muted); }
 
 .summary-icon {
-    font-size: 2rem;
-    margin-bottom: var(--spacing-sm);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xs);
+    opacity: 0.9;
 }
 
 .summary-value {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--text-primary);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
 }
 
 .summary-label {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-primary);
-    margin-top: var(--spacing-xs);
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .summary-desc {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: var(--spacing-xs);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
 }
 
-/* Fleet Section */
+/* ============================================
+   Fleet Section & Cards
+   ============================================ */
 .fleet-section {
-    background: var(--surface);
+    background: transparent;
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    padding: var(--spacing-md) 0;
+    border: none;
 }
 
 .fleet-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 @media (max-width: 1200px) {
-    .fleet-cards {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    .fleet-cards { grid-template-columns: repeat(3, 1fr); }
 }
-
 @media (max-width: 900px) {
-    .fleet-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    .fleet-cards { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media (max-width: 600px) {
-    .fleet-cards {
-        grid-template-columns: 1fr;
-    }
+    .fleet-cards { grid-template-columns: 1fr; }
 }
 
 .fleet-card {
-    background: var(--background);
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    padding: 1.15rem;
+    border: 1px solid var(--border-subtle);
     transition: all var(--transition-normal);
     cursor: pointer;
     position: relative;
@@ -160,9 +223,9 @@
 }
 
 .fleet-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+    border-color: rgba(59, 130, 246, 0.3);
 }
 
 .fleet-card::before {
@@ -171,68 +234,89 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px;
     background: var(--primary);
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+}
+
+.fleet-card:hover::before {
+    opacity: 1;
 }
 
 .fleet-card.healthy::before {
-    background: var(--success);
+    background: linear-gradient(90deg, var(--success), #34d399);
 }
 
 .fleet-card.warning::before {
-    background: var(--warning);
+    background: linear-gradient(90deg, var(--warning), #fbbf24);
 }
 
 .fleet-card.critical::before {
-    background: var(--danger);
+    background: linear-gradient(90deg, var(--danger), #f87171);
 }
 
 .fleet-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 0.85rem;
 }
 
 .fleet-card-type {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .fleet-card-reg {
-    font-size: 1rem;
-    color: var(--primary);
-    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-top: 0.2rem;
 }
 
 .fleet-card-icon {
-    font-size: 2rem;
+    font-size: 1.6rem;
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+
+.fleet-card:hover .fleet-card-icon {
+    opacity: 0.8;
 }
 
 .fleet-card-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
 }
 
 .fleet-stat {
     text-align: center;
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
+    padding: 0.4rem 0.25rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
 }
 
 .fleet-stat-value {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
 }
 
 .fleet-stat-label {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    margin-top: 2px;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .fleet-stat.safe .fleet-stat-value { color: var(--success); }
@@ -241,13 +325,13 @@
 .fleet-stat.expired .fleet-stat-value { color: var(--expired); }
 
 .fleet-card-progress {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 0.85rem;
 }
 
 .progress-bar {
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
     overflow: hidden;
     display: flex;
 }
@@ -261,7 +345,7 @@
 .progress-segment.warning { background: var(--warning); }
 .progress-segment.critical { background: var(--danger); }
 .progress-segment.expired { background: var(--expired); }
-.progress-segment.no-data { background: var(--text-secondary); }
+.progress-segment.no-data { background: rgba(148, 163, 184, 0.2); }
 
 .fleet-card-footer {
     display: flex;
@@ -270,7 +354,7 @@
 }
 
 .health-score {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 600;
 }
 
@@ -282,17 +366,24 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
-    color: var(--primary);
+    color: var(--text-muted);
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    transition: color var(--transition-fast);
 }
 
-/* Alerts Section */
+.fleet-card:hover .fleet-card-action {
+    color: var(--primary-light);
+}
+
+/* ============================================
+   Alerts Section
+   ============================================ */
 .alerts-section {
-    background: var(--surface);
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
 }
 
 .alerts-container {
@@ -304,7 +395,7 @@
     text-align: center;
     padding: var(--spacing-xl);
     color: var(--success);
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .alert-item {
@@ -312,16 +403,16 @@
     align-items: center;
     gap: var(--spacing-md);
     padding: var(--spacing-md);
-    background: var(--background);
+    background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-sm);
-    border-left: 4px solid var(--danger);
+    border-left: 3px solid var(--danger);
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
 .alert-item:hover {
-    background: var(--surface-hover);
+    background: rgba(255, 255, 255, 0.05);
     transform: translateX(4px);
 }
 
@@ -329,21 +420,17 @@
     border-left-color: var(--warning);
 }
 
-.alert-icon {
-    font-size: 1.5rem;
-}
-
-.alert-content {
-    flex: 1;
-}
+.alert-icon { font-size: 1.25rem; }
+.alert-content { flex: 1; }
 
 .alert-title {
     font-weight: 600;
+    font-size: 0.9rem;
     color: var(--text-primary);
 }
 
 .alert-desc {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     margin-top: 2px;
 }
@@ -351,60 +438,79 @@
 .alert-action {
     color: var(--primary);
     font-weight: 500;
+    font-size: 0.85rem;
 }
 
-/* Stats Section */
+/* ============================================
+   Stats Section (Quick Stats)
+   ============================================ */
 .stats-section {
-    background: var(--surface);
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: var(--spacing-md);
 }
 
 .stat-item {
     text-align: center;
-    padding: var(--spacing-lg);
-    background: var(--background);
+    padding: 1.25rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
     border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    transition: all var(--transition-fast);
+}
+
+.stat-item:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--primary);
+    font-variant-numeric: tabular-nums;
 }
 
 .stat-label {
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     color: var(--text-secondary);
     margin-top: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
-/* Footer */
+/* ============================================
+   Dashboard Footer
+   ============================================ */
 .dashboard-footer {
     text-align: center;
     padding: var(--spacing-lg);
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border-subtle);
     margin-top: auto;
 }
 
 /* ============================================
-   Monthly Replacement Plan Section
+   Monthly Replacement Plan
    ============================================ */
-
 .monthly-plan-section {
-    background: var(--surface);
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
 }
 
 /* Excel Export Button */
@@ -413,65 +519,67 @@
     align-items: center;
     gap: 0.35rem;
     padding: 0.4rem 1rem;
-    background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    background: #059669;
     color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    border: 1px solid #047857;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(27, 94, 32, 0.3);
+    transition: all var(--transition-fast);
+    box-shadow: 0 1px 3px rgba(5, 150, 105, 0.2);
 }
 
 .btn-excel-export:hover {
-    background: linear-gradient(135deg, #2E7D32, #43A047);
+    background: #047857;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(27, 94, 32, 0.5);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
     color: #fff;
 }
 
 .monthly-plan-subtitle {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
     font-weight: 400;
 }
 
 /* Grand Summary Bar */
 .monthly-grand-summary {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     margin: 1rem 0 1.5rem;
     flex-wrap: wrap;
 }
 
 .monthly-grand-item {
-    background: var(--background);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: var(--radius-md);
     padding: 0.75rem 1.25rem;
     text-align: center;
     flex: 1;
     min-width: 120px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
     transition: all var(--transition-fast);
 }
 
 .monthly-grand-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border);
 }
 
 .monthly-grand-item.overdue {
-    border-color: var(--expired);
-    background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), transparent);
+    border-color: rgba(139, 92, 246, 0.3);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.06) 0%, transparent 80%);
 }
 
 .monthly-grand-value {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 .monthly-grand-item.overdue .monthly-grand-value {
@@ -479,47 +587,51 @@
 }
 
 .monthly-grand-label {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    font-size: 0.7rem;
+    color: var(--text-muted);
     margin-top: 0.25rem;
     display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 /* Monthly Timeline */
 .monthly-timeline {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
 }
 
 /* Monthly Card */
 .monthly-card {
-    background: var(--background);
+    background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-md);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
     overflow: hidden;
     transition: all var(--transition-normal);
 }
 
 .monthly-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border);
 }
 
 .monthly-card.expanded {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border);
 }
 
-/* Urgency border-left coloring (matches dashboard: overdue=purple, critical=red, warning=yellow) */
+/* Urgency border-left */
 .monthly-card.overdue {
-    border-left: 4px solid var(--expired);
+    border-left: 3px solid var(--expired);
 }
 
 .monthly-card.critical {
-    border-left: 4px solid var(--danger);
+    border-left: 3px solid var(--danger);
 }
 
 .monthly-card.warning {
-    border-left: 4px solid var(--warning);
+    border-left: 3px solid var(--warning);
 }
 
 /* Card Header */
@@ -527,14 +639,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem;
+    padding: 0.85rem 1.15rem;
     cursor: pointer;
     transition: background var(--transition-fast);
     user-select: none;
 }
 
 .monthly-card-header:hover {
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .monthly-card-left {
@@ -545,37 +657,37 @@
 
 /* Urgency Dot */
 .monthly-urgency-dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
 }
 
 .monthly-urgency-dot.overdue {
     background: var(--expired);
-    box-shadow: 0 0 8px rgba(156, 39, 176, 0.5);
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
     animation: pulse-dot 2s infinite;
 }
 
 .monthly-urgency-dot.critical {
     background: var(--danger);
-    box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
     animation: pulse-dot 2s infinite;
 }
 
 .monthly-urgency-dot.warning {
     background: var(--warning);
-    box-shadow: 0 0 6px rgba(255, 193, 7, 0.4);
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
 }
 
 @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.2); }
+    50% { opacity: 0.6; transform: scale(1.3); }
 }
 
 /* Card Title */
 .monthly-card-title {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-primary);
     display: flex;
@@ -584,39 +696,43 @@
 }
 
 .monthly-card-meta {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-size: 0.75rem;
+    color: var(--text-muted);
     margin-top: 0.15rem;
 }
 
 /* Monthly Badge */
 .monthly-badge {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
-    padding: 0.15rem 0.5rem;
+    padding: 0.15rem 0.45rem;
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .monthly-badge.overdue {
-    background: var(--expired);
-    color: #fff;
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--expired);
+    border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .monthly-badge.critical {
-    background: var(--danger);
-    color: #fff;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .monthly-badge.warning {
-    background: var(--warning);
-    color: #111;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .monthly-badge.current-month {
-    background: rgba(33, 150, 243, 0.8);
-    color: #fff;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-light);
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 /* Card Right (total) */
@@ -627,9 +743,10 @@
 }
 
 .monthly-card-total {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
 .monthly-card.overdue .monthly-card-total { color: var(--expired); }
@@ -637,53 +754,51 @@
 .monthly-card.warning .monthly-card-total { color: var(--warning); }
 
 .monthly-card-unit {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-size: 0.75rem;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
 .monthly-card-arrow {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    font-size: 0.7rem;
+    color: var(--text-muted);
     transition: transform 0.2s ease;
     margin-left: 0.5rem;
 }
 
-/* Export Excel Button */
+/* Export Excel Button (per month) */
 .btn-export-month {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.3rem 0.65rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #4caf50;
-    background: rgba(76, 175, 80, 0.1);
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-family: inherit;
     white-space: nowrap;
 }
 
 .btn-export-month:hover {
-    background: rgba(76, 175, 80, 0.2);
-    border-color: rgba(76, 175, 80, 0.6);
-    color: #66bb6a;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: var(--success);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
 }
 
 .btn-export-month:active {
     transform: translateY(0);
-    box-shadow: none;
 }
 
 /* Card Body (collapsible detail) */
 .monthly-card-body {
     padding: 0rem 1.25rem 1.25rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-subtle);
     animation: slideDown 0.2s ease;
 }
 
@@ -694,8 +809,8 @@
 
 /* P/N Breakdown Row */
 .monthly-pn-row {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border);
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .monthly-pn-row:last-of-type {
@@ -706,7 +821,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
 .monthly-pn-info {
@@ -718,61 +833,64 @@
 .monthly-pn-name {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 0.95rem;
+    font-size: 0.88rem;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .monthly-pn-category {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
-    padding: 0.15rem 0.4rem;
+    padding: 0.12rem 0.4rem;
     border-radius: 3px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
 
 .monthly-pn-category.adult {
-    background: rgba(33, 150, 243, 0.15);
-    color: #42a5f5;
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
 }
 
 .monthly-pn-category.crew {
-    background: rgba(255, 152, 0, 0.15);
-    color: #ffa726;
+    background: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
 }
 
 .monthly-pn-category.infant {
-    background: rgba(233, 30, 99, 0.15);
-    color: #ec407a;
+    background: rgba(236, 72, 153, 0.12);
+    color: #f472b6;
 }
 
 .monthly-pn-category.unknown {
-    background: rgba(158, 158, 158, 0.15);
-    color: #9e9e9e;
+    background: rgba(148, 163, 184, 0.12);
+    color: #94a3b8;
 }
 
 .monthly-pn-count {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
-/* Aircraft chips in P/N breakdown */
+/* Aircraft chips */
 .monthly-aircraft-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .monthly-aircraft-chip {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    font-size: 0.7rem;
+    padding: 0.18rem 0.45rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
     border-radius: 4px;
     color: var(--text-secondary);
     font-weight: 500;
     text-decoration: none;
     transition: all var(--transition-fast);
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .monthly-aircraft-chip:hover {
@@ -782,68 +900,73 @@
     transform: translateY(-1px);
 }
 
-/* Aircraft Summary at bottom of card */
+/* Aircraft Summary */
 .monthly-aircraft-summary {
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px dashed var(--border);
+    margin-top: 0.85rem;
+    padding-top: 0.65rem;
+    border-top: 1px dashed var(--border-subtle);
 }
 
 .monthly-aircraft-summary-title {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .monthly-aircraft-summary-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .monthly-ac-summary-chip {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.6rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    gap: 0.35rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
     border-radius: 6px;
     text-decoration: none;
     transition: all var(--transition-fast);
 }
 
 .monthly-ac-summary-chip:hover {
-    border-color: var(--primary);
-    background: rgba(33, 150, 243, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(59, 130, 246, 0.06);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-sm);
 }
 
 .monthly-ac-reg {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--primary);
 }
 
 .monthly-ac-type {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
+    font-size: 0.65rem;
+    color: var(--text-muted);
 }
 
 .monthly-ac-count {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-primary);
-    background: var(--background);
-    padding: 0.1rem 0.35rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.08rem 0.3rem;
     border-radius: 4px;
-    min-width: 20px;
+    min-width: 18px;
     text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Responsive */
+/* ============================================
+   Responsive
+   ============================================ */
 @media (max-width: 768px) {
     .dashboard-content {
         padding: var(--spacing-md);
@@ -858,7 +981,7 @@
     }
 
     .summary-value {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .fleet-card-stats {
@@ -870,11 +993,11 @@
     }
 
     .monthly-card-header {
-        padding: 0.75rem 1rem;
+        padding: 0.7rem 0.85rem;
     }
 
     .monthly-card-total {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .monthly-plan-subtitle {
