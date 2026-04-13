@@ -1,5 +1,4 @@
-[![PHP Composer](https://github.com/ragepanz/lifevest-laravel/actions/workflows/php.yml/badge.svg?event=project)](https://github.com/ragepanz/lifevest-laravel/actions/workflows/php.yml)
-
+[![PHP](https://github.com/ragepanz/lifevest-laravel/actions/workflows/php.yml/badge.svg)](https://github.com/ragepanz/lifevest-laravel/actions/workflows/php.yml)
 # 🛡️ Life Vest Tracker - GMF AeroAsia
 
 Aplikasi pelacakan tanggal kedaluwarsa life vest untuk armada pesawat GMF AeroAsia.
