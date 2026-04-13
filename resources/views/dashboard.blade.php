@@ -3,8 +3,8 @@
 @section('content')
     <!-- Filter Toggle Button -->
     <div id="top" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-        <button type="button" id="toggleFilters" class="btn btn-secondary"
-            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+        <button type="button" id="toggleFilters" class="btn-jump-pn"
+            style="display: flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             <span>Filter</span>
             <span id="filterArrow" style="transition: transform 0.2s; font-size: 0.65rem;">▼</span>
@@ -50,7 +50,7 @@
             <option value="safe">🟢 Safe</option>
         </select>
 
-        <button type="button" id="clearFilters" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Clear</button>
+        <button type="button" id="clearFilters" class="btn-jump-pn" style="cursor: pointer; border: none;">Clear</button>
     </div>
 
     <!-- Summary Section -->
@@ -69,8 +69,8 @@
 
             <!-- Fleet Multi-Select Dropdown -->
             <div class="fleet-dropdown" style="position: relative;">
-                <button type="button" id="fleetDropdownBtn" class="btn btn-secondary"
-                    style="padding: 0.45rem 0.9rem; display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
+                <button type="button" id="fleetDropdownBtn" class="btn-jump-pn"
+                    style="display: flex; align-items: center; gap: 6px; cursor: pointer; border: none;">
                     <span>Filter Fleet</span>
                     <span style="font-size: 0.6em;">▼</span>
                 </button>
@@ -309,10 +309,10 @@
                     <span class="monthly-plan-subtitle">Timeline kebutuhan penggantian life vest per bulan</span>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <a href="{{ route('reports.excel') }}" class="btn-excel-export" title="Download Excel Report">
+                    <a href="{{ route('reports.excel') }}" class="btn-jump-success" title="Download Excel Report">
                         Export Excel
                     </a>
-                    <button type="button" id="toggleAllMonths" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Expand All</button>
+                    <button type="button" id="toggleAllMonths" class="btn-jump-pn" style="cursor: pointer;">Expand All</button>
                     <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
                 </div>
             </div>
@@ -367,7 +367,7 @@
                             <div class="monthly-card-right">
                                 <span class="monthly-card-total">{{ $month['total'] }}</span>
                                 <span class="monthly-card-unit">vests</span>
-                                <button type="button" class="btn-export-month" onclick="event.stopPropagation(); exportMonthlyExcel('{{ $monthKey }}')" title="Export to Excel">
+                                <button type="button" class="btn-jump-success" onclick="event.stopPropagation(); exportMonthlyExcel('{{ $monthKey }}')" title="Export to Excel">
                                     Export to Excel
                                 </button>
                                 <span class="monthly-card-arrow" id="arrow-{{ $monthKey }}">▼</span>
@@ -649,8 +649,49 @@
                 }
             }
 
+            function updateTypeDropdown() {
+                const selectedAirline = filterAirline?.value || '';
+                const currentSelectedType = filterType?.value || '';
+                
+                // Get all valid types for the selected airline
+                const validTypes = new Set();
+                cards.forEach(card => {
+                    const cardAirline = card.dataset.airline || '';
+                    const cardType = card.dataset.type || '';
+                    if (!selectedAirline || cardAirline === selectedAirline) {
+                        if (cardType) validTypes.add(cardType);
+                    }
+                });
+                
+                // Update dropdown options
+                if (filterType) {
+                    // Keep the first option "All Types"
+                    while (filterType.options.length > 1) {
+                        filterType.remove(1);
+                    }
+                    
+                    // Populate with valid types, sorted alphabetically
+                    Array.from(validTypes).sort().forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        filterType.appendChild(option);
+                    });
+                    
+                    // Maintain previous selection if still valid, otherwise reset
+                    if (validTypes.has(currentSelectedType)) {
+                        filterType.value = currentSelectedType;
+                    } else {
+                        filterType.value = '';
+                    }
+                }
+            }
+
             // Event listeners
-            filterAirline?.addEventListener('change', applyFilters);
+            filterAirline?.addEventListener('change', function() {
+                updateTypeDropdown();
+                applyFilters();
+            });
             filterType?.addEventListener('change', applyFilters);
             filterStatus?.addEventListener('change', applyFilters);
             filterHealth?.addEventListener('change', applyFilters);
@@ -662,6 +703,7 @@
                 if (filterStatus) filterStatus.value = '';
                 if (filterHealth) filterHealth.value = '';
                 if (searchInput) searchInput.value = '';
+                updateTypeDropdown(); // Ensure dropdown options reset
                 applyFilters();
             });
 

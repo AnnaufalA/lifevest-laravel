@@ -221,9 +221,45 @@
                 });
             }
 
+            function updateTypeDropdown() {
+                const selectedAirline = filterAirline?.value || '';
+                const currentSelectedType = filterType?.value || '';
+                
+                const validTypes = new Set();
+                rows.forEach(row => {
+                    const airline = row.cells[2]?.textContent.trim() || '';
+                    const type = row.cells[3]?.textContent.trim() || '';
+                    if (!selectedAirline || airline.includes(selectedAirline)) {
+                        if (type) validTypes.add(type);
+                    }
+                });
+                
+                if (filterType) {
+                    while (filterType.options.length > 1) {
+                        filterType.remove(1);
+                    }
+                    
+                    Array.from(validTypes).sort().forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        filterType.appendChild(option);
+                    });
+                    
+                    if (validTypes.has(currentSelectedType)) {
+                        filterType.value = currentSelectedType;
+                    } else {
+                        filterType.value = '';
+                    }
+                }
+            }
+
             // Event listeners
             searchInput?.addEventListener('input', applyFilters);
-            filterAirline?.addEventListener('change', applyFilters);
+            filterAirline?.addEventListener('change', function() {
+                updateTypeDropdown();
+                applyFilters();
+            });
             filterStatus?.addEventListener('change', applyFilters);
             filterType?.addEventListener('change', applyFilters);
 
@@ -232,6 +268,7 @@
                 if (filterAirline) filterAirline.value = '';
                 if (filterStatus) filterStatus.value = '';
                 if (filterType) filterType.value = '';
+                updateTypeDropdown();
                 applyFilters();
             });
         });

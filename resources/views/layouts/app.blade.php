@@ -54,7 +54,7 @@
                 </label>
 
                 @if(request()->routeIs('dashboard'))
-                    <a href="{{ route('fleet.index') }}" class="btn btn-sm btn-secondary nav-manage-btn">
+                    <a href="{{ route('fleet.index') }}" class="btn-jump-pn nav-manage-btn" style="display: flex; align-items: center; cursor: pointer; border: none;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
                         Manage Fleet
                     </a>
