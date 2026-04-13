@@ -5,7 +5,7 @@ Aplikasi pelacakan tanggal kedaluwarsa life vest untuk armada pesawat GMF AeroAs
 
 ---
 
-## 📋 Daftar Isi
+## Daftar Isi
 
 - [Cara Menjalankan](#-cara-menjalankan)
 - [Panduan Penggunaan](#-panduan-penggunaan)
@@ -15,11 +15,11 @@ Aplikasi pelacakan tanggal kedaluwarsa life vest untuk armada pesawat GMF AeroAs
 - [Airlines Management](#-airlines-management)
 - [Menambahkan Pesawat Baru](#-menambahkan-pesawat-baru)
 - [Struktur File](#-struktur-file-penting)
-- [📚 Dokumentasi Lengkap](#-dokumentasi-lengkap)
+- [Dokumentasi Lengkap](#-dokumentasi-lengkap)
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### Prasyarat
 - PHP 8.1+
@@ -58,28 +58,29 @@ Buka http://localhost:8000
 
 ---
 
-## 📖 Panduan Penggunaan
+## Panduan Penggunaan
 
 ### Dashboard
 - Menampilkan **Fleet Overview** (ringkasan status semua pesawat)
-- **Fleet Filter Dropdown**: Klik tombol "✈️ Filter Fleet" untuk memfilter per tipe pesawat:
+- **Fleet Filter Dropdown**: Klik tombol "Filter Fleet" untuk memfilter per tipe pesawat:
   - Multi-select checkbox (B737, B777, A330, A320, ATR72)
   - Pilih lebih dari satu tipe untuk melihat total gabungan
   - Checkbox **"All Fleets"** untuk select/deselect semua sekaligus
   - Default: semua tipe tercentang
 - Menampilkan **Fleet Status** per Airline, lalu per Tipe (Garuda Indonesia → B737, A330, dll)
-- **Filter**: Klik tombol "🔍 Filter" untuk menampilkan panel filter:
+- **Filter**: Klik tombol "Filter" untuk menampilkan panel filter cerdas (Smart Filter):
   - Filter berdasarkan **Airline**
-  - Filter berdasarkan **Type** pesawat
+  - Filter berdasarkan **Type** pesawat *(opsi Tipe otomatis menyesuaikan dengan Airline yang dipilih)*
   - Filter berdasarkan **Status** (Active/Prolong)
   - Filter berdasarkan **Health** (Safe/Warning/Critical)
+- **Monthly Replacement Plan**: Disajikan dengan antarmuka bisa-buka-tutup (Accordion) yang rapi secara otomatis. Klik "Expand All" untuk melihat detail lengkap kapanpun dibutuhkan.
 - **Fleet Manager**: Kelola data pesawat & airline via tombol "Manage Fleet" di navbar
 - **Dark/Light Mode**: Toggle tema via tombol 🌙/☀️ di navbar
 - Klik kartu pesawat untuk masuk ke halaman seat map
 
 ---
 
-## 🖱️ SELECT KURSI
+## SELECT KURSI
 
 | Aksi | Fungsi |
 |------|--------|
@@ -91,7 +92,7 @@ Buka http://localhost:8000
 
 ---
 
-## ❌ UNSELECT / HAPUS SELECTION
+## UNSELECT / HAPUS SELECTION
 
 | Aksi | Fungsi |
 |------|--------|
@@ -102,18 +103,18 @@ Buka http://localhost:8000
 
 ---
 
-## 📅 SET TANGGAL EXPIRY
+## SET TANGGAL EXPIRY
 
 1. Pilih kursi yang ingin di-update (bisa multi-select)
 2. Klik tombol **"Set Date"** di toolbar
 3. Pilih tanggal expiry life vest dari calendar
 4. Klik **"Apply"** untuk menyimpan
 
-> 💡 **Catatan:** Bisa update banyak kursi sekaligus!
+> **Catatan:** Bisa update banyak kursi sekaligus!
 
 ---
 
-## ⌨️ KEYBOARD SHORTCUTS
+## KEYBOARD SHORTCUTS
 
 | Shortcut | Fungsi |
 |----------|--------|
@@ -123,7 +124,7 @@ Buka http://localhost:8000
 
 ---
 
-## 🎨 ARTI WARNA STATUS
+## ARTI WARNA STATUS
 
 | Warna | Status | Keterangan |
 |-------|--------|------------|
@@ -135,12 +136,15 @@ Buka http://localhost:8000
 
 ---
 
-## 📄 PDF Export & Blank Form
+## PDF Export & Blank Form
 
 ### Export PDF
 Export seat map sebagai PDF report dengan warna status dan tanggal expiry.
-- Klik tombol **"Export PDF"** di toolbar halaman seat map
+- Klik tombol **"Export PDF" (warna merah)** di toolbar halaman seat map
 - PDF akan terbuka di tab baru
+
+### Export Excel
+- Daftar perencanaan P/N tiap bulan dapat diekspor ke Excel dengan menekan tombol **"Export Excel" (warna hijau)** di halaman Dasbor.
 
 ### Blank Form
 Export formulir kosong untuk teknisi (kotak lebih besar untuk tulisan tangan).
@@ -158,18 +162,18 @@ Export formulir kosong untuk teknisi (kotak lebih besar untuk tulisan tangan).
 
 ### Batch Input
 Input data expiry secara massal untuk kursi economy.
-- Klik tombol **"⚡ Batch Input"** di toolbar halaman seat map
+- Klik tombol **"Batch Input"** di toolbar halaman seat map
 - Halaman khusus untuk input cepat banyak kursi sekaligus
 
 ---
 
-## ⚙️ Fleet Manager
+## Fleet Manager
 
 Halaman **Fleet Manager** (`/fleet`) adalah pusat kontrol data pesawat dan airline. Tersedia dalam format **Tab**:
 
 ### Tab Aircraft
 - **Monitoring Armada**: Melihat daftar seluruh pesawat
-- **Filter**: Filter berdasarkan Airline, Type, Status
+- **Smart Filter**: Filter maskapai (*Airline*) dan tipe (*Type*). Serupa dengan dasbor, opsi *Type* otomatis berjenjang menyesuaikan daftar *Airline* yang dipilih.
 - **Tambah Pesawat**: Input dengan pilihan airline
 - **Edit Pesawat**: Mengubah status (Active/Prolong) saja (Airline, Type & Registration terkunci)
 - **Hapus Pesawat**: Hapus data permanen
@@ -182,7 +186,7 @@ Halaman **Fleet Manager** (`/fleet`) adalah pusat kontrol data pesawat dan airli
 
 ---
 
-## 🏢 Airlines Management
+## Airlines Management
 
 Sistem mendukung **multi-airline** dengan fitur:
 
@@ -198,7 +202,7 @@ Sistem mendukung **multi-airline** dengan fitur:
 
 ---
 
-## ✈️ Menambahkan Pesawat Baru
+## Menambahkan Pesawat Baru
 
 ### 1. Via Fleet Manager (Cara Utama)
 Untuk menambahkan pesawat dengan layout yang sudah ada:
@@ -234,7 +238,7 @@ Jika Anda memiliki pesawat dengan konfigurasi kursi yang **belum pernah ada** (t
 
 ---
 
-## 📁 Struktur File Penting
+## Struktur File Penting
 
 ```
 lifevest-laravel/
@@ -290,7 +294,7 @@ lifevest-laravel/
 
 ---
 
-## 🛠️ Teknologi
+## Teknologi
 
 - **Backend:** Laravel 12
 - **Frontend:** Vanilla CSS & JavaScript (Glassmorphism UI)
@@ -300,7 +304,7 @@ lifevest-laravel/
 
 ---
 
-## 📊 Fleet Overview
+## Fleet Overview
 
 | Tipe | Jumlah Registrasi | Layout |
 |------|-------------------|--------|
@@ -316,7 +320,7 @@ lifevest-laravel/
 
 ---
 
-## 🏢 Airlines
+## Airlines
 
 | Airline | Kode IATA |
 |---------|-----------|
@@ -325,14 +329,14 @@ lifevest-laravel/
 
 ---
 
-## 📚 Dokumentasi Lengkap
+## Dokumentasi Lengkap
 
 Dokumentasi lengkap tersedia di folder **[`dokumentasi/`](dokumentasi/)**:
 
 | Dokumen | Markdown | PDF |
 |---------|----------|-----|
-| **User Manual** — Panduan penggunaan untuk end-user / teknisi | [📄 USER_MANUAL.md](dokumentasi/USER_MANUAL.md) | [📕 PDF](dokumentasi/Buku%20Panduan%20Pengguna%20(User%20Manual).pdf) |
-| **Developer Manual** — Panduan teknis untuk developer | [📄 DEVELOPER_MANUAL.md](dokumentasi/DEVELOPER_MANUAL.md) | [📕 PDF](dokumentasi/Developer%20Manual.pdf) |
+| **User Manual** — Panduan penggunaan untuk end-user / teknisi | [USER_MANUAL.md](dokumentasi/USER_MANUAL.md) | [PDF](dokumentasi/Buku%20Panduan%20Pengguna%20(User%20Manual).pdf) |
+| **Developer Manual** — Panduan teknis untuk developer | [DEVELOPER_MANUAL.md](dokumentasi/DEVELOPER_MANUAL.md) | [PDF](dokumentasi/Developer%20Manual.pdf) |
 
 > 💡 File `.md` bisa dibaca langsung di GitHub. File `.pdf` bisa di-download untuk print.
 
