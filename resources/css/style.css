@@ -184,12 +184,6 @@
     box-shadow: var(--shadow-sm);
 }
 
-[data-theme="light"] .stats-section, 
-[data-theme="light"] .summary-section {
-    /* Optional: if these sections need borders, add them here. 
-       Currently they are containers, often transparent. */
-}
-
 /* ========================================
    THEME TOGGLE SWITCH
    ======================================== */
