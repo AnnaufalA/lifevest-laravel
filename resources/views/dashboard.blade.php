@@ -1,6 +1,69 @@
 @extends('layouts.app')
 
+@php
+    $currentView = request()->query('view', 'fleet-overview');
+    $isFullScreenView = $currentView !== 'all';
+@endphp
+
 @section('content')
+    <!-- Full-Screen View Styles -->
+    @if($isFullScreenView)
+        <style>
+            .dashboard-container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            
+            .dashboard-content {
+                flex: 1;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .summary-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
+            .airline-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
+            .replacement-section { display: {{ $currentView === 'life-vest-summary' ? 'block' : 'none' }}; }
+            .monthly-plan-section { display: {{ $currentView === 'monthly-plan' ? 'block' : 'none' }}; }
+            .stats-section { display: {{ $currentView === 'monthly-plan' ? 'block' : 'none' }}; }
+            
+            /* Filter only shown in full view */
+            #top { display: none !important; }
+            #filterPanel { display: none !important; }
+            
+            /* Back button for full-screen view */
+            .view-back-btn {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                margin-bottom: 1rem;
+                background: var(--bg-card);
+                border: 1px solid var(--border-subtle);
+                border-radius: 6px;
+                color: var(--primary);
+                text-decoration: none;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+            
+            .view-back-btn:hover {
+                background: var(--bg-hover);
+                border-color: var(--primary);
+            }
+        </style>
+    @endif
+
+    <!-- Back Button for Full-Screen Views -->
+    @if($isFullScreenView)
+        <a href="{{ route('dashboard') }}" class="view-back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Back to Dashboard</span>
+        </a>
+    @endif
+
     <!-- Filter Toggle Button -->
     <div id="top" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
         <button type="button" id="toggleFilters" class="btn-jump-pn"

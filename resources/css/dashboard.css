@@ -1025,3 +1025,344 @@
         display: none;
     }
 }
+
+/* ============================================
+   LIGHT THEME - DASHBOARD OVERRIDES
+   ======================================== */
+
+/* Summary Cards Light */
+[data-theme="light"] .summary-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .summary-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .summary-value {
+    color: #0f172a;
+}
+
+[data-theme="light"] .summary-label {
+    color: #475569;
+}
+
+[data-theme="light"] .summary-desc {
+    color: #94a3b8;
+}
+
+/* Fleet Cards Light */
+[data-theme="light"] .fleet-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .fleet-card:hover {
+    border-color: rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+}
+
+[data-theme="light"] .fleet-card-type {
+    color: #64748b;
+}
+
+[data-theme="light"] .fleet-card-reg {
+    color: #0f172a;
+}
+
+[data-theme="light"] .fleet-stat {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .fleet-stat-value {
+    color: #0f172a;
+}
+
+[data-theme="light"] .fleet-stat-label {
+    color: #64748b;
+}
+
+[data-theme="light"] .progress-bar {
+    background: #e2e8f0;
+}
+
+[data-theme="light"] .fleet-card-action {
+    color: #64748b;
+}
+
+[data-theme="light"] .fleet-card:hover .fleet-card-action {
+    color: #2563eb;
+}
+
+/* Alerts Section Light */
+[data-theme="light"] .alerts-section {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .alert-item {
+    background: #f8fafc;
+    border-left-color: #ef4444;
+}
+
+[data-theme="light"] .alert-item:hover {
+    background: #f1f5f9;
+}
+
+[data-theme="light"] .alert-item.warning {
+    border-left-color: #f59e0b;
+}
+
+[data-theme="light"] .alert-title {
+    color: #0f172a;
+}
+
+[data-theme="light"] .alert-desc {
+    color: #64748b;
+}
+
+[data-theme="light"] .no-alerts {
+    color: #10b981;
+}
+
+/* Stats Section Light */
+[data-theme="light"] .stats-section {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .stat-item {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .stat-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .stat-value {
+    color: #2563eb;
+}
+
+[data-theme="light"] .stat-label {
+    color: #64748b;
+}
+
+/* Monthly Plan Section Light */
+[data-theme="light"] .monthly-plan-section {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .btn-excel-export {
+    background: #059669;
+    border-color: #047857;
+}
+
+[data-theme="light"] .btn-excel-export:hover {
+    background: #047857;
+}
+
+[data-theme="light"] .monthly-plan-subtitle {
+    color: #64748b;
+}
+
+/* Grand Summary Light */
+[data-theme="light"] .monthly-grand-item {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-grand-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .monthly-grand-item.overdue {
+    background: rgba(139, 92, 246, 0.04);
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+[data-theme="light"] .monthly-grand-value {
+    color: #0f172a;
+}
+
+[data-theme="light"] .monthly-grand-label {
+    color: #64748b;
+}
+
+/* Monthly Card Light */
+[data-theme="light"] .monthly-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .monthly-card.expanded {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .monthly-card-header:hover {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .monthly-card-title {
+    color: #0f172a;
+}
+
+[data-theme="light"] .monthly-card-meta {
+    color: #64748b;
+}
+
+[data-theme="light"] .monthly-card-total {
+    color: #0f172a;
+}
+
+[data-theme="light"] .monthly-card-unit {
+    color: #64748b;
+}
+
+[data-theme="light"] .monthly-card-arrow {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .monthly-card-body {
+    border-top-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-badge.overdue {
+    background: rgba(139, 92, 246, 0.08);
+    color: #7c3aed;
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+[data-theme="light"] .monthly-badge.critical {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .monthly-badge.warning {
+    background: rgba(245, 158, 11, 0.08);
+    color: #d97706;
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+[data-theme="light"] .monthly-badge.current-month {
+    background: rgba(59, 130, 246, 0.08);
+    color: #2563eb;
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* P/N Breakdown Light */
+[data-theme="light"] .monthly-pn-row {
+    border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-pn-header:hover {
+    background: #f8fafc;
+}
+
+[data-theme="light"] .monthly-pn-toggle {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .monthly-pn-name {
+    color: #0f172a;
+}
+
+[data-theme="light"] .monthly-pn-category.adult {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+[data-theme="light"] .monthly-pn-category.crew {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+[data-theme="light"] .monthly-pn-category.infant {
+    background: rgba(236, 72, 153, 0.1);
+    color: #db2777;
+}
+
+[data-theme="light"] .monthly-pn-category.unknown {
+    background: rgba(100, 116, 139, 0.1);
+    color: #475569;
+}
+
+[data-theme="light"] .monthly-pn-count {
+    color: #0f172a;
+}
+
+/* Aircraft Chips Light */
+[data-theme="light"] .monthly-aircraft-list {
+    background: #f8fafc;
+    border-left-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-aircraft-chip {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+[data-theme="light"] .monthly-aircraft-chip:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+}
+
+[data-theme="light"] .monthly-aircraft-summary {
+    border-top-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-aircraft-summary-title {
+    color: #64748b;
+}
+
+[data-theme="light"] .monthly-ac-summary-chip {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .monthly-ac-summary-chip:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+    background: rgba(37, 99, 235, 0.04);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .monthly-ac-reg {
+    color: #2563eb;
+}
+
+[data-theme="light"] .monthly-ac-type {
+    color: #64748b;
+}
+
+[data-theme="light"] .monthly-ac-count {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* Export Button Light */
+[data-theme="light"] .btn-export-month {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+[data-theme="light"] .btn-export-month:hover {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #059669;
+}

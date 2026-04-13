@@ -1,3 +1,9 @@
-/* Import custom styles */
-@import './style.css';
-@import './dashboard.css';
+/* Import custom styles in correct order: variables first, then layout, then components */
+@import './style.css';         /* Define all CSS variables for themes */
+@import './layout.css';        /* Layout structure (uses style.css variables) */
+@import './dashboard.css';     /* Dashboard components (uses style.css variables) */
+
+/* Define navbar height for layout calculations */
+:root {
+    --navbar-height: 64px;
+}
