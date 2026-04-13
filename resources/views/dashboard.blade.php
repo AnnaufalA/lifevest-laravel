@@ -747,7 +747,8 @@
                 });
             }
 
-            // Auto-expand overdue and critical
+            /*
+            // Auto-expand overdue and critical (Disabled by user request)
             document.querySelectorAll('.monthly-card.overdue, .monthly-card.critical').forEach(card => {
                 const monthKey = card.dataset.month;
                 const body = document.getElementById('body-' + monthKey);
@@ -758,6 +759,7 @@
                 }
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
             });
+            */
         });
 
         // Monthly Plan - Toggle individual month (must be global function for onclick)

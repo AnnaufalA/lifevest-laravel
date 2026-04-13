@@ -2456,6 +2456,51 @@ html {
     background: rgba(16, 185, 129, 0.12);
 }
 
+/* Danger Variant (Red) */
+.btn-jump-danger {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 6px;
+    background: rgba(239, 68, 68, 0.08); color: var(--danger);
+    text-decoration: none; font-weight: 500; border: 1px solid rgba(239, 68, 68, 0.15);
+    transition: all var(--transition-fast); white-space: nowrap; cursor: pointer;
+}
+.btn-jump-danger:hover {
+    background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); transform: translateY(-1px);
+}
+[data-theme="light"] .btn-jump-danger {
+    background: rgba(239, 68, 68, 0.06); color: #dc2626; border-color: rgba(239, 68, 68, 0.15);
+}
+[data-theme="light"] .btn-jump-danger:hover { background: rgba(239, 68, 68, 0.12); }
+
+/* Warning Variant (Orange) */
+.btn-jump-warning {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 6px;
+    background: rgba(245, 158, 11, 0.08); color: var(--warning);
+    text-decoration: none; font-weight: 500; border: 1px solid rgba(245, 158, 11, 0.15);
+    transition: all var(--transition-fast); white-space: nowrap; cursor: pointer;
+}
+.btn-jump-warning:hover {
+    background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); transform: translateY(-1px);
+}
+[data-theme="light"] .btn-jump-warning {
+    background: rgba(245, 158, 11, 0.06); color: #d97706; border-color: rgba(245, 158, 11, 0.15);
+}
+[data-theme="light"] .btn-jump-warning:hover { background: rgba(245, 158, 11, 0.12); }
+
+/* Secondary Variant (Grey) */
+.btn-jump-secondary {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 6px;
+    background: rgba(148, 163, 184, 0.08); color: var(--text-secondary);
+    text-decoration: none; font-weight: 500; border: 1px solid rgba(148, 163, 184, 0.15);
+    transition: all var(--transition-fast); white-space: nowrap; cursor: pointer;
+}
+.btn-jump-secondary:hover {
+    background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.3); transform: translateY(-1px);
+}
+[data-theme="light"] .btn-jump-secondary {
+    background: rgba(148, 163, 184, 0.06); color: #475569; border-color: rgba(148, 163, 184, 0.15);
+}
+[data-theme="light"] .btn-jump-secondary:hover { background: rgba(148, 163, 184, 0.12); }
+
 /* Manage Fleet Button in Navbar */
 .nav-manage-btn {
     font-size: 0.78rem !important;
