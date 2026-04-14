@@ -115,6 +115,15 @@
                 background: var(--bg-hover);
                 border-color: var(--primary);
             }
+
+            /* View Transition Animations */
+            @keyframes fadeInSlide {
+                0% { opacity: 0; transform: translateY(12px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-view {
+                animation: fadeInSlide 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            }
         </style>
     @endif
 
@@ -179,7 +188,7 @@
     </div>
 
     <!-- Summary Section -->
-    <section class="summary-section">
+    <section class="summary-section animate-view">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                 <h2>Fleet Overview</h2>
@@ -263,7 +272,17 @@
     </section>
 
     <!-- Airline Master Overview Section -->
-    <section class="master-airline-section" id="airline-master-overview" style="display: {{ ($currentView === 'fleet-overview' || $currentView === 'all') ? 'grid' : 'none' }}; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; margin-top: 1rem;">
+    <section class="master-airline-section animate-view" id="airline-master-overview" style="display: {{ ($currentView === 'fleet-overview' || $currentView === 'all') ? 'grid' : 'none' }}; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; margin-top: 1rem;">
+        <!-- Smart Sorting Control -->
+        <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Sort By:</span>
+            <select id="airlineSortControl" class="form-select" style="min-width: 200px; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; background-color: var(--bg-card); border-color: var(--border-subtle);" onchange="sortMasterAirlines(this.value)">
+                <option value="name_asc">Alphabetical (A-Z)</option>
+                <option value="health_asc">Lowest Health First</option>
+                <option value="expired_desc">Most Expired Vests</option>
+            </select>
+        </div>
+
         @foreach($fleetByAirline as $airlineId => $airline)
             @php
                 $aSafe = 0; $aWarn = 0; $aCrit = 0; $aExp = 0;
@@ -278,17 +297,46 @@
                 $aTotal = $aSafe + $aWarn + $aCrit + $aExp;
                 $aHealth = $aTotal > 0 ? round((($aSafe + ($aWarn * 0.5)) / $aTotal) * 100) : 100;
             @endphp
-            <div class="fleet-card airline-master-card" style="cursor: pointer; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--border-subtle); transition: transform 0.2s, box-shadow 0.2s; background: var(--bg-card); border-radius: 12px; position: relative; overflow: hidden;" onclick="showAirlineDetails('{{ $airline['name'] }}')" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='var(--shadow-lg)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)';">
+            <div class="fleet-card airline-master-card" data-name="{{ strtolower($airline['name']) }}" data-health="{{ $aHealth }}" data-expired="{{ $aExp }}" style="cursor: pointer; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--border-subtle); transition: transform 0.2s, box-shadow 0.2s; background: var(--bg-card); border-radius: 12px; position: relative; overflow: hidden;" onclick="showAirlineDetails('{{ $airline['name'] }}')" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='var(--shadow-lg)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)';">
                 <div style="margin-bottom: 1.5rem;">
                     <h2 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em;">{{ $airline['name'] }}</h2>
                     <span style="color: var(--text-muted); font-size: 0.9rem;">{{ $airline['code'] }} • {{ $airline['aircraft_count'] }} Aircraft</span>
                 </div>
                 
-                <div style="margin-bottom: 1.5rem;">
-                    <div style="font-size: 3rem; font-weight: 800; line-height: 1; color: {{ $aHealth >= 70 ? 'var(--success)' : ($aHealth >= 40 ? 'var(--warning)' : 'var(--danger)') }};">
-                        {{ $aHealth }}<span style="font-size: 1.5rem;">%</span>
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 1.5rem;">
+                    @php
+                        $healthColor = $aHealth >= 70 ? 'var(--success)' : ($aHealth >= 40 ? 'var(--warning)' : 'var(--danger)');
+                        $bgColor = $aHealth >= 70 ? 'rgba(46, 204, 113, 0.15)' : ($aHealth >= 40 ? 'rgba(241, 196, 15, 0.15)' : 'rgba(231, 76, 60, 0.15)');
+                    @endphp
+                    <div style="
+                        position: relative; 
+                        width: 130px; 
+                        height: 130px; 
+                        border-radius: 50%; 
+                        background: conic-gradient({{ $healthColor }} {{ $aHealth }}%, {{ $bgColor }} 0);
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center;
+                        margin-bottom: 1.25rem;
+                        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                        z-index: 1;
+                    ">
+                        <div style="
+                            position: relative;
+                            width: 106px; 
+                            height: 106px; 
+                            background-color: var(--bg-card);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+                        ">
+                            <span style="font-weight: 800; font-size: 2.25rem; color: {{ $healthColor }}; leading-height: 1;">{{ $aHealth }}<span style="font-size: 1.25rem;">%</span></span>
+                        </div>
                     </div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 0.5rem;">Overall Fleet Health</div>
+                    
+                    <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Overall Fleet Health</div>
                 </div>
 
                 <div style="display: flex; gap: 1rem; font-size: 0.85rem; width: 100%; justify-content: center; margin-bottom: 1.5rem;">
@@ -310,7 +358,7 @@
     </section>
 
     <!-- Fleet Details Container -->
-    <div id="airline-fleet-details" style="display: none;">
+    <div id="airline-fleet-details" class="animate-view" style="display: none;">
         <!-- Back Button Header -->
         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
              <button onclick="hideAirlineDetails()" class="btn-jump-pn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 0.4rem 0.8rem; font-size: 0.9rem;">← Back to Airlines Menu</button>
@@ -415,7 +463,7 @@
 
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
-        <section class="replacement-section" id="life-vest-summary-section">
+        <section class="replacement-section animate-view" id="life-vest-summary-section">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Life Vest Replacement Summary</h2>
             </div>
@@ -502,7 +550,7 @@
                 $isPlanVisible = ($currentView === 'replacement-'.$interval);
             @endphp
             @if(count($plan) > 0)
-                <section class="replacement-section replacement-interval-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
+                <section class="replacement-section replacement-interval-section animate-view" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <h2>{{ $titleText }}</h2>
@@ -1108,6 +1156,35 @@
                 detailsEl.style.display = isHidden ? 'block' : 'none';
                 if (toggleEl) toggleEl.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
             }
+        }
+
+        // Smart Sorting for Airline Master Cards
+        function sortMasterAirlines(criteria) {
+            const container = document.getElementById('airline-master-overview');
+            if (!container) return;
+            
+            const cards = Array.from(container.querySelectorAll('.airline-master-card'));
+            
+            cards.sort((a, b) => {
+                const nameA = a.dataset.name;
+                const nameB = b.dataset.name;
+                const healthA = parseInt(a.dataset.health, 10);
+                const healthB = parseInt(b.dataset.health, 10);
+                const expA = parseInt(a.dataset.expired, 10);
+                const expB = parseInt(b.dataset.expired, 10);
+
+                if (criteria === 'health_asc') {
+                    if (healthA !== healthB) return healthA - healthB;
+                    return nameA.localeCompare(nameB);
+                } else if (criteria === 'expired_desc') {
+                    if (expA !== expB) return expB - expA;
+                    return nameA.localeCompare(nameB);
+                } else {
+                    return nameA.localeCompare(nameB);
+                }
+            });
+
+            cards.forEach(card => container.appendChild(card));
         }
 
 
