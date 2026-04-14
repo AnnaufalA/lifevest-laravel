@@ -6,6 +6,69 @@
 @endphp
 
 @section('content')
+    <!-- View Mode Styles for Fleet Overview -->
+    <style>
+        .list-view-active .fleet-cards[style*="grid"] {
+            display: flex !important;
+        }
+        .list-view-active .fleet-cards {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .list-view-active .fleet-card {
+            flex-direction: row;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            height: auto;
+            justify-content: space-between;
+        }
+        .list-view-active .fleet-card-header {
+            width: 250px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+        .list-view-active .fleet-card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+        .list-view-active .fleet-card-stats {
+            flex-direction: row;
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+            gap: 2rem;
+            align-items: center;
+            justify-content: flex-start;
+            flex-grow: 1;
+        }
+        .list-view-active .fleet-stat {
+            flex-direction: row;
+            gap: 0.6rem;
+            align-items: center;
+        }
+        .list-view-active .fleet-stat-value {
+            font-size: 1.1rem;
+        }
+        .list-view-active .fleet-card-progress {
+            display: none;
+        }
+        .list-view-active .fleet-card-footer {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+            flex-shrink: 0;
+            width: auto;
+            justify-content: flex-end;
+        }
+        .list-view-active .fleet-card-action {
+            display: none;
+        }
+    </style>
+
     <!-- Full-Screen View Styles -->
     @if($isFullScreenView)
         <style>
@@ -122,30 +185,42 @@
                 <h2>Fleet Overview</h2>
             </div>
 
-            <!-- Fleet Multi-Select Dropdown -->
-            <div class="fleet-dropdown" style="position: relative;">
-                <button type="button" id="fleetDropdownBtn" class="btn-jump-pn"
-                    style="display: flex; align-items: center; gap: 6px; cursor: pointer; border: none;">
-                    <span>Filter Fleet</span>
-                    <span style="font-size: 0.6em;">▼</span>
-                </button>
-                <div id="fleetDropdownMenu" class="fleet-dropdown-menu">
-                    <!-- Select All Option -->
-                    <label class="fleet-checkbox-item all-fleets"
-                        style="border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 8px;">
-                        <input type="checkbox" id="fleetCheckAll" class="fleet-checkbox-all" checked>
-                        <span class="fleet-name">All Fleets</span>
-                    </label>
-
-                    @foreach($perFleetStats as $baseType => $stats)
-                        <label class="fleet-checkbox-item">
-                            <input type="checkbox" class="fleet-checkbox" checked data-fleet="{{ $baseType }}"
-                                data-safe="{{ $stats['safe'] }}" data-warning="{{ $stats['warning'] }}"
-                                data-critical="{{ $stats['critical'] }}" data-expired="{{ $stats['expired'] }}">
-                            <span class="fleet-name">{{ $baseType }}</span>
-                            <span class="fleet-count">{{ $stats['count'] }}</span>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <!-- Fleet Multi-Select Dropdown -->
+                <div class="fleet-dropdown" style="position: relative;">
+                    <button type="button" id="fleetDropdownBtn" class="btn-jump-pn"
+                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; border: none;">
+                        <span>Filter Fleet</span>
+                        <span style="font-size: 0.6em;">▼</span>
+                    </button>
+                    <div id="fleetDropdownMenu" class="fleet-dropdown-menu">
+                        <!-- Select All Option -->
+                        <label class="fleet-checkbox-item all-fleets"
+                            style="border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 8px;">
+                            <input type="checkbox" id="fleetCheckAll" class="fleet-checkbox-all" checked>
+                            <span class="fleet-name">All Fleets</span>
                         </label>
-                    @endforeach
+
+                        @foreach($perFleetStats as $baseType => $stats)
+                            <label class="fleet-checkbox-item">
+                                <input type="checkbox" class="fleet-checkbox" checked data-fleet="{{ $baseType }}"
+                                    data-safe="{{ $stats['safe'] }}" data-warning="{{ $stats['warning'] }}"
+                                    data-critical="{{ $stats['critical'] }}" data-expired="{{ $stats['expired'] }}">
+                                <span class="fleet-name">{{ $baseType }}</span>
+                                <span class="fleet-count">{{ $stats['count'] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Global Expand/Collapse & View Toggle -->
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div style="display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-right: 0.25rem;">
+                        <button type="button" onclick="document.body.classList.remove('list-view-active'); this.style.background='var(--primary)'; this.style.color='white'; this.nextElementSibling.style.background='transparent'; this.nextElementSibling.style.color='var(--text-secondary)';" style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; font-size: 0.85rem; cursor: pointer; transition: 0.2s;">Grid</button>
+                        <button type="button" onclick="document.body.classList.add('list-view-active'); this.style.background='var(--primary)'; this.style.color='white'; this.previousElementSibling.style.background='transparent'; this.previousElementSibling.style.color='var(--text-secondary)';" style="background: transparent; color: var(--text-secondary); border: none; padding: 0.4rem 0.8rem; font-size: 0.85rem; cursor: pointer; transition: 0.2s;">List</button>
+                    </div>
+                    <button type="button" class="btn-jump-pn" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = document.body.classList.contains('list-view-active') ? 'flex' : 'grid'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(90deg)');">Expand All</button>
+                    <button type="button" class="btn-jump-pn" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');">Collapse All</button>
                 </div>
             </div>
         </div>
@@ -187,6 +262,61 @@
             </div>
     </section>
 
+    <!-- Airline Master Overview Section -->
+    <section class="master-airline-section" id="airline-master-overview" style="display: {{ ($currentView === 'fleet-overview' || $currentView === 'all') ? 'grid' : 'none' }}; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; margin-top: 1rem;">
+        @foreach($fleetByAirline as $airlineId => $airline)
+            @php
+                $aSafe = 0; $aWarn = 0; $aCrit = 0; $aExp = 0;
+                foreach($airline['types'] as $typeGroup) {
+                    foreach($typeGroup['aircraft'] as $ac) {
+                        $aSafe += $ac['stats']['safe'] ?? 0;
+                        $aWarn += $ac['stats']['warning'] ?? 0;
+                        $aCrit += $ac['stats']['critical'] ?? 0;
+                        $aExp += $ac['stats']['expired'] ?? 0;
+                    }
+                }
+                $aTotal = $aSafe + $aWarn + $aCrit + $aExp;
+                $aHealth = $aTotal > 0 ? round((($aSafe + ($aWarn * 0.5)) / $aTotal) * 100) : 100;
+            @endphp
+            <div class="fleet-card airline-master-card" style="cursor: pointer; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--border-subtle); transition: transform 0.2s, box-shadow 0.2s; background: var(--bg-card); border-radius: 12px; position: relative; overflow: hidden;" onclick="showAirlineDetails('{{ $airline['name'] }}')" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='var(--shadow-lg)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)';">
+                <div style="margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em;">{{ $airline['name'] }}</h2>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">{{ $airline['code'] }} • {{ $airline['aircraft_count'] }} Aircraft</span>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; font-weight: 800; line-height: 1; color: {{ $aHealth >= 70 ? 'var(--success)' : ($aHealth >= 40 ? 'var(--warning)' : 'var(--danger)') }};">
+                        {{ $aHealth }}<span style="font-size: 1.5rem;">%</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 0.5rem;">Overall Fleet Health</div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; font-size: 0.85rem; width: 100%; justify-content: center; margin-bottom: 1.5rem;">
+                    <span style="color: var(--success); font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">🟢 {{ $aSafe }}</span>
+                    <span style="color: var(--warning); font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">🟡 {{ $aWarn }}</span>
+                    <span style="color: var(--danger); font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">🔴 {{ $aCrit }}</span>
+                    <span style="color: purple; font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">🟣 {{ $aExp }}</span>
+                </div>
+
+                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 3px; display: flex; overflow: hidden; margin-top: auto;">
+                    @if($aTotal > 0)
+                        <div style="width: {{ ($aSafe/$aTotal)*100 }}%; background: var(--success); height: 100%;"></div>
+                        <div style="width: {{ ($aWarn/$aTotal)*100 }}%; background: var(--warning); height: 100%;"></div>
+                        <div style="width: {{ (($aCrit+$aExp)/$aTotal)*100 }}%; background: var(--danger); height: 100%;"></div>
+                    @endif
+                </div>
+            </div>
+        @endforeach
+    </section>
+
+    <!-- Fleet Details Container -->
+    <div id="airline-fleet-details" style="display: none;">
+        <!-- Back Button Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+             <button onclick="hideAirlineDetails()" class="btn-jump-pn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 0.4rem 0.8rem; font-size: 0.9rem;">← Back to Airlines Menu</button>
+             <h2 id="airline-details-title" style="margin: 0; font-size: 1.5rem; color: var(--primary);">Airline Fleet Profile</h2>
+        </div>
+
     <!-- Fleet Cards Section - Grouped by Airline then by Type -->
     @foreach($fleetByAirline as $airlineId => $airline)
         <section class="airline-section" data-airline="{{ $airline['name'] }}" style="margin-bottom: 2rem;">
@@ -201,12 +331,14 @@
 
             @foreach($airline['types'] as $baseType => $typeGroup)
                 <section class="fleet-section" style="margin-left: 0.5rem;">
-                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 600; color: var(--text-secondary);">
+                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none;"
+                        onclick="const cards = this.nextElementSibling; const isHidden = cards.style.display==='none'; cards.style.display=isHidden?(document.body.classList.contains('list-view-active')?'flex':'grid'):'none'; this.querySelector('.collapse-icon').style.transform=isHidden?'rotate(90deg)':'rotate(0deg)';">
+                        <span class="collapse-icon" style="font-size: 0.7em; transition: transform 0.2s; transform: rotate(0deg); display: inline-block;">▶</span>
                         {{ $typeGroup['icon'] }} {{ $typeGroup['name'] }}
                         <span class="type-count"
                             style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">({{ count($typeGroup['aircraft']) }})</span>
                     </h3>
-                    <div class="fleet-cards">
+                    <div class="fleet-cards" style="display: none;">
                         @foreach($typeGroup['aircraft'] as $registration => $aircraft)
                             <a href="{{ route('aircraft.show', $registration) }}"
                                 class="fleet-card {{ $aircraft['health'] >= 70 ? 'healthy' : ($aircraft['health'] >= 40 ? 'warning' : 'critical') }}"
@@ -278,6 +410,8 @@
     <div class="airline-section" style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; width: 100%;">
         <a href="#" onclick="document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-jump-pn" style="display: inline-block; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
     </div>
+    
+    </div> <!-- End Fleet Details Container -->
 
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
@@ -368,7 +502,7 @@
                 $isPlanVisible = ($currentView === 'replacement-'.$interval);
             @endphp
             @if(count($plan) > 0)
-                <section class="replacement-section replacement-interval-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
+                <section class="replacement-section replacement-interval-section stats-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <h2>{{ $titleText }}</h2>
@@ -685,6 +819,7 @@
                 });
 
                 // Hide empty fleet sections (type groups)
+                const hasFilters = (airlineFilter || typeFilter || statusFilter || healthFilter || searchQuery) !== '';
                 fleetSections.forEach(section => {
                     const visibleCards = section.querySelectorAll('.fleet-card:not([style*="display: none"])');
                     section.style.display = visibleCards.length > 0 ? '' : 'none';
@@ -693,6 +828,14 @@
                     const typeCount = section.querySelector('.type-count');
                     if (typeCount) {
                         typeCount.textContent = `(${visibleCards.length})`;
+                    }
+                    
+                    // Auto Expand if filtered
+                    const cardsContainer = section.querySelector('.fleet-cards');
+                    const headerIcon = section.querySelector('.collapse-icon');
+                    if (cardsContainer && headerIcon && hasFilters) {
+                        cardsContainer.style.display = 'grid';
+                        headerIcon.style.transform = 'rotate(90deg)';
                     }
                 });
 
@@ -853,9 +996,22 @@
                                     link.classList.add('active');
                                     
                                     // Toggle sections
-                                    document.querySelectorAll('.summary-section, .airline-section').forEach(el => {
+                                    document.querySelectorAll('.summary-section').forEach(el => {
                                         el.style.display = (targetView === 'fleet-overview' || targetView === 'all') ? 'block' : 'none';
                                     });
+                                    document.querySelectorAll('.airline-section').forEach(el => {
+                                        el.style.display = targetView === 'all' ? 'block' : '';
+                                    });
+                                    
+                                    if (targetView === 'fleet-overview') {
+                                        hideAirlineDetails(); // Return to master deck when clicking sidebar 'Fleet Overview'
+                                    } else {
+                                        document.getElementById('airline-master-overview').style.display = 'none';
+                                        document.getElementById('airline-fleet-details').style.display = 'none';
+                                        if (targetView === 'all') {
+                                            document.getElementById('airline-fleet-details').style.display = 'block';
+                                        }
+                                    }
                                     document.querySelectorAll('#life-vest-summary-section').forEach(el => {
                                         el.style.display = (targetView === 'life-vest-summary' || targetView === 'all') ? 'block' : 'none';
                                     });
@@ -955,5 +1111,44 @@
         }
 
 
+        function showAirlineDetails(airlineName) {
+            document.getElementById('airline-master-overview').style.display = 'none';
+            document.getElementById('airline-fleet-details').style.display = 'block';
+            document.getElementById('airline-details-title').textContent = airlineName + ' Fleet Profile';
+            
+            // Set the dropdown to target airline to trigger standard filtering
+            const filterAirline = document.getElementById('filterAirline');
+            if(filterAirline) {
+                filterAirline.value = airlineName;
+                filterAirline.dispatchEvent(new Event('change'));
+            }
+            
+            // Re-collapse all types locally so they don't auto expand from the airlineFilter
+            document.querySelector('#airline-fleet-details').querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); 
+            document.querySelector('#airline-fleet-details').querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+            
+            // View toggles handles display updates
+            
+            // Scroll to top
+            document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function hideAirlineDetails() {
+            document.getElementById('airline-master-overview').style.display = 'grid';
+            document.getElementById('airline-fleet-details').style.display = 'none';
+            
+            // Reset airline filter to ALL
+            const filterAirline = document.getElementById('filterAirline');
+            if(filterAirline) {
+                filterAirline.value = '';
+                filterAirline.dispatchEvent(new Event('change'));
+            }
+            
+            // Auto collapse internally
+            document.querySelector('#airline-fleet-details').querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); 
+            document.querySelector('#airline-fleet-details').querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+            
+            document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'});
+        }
     </script>
 @endpush
