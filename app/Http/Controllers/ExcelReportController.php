@@ -157,8 +157,6 @@ class ExcelReportController extends Controller
         $spreadsheet = new Spreadsheet();
         $spreadsheet->removeSheetByIndex(0);
 
-        $this->buildSummarySheet($spreadsheet, $allRows, $today, $threeMonthsBoundary);
-
         foreach (['weekly', 'monthly', 'yearly'] as $intervalName) {
             $this->buildIntervalSheet($spreadsheet, ucfirst($intervalName), $intervalData[$intervalName], $allPns, $today, $threeMonthsBoundary);
         }
@@ -175,12 +173,84 @@ class ExcelReportController extends Controller
         exit;
     }
 
+    public function exportSummaryDashboard()
+    {
+        $today = now()->startOfDay();
+        $threeMonthsBoundary = $today->copy()->addDays(89);
+
+        $aircrafts = Aircraft::with('airline')->get();
+        $allRows = [];
+
+        foreach ($aircrafts as $aircraft) {
+            $reg = $aircraft->registration;
+            $acType = $aircraft->type;
+            $airlineName = $aircraft->airline?->name ?? 'Unknown';
+
+            $pnMap = [
+                'adult'  => ['pn' => $aircraft->pn_adult,  'types' => ['business', 'economy', 'first', 'spare-pax']],
+                'crew'   => ['pn' => $aircraft->pn_crew,   'types' => ['cockpit', 'attendant']],
+                'infant' => ['pn' => $aircraft->pn_infant, 'types' => ['spare-inf']],
+            ];
+
+            $seats = Seat::where('registration', $reg)
+                ->whereNotNull('expiry_date')
+                ->get();
+
+            foreach ($seats as $seat) {
+                $expiryDate = Carbon::parse($seat->expiry_date);
+                
+                $seatPn = null;
+                $seatCategory = null;
+                foreach ($pnMap as $category => $info) {
+                    if (in_array($seat->class_type, $info['types'])) {
+                        $seatPn = $info['pn'] ?: null;
+                        $seatCategory = $category;
+                        break;
+                    }
+                }
+                if (!$seatPn || !$seatCategory) continue;
+
+                $daysRemaining = $today->diffInDays($expiryDate, false);
+                if ($daysRemaining < 0) {
+                    $status = 'EXPIRED';
+                } elseif ($daysRemaining < 90) {
+                    $status = 'CRITICAL';
+                } elseif ($daysRemaining < 180) {
+                    $status = 'WARNING';
+                } else {
+                    $status = 'SAFE';
+                }
+
+                $allRows[] = [
+                    'status' => $status,
+                    'pn'     => $seatPn,
+                ];
+            }
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+
+        $this->buildSummarySheet($spreadsheet, $allRows, $today, $threeMonthsBoundary);
+
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $filename = 'LifeVest_Summary_' . date('Y-m-d_His') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
     private function buildSummarySheet(Spreadsheet $spreadsheet, array $allRows, Carbon $today, Carbon $threeMonthsBoundary): void
     {
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Summary');
 
-        $sheet->mergeCells("A1:C1");
+        $sheet->mergeCells("A1:E1");
         $sheet->setCellValue('A1', 'LIFE VEST REPLACEMENT DASHBOARD — GMF AeroAsia');
         $sheet->getStyle('A1')->applyFromArray([
             'font' => ['bold' => true, 'size' => 14, 'color' => ['argb' => $this->colorWhite]],
@@ -189,7 +259,7 @@ class ExcelReportController extends Controller
         ]);
         $sheet->getRowDimension(1)->setRowHeight(35);
 
-        $sheet->mergeCells("A2:C2");
+        $sheet->mergeCells("A2:E2");
         $sheet->setCellValue('A2', 'Generated: ' . now()->format('d M Y, H:i'));
         $sheet->getStyle('A2')->applyFromArray([
             'font' => ['italic' => true, 'size' => 10, 'color' => ['argb' => $this->colorWhite]],
@@ -197,6 +267,12 @@ class ExcelReportController extends Controller
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
         ]);
         $sheet->getRowDimension(2)->setRowHeight(22);
+
+        $sheet->getColumnDimension('A')->setWidth(25);
+        $sheet->getColumnDimension('B')->setWidth(12);
+        $sheet->getColumnDimension('C')->setWidth(14);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(14);
 
         $row = 4;
         $sheet->setCellValue("A{$row}", 'OVERALL FLEET STATUS');
@@ -216,20 +292,17 @@ class ExcelReportController extends Controller
         ];
 
         foreach ($summaryItems as $item) {
+            $sheet->mergeCells("A{$row}:D{$row}");
             $sheet->setCellValue("A{$row}", $item[0]);
-            $sheet->setCellValue("C{$row}", $item[1]);
-            $sheet->getStyle("A{$row}:C{$row}")->applyFromArray([
+            $sheet->setCellValue("E{$row}", $item[1]);
+            $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $item[2]]],
-                'borders' => ['bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
             ]);
-            $sheet->getStyle("C{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("E{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $row++;
         }
-        
-        $sheet->getColumnDimension('A')->setWidth(30);
-        $sheet->getColumnDimension('B')->setWidth(5);
-        $sheet->getColumnDimension('C')->setWidth(20);
         
         // --- Legend ---
         $row += 2;
@@ -242,13 +315,69 @@ class ExcelReportController extends Controller
             ['WARNING', 'Life vest tersisa 3-6 bulan', $this->colorWarning],
         ];
         foreach ($legends as $legend) {
+            $sheet->mergeCells("A{$row}:B{$row}");
             $sheet->setCellValue("A{$row}", $legend[0]);
+            $sheet->mergeCells("C{$row}:E{$row}");
             $sheet->setCellValue("C{$row}", $legend[1]);
-            $sheet->getStyle("A{$row}:B{$row}")->applyFromArray([
+            $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $legend[2]]],
                 'font' => ['bold' => true],
             ]);
             $row++;
+        }
+        
+        // --- TOP PART NUMBERS REQUIRING ATTENTION ---
+        $row += 2;
+        $sheet->setCellValue("A{$row}", 'TOP PART NUMBERS REQUIRING REPLACEMENT');
+        $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(12);
+        $row++;
+
+        $pnCounts = [];
+        foreach ($allRows as $r) {
+            if (in_array($r['status'], ['EXPIRED', 'CRITICAL', 'WARNING'])) {
+                $pn = $r['pn'] ?? 'UNKNOWN';
+                if (!isset($pnCounts[$pn])) {
+                    $pnCounts[$pn] = ['total' => 0, 'expired' => 0, 'critical' => 0, 'warning' => 0];
+                }
+                $pnCounts[$pn]['total']++;
+                $pnCounts[$pn][strtolower($r['status'])]++;
+            }
+        }
+        
+        uasort($pnCounts, fn($a, $b) => $b['total'] <=> $a['total']);
+        $topPns = array_slice($pnCounts, 0, 10, true); // Get top 10
+        
+        if (empty($topPns)) {
+            $sheet->setCellValue("A{$row}", "Semua Part Number dalam kondisi aman.");
+            $sheet->mergeCells("A{$row}:E{$row}");
+        } else {
+            $sheet->setCellValue("A{$row}", "Part Number");
+            $sheet->setCellValue("B{$row}", "Total Qty");
+            $sheet->setCellValue("C{$row}", "Expired");
+            $sheet->setCellValue("D{$row}", "Critical");
+            $sheet->setCellValue("E{$row}", "Warning");
+            
+            $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
+                'font' => ['bold' => true, 'color' => ['argb' => $this->colorWhite], 'size' => 10],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $this->colorHeader]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF424242']]],
+            ]);
+            $row++;
+            
+            foreach ($topPns as $pn => $counts) {
+                $sheet->setCellValue("A{$row}", $pn);
+                $sheet->setCellValue("B{$row}", $counts['total']);
+                $sheet->setCellValue("C{$row}", $counts['expired']);
+                $sheet->setCellValue("D{$row}", $counts['critical']);
+                $sheet->setCellValue("E{$row}", $counts['warning']);
+                
+                $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFE0E0E0']]],
+                ]);
+                $sheet->getStyle("B{$row}:E{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $row++;
+            }
         }
     }
 

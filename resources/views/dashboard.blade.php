@@ -137,13 +137,13 @@
 
     <!-- Filter Toggle Button -->
     <div id="top" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-        <button type="button" id="toggleFilters" class="btn-jump-pn"
-            style="display: flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            <span>Filter</span>
-            <span id="filterArrow" style="transition: transform 0.2s; font-size: 0.65rem;">▼</span>
+        <button type="button" id="toggleFilters" class="btn-premium"
+            style="border-radius: 8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <span>Filters</span>
+            <span id="filterArrow" style="transition: transform 0.2s; font-size: 0.65rem; margin-left: 0.25rem;">▼</span>
         </button>
-        <span id="filterCount" style="color: var(--text-muted); font-size: 0.8rem;"></span>
+        <span id="filterCount" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;"></span>
     </div>
 
     <!-- Collapsible Filter Bar -->
@@ -184,7 +184,7 @@
             <option value="safe">🟢 Safe</option>
         </select>
 
-        <button type="button" id="clearFilters" class="btn-jump-pn" style="cursor: pointer; border: none;">Clear</button>
+        <button type="button" id="clearFilters" class="btn-premium" style="cursor: pointer; border: none; border-radius: 8px;">Clear</button>
     </div>
 
     <!-- Summary Section -->
@@ -197,8 +197,8 @@
             <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                 <!-- Fleet Multi-Select Dropdown -->
                 <div class="fleet-dropdown" style="position: relative;">
-                    <button type="button" id="fleetDropdownBtn" class="btn-jump-pn"
-                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; border: none;">
+                    <button type="button" id="fleetDropdownBtn" class="btn-premium"
+                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; border: none; border-radius: 8px;">
                         <span>Filter Fleet</span>
                         <span style="font-size: 0.6em;">▼</span>
                     </button>
@@ -228,8 +228,8 @@
                         <button type="button" onclick="document.body.classList.remove('list-view-active'); this.style.background='var(--primary)'; this.style.color='white'; this.nextElementSibling.style.background='transparent'; this.nextElementSibling.style.color='var(--text-secondary)';" style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; font-size: 0.85rem; cursor: pointer; transition: 0.2s;">Grid</button>
                         <button type="button" onclick="document.body.classList.add('list-view-active'); this.style.background='var(--primary)'; this.style.color='white'; this.previousElementSibling.style.background='transparent'; this.previousElementSibling.style.color='var(--text-secondary)';" style="background: transparent; color: var(--text-secondary); border: none; padding: 0.4rem 0.8rem; font-size: 0.85rem; cursor: pointer; transition: 0.2s;">List</button>
                     </div>
-                    <button type="button" class="btn-jump-pn" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = document.body.classList.contains('list-view-active') ? 'flex' : 'grid'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(90deg)');">Expand All</button>
-                    <button type="button" class="btn-jump-pn" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');">Collapse All</button>
+                    <button type="button" class="btn-premium" style="border-radius: 8px;" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = document.body.classList.contains('list-view-active') ? 'flex' : 'grid'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(90deg)');">Expand All</button>
+                    <button type="button" class="btn-premium" style="border-radius: 8px;" onclick="document.querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); document.querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');">Collapse All</button>
                 </div>
             </div>
         </div>
@@ -361,7 +361,7 @@
     <div id="airline-fleet-details" class="animate-view" style="display: none;">
         <!-- Back Button Header -->
         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-             <button onclick="hideAirlineDetails()" class="btn-jump-pn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 0.4rem 0.8rem; font-size: 0.9rem;">← Back to Airlines Menu</button>
+             <button onclick="hideAirlineDetails()" class="btn-premium" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 0.4rem 0.8rem; font-size: 0.9rem;">← Back to Airlines Menu</button>
              <h2 id="airline-details-title" style="margin: 0; font-size: 1.5rem; color: var(--primary);">Airline Fleet Profile</h2>
         </div>
 
@@ -456,7 +456,7 @@
     @endforeach
 
     <div class="airline-section" style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; width: 100%;">
-        <a href="#" onclick="document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-jump-pn" style="display: inline-block; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
+        <a href="#" onclick="document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-premium" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
     </div>
     
     </div> <!-- End Fleet Details Container -->
@@ -464,8 +464,11 @@
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
         <section class="replacement-section animate-view" id="life-vest-summary-section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Life Vest Replacement Summary</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <a href="{{ route('reports.summary') }}" class="btn-premium btn-premium-success" title="Download Summary Dashboard">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export Summary
+                </a>
             </div>
             <div class="replacement-grid">
                 @foreach($pnSummary as $idx => $item)
@@ -556,11 +559,12 @@
                             <h2>{{ $titleText }}</h2>
                             <span class="monthly-plan-subtitle">{{ $subtitleText }}</span>
                         </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                            <a href="{{ route('reports.excel') }}" class="btn-jump-success" title="Download Excel Report">
-                                Export Excel
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <a href="{{ route('reports.excel') }}" class="btn-premium btn-premium-success" title="Download Excel Report">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Export Schedule
                             </a>
-                            <button type="button" class="btn-jump-pn toggleAllPlanBtn" data-interval="{{ $interval }}" style="cursor: pointer;">Expand All</button>
+                            <button type="button" class="btn-premium toggleAllPlanBtn" data-interval="{{ $interval }}" style="cursor: pointer; height: 100%; border-radius: 8px;">Expand All</button>
                         </div>
                     </div>
 

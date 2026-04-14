@@ -9,6 +9,7 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Excel Export - Replacement Plan
 Route::get('/export/replacement-plan', [\App\Http\Controllers\ExcelReportController::class, 'exportReplacementPlan'])->name('reports.excel');
+Route::get('/export/summary', [\App\Http\Controllers\ExcelReportController::class, 'exportSummaryDashboard'])->name('reports.summary');
 
 // Aircraft routes
 Route::prefix('aircraft')->group(function () {
