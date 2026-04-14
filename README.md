@@ -60,23 +60,30 @@ Buka http://localhost:8000
 
 ## Panduan Penggunaan
 
-### Dashboard
-- Menampilkan **Fleet Overview** (ringkasan status semua pesawat)
-- **Fleet Filter Dropdown**: Klik tombol "Filter Fleet" untuk memfilter per tipe pesawat:
-  - Multi-select checkbox (B737, B777, A330, A320, ATR72)
-  - Pilih lebih dari satu tipe untuk melihat total gabungan
-  - Checkbox **"All Fleets"** untuk select/deselect semua sekaligus
-  - Default: semua tipe tercentang
-- Menampilkan **Fleet Status** per Airline, lalu per Tipe (Garuda Indonesia → B737, A330, dll)
-- **Filter**: Klik tombol "Filter" untuk menampilkan panel filter cerdas (Smart Filter):
-  - Filter berdasarkan **Airline**
-  - Filter berdasarkan **Type** pesawat *(opsi Tipe otomatis menyesuaikan dengan Airline yang dipilih)*
-  - Filter berdasarkan **Status** (Active/Prolong)
-  - Filter berdasarkan **Health** (Safe/Warning/Critical)
-- **Monthly Replacement Plan**: Disajikan dengan antarmuka bisa-buka-tutup (Accordion) yang rapi secara otomatis. Klik "Expand All" untuk melihat detail lengkap kapanpun dibutuhkan.
-- **Fleet Manager**: Kelola data pesawat & airline via tombol "Manage Fleet" di navbar
-- **Dark/Light Mode**: Toggle tema via tombol 🌙/☀️ di navbar
-- Klik kartu pesawat untuk masuk ke halaman seat map
+### Dashboard (Command Center)
+Dasbor menggunakan navigasi arsitektur **Single Page Application (SPA)**. Perpindahan antar-menu (via Sidebar) terjadi instan secara dinamis tanpa proses *reload* browser.
+
+1. **Airline Master Deck (Level 1)**: 
+   - Layar pertama menampilkan *Master Cards* raksasa untuk masing-masing maskapai yang terdaftar.
+   - Keunikan: Dilengkapi dengan **Conic-Gradient Donut Chart** modern yang menampilkan **Overall Fleet Health** (kesehatan armada maskapai) secara visual dalam lingkaran triwarna dan persentase absolut (Safe, Warning, Critical/Expired).
+   - **Smart Sorting**: Tombol *Sort By* mengizinkan operator untuk otomatis memaksa maskapai dengan kasus kritis ke urutan \#1 *(Lowest Health First / Most Expired Vests)*.
+
+2. **Airline Fleet Profile (Level 2)**:
+   - Mengklik salah satu kartu maskapai memicu transisi *smooth fade-in* untuk meluncur ke rincian armada maskapai tersebut.
+   - Daftar pesawat dikelompokkan secara hierarki berdasarkan **Tipe Tipe Pesawat** (*collapsible accordion*).
+   - **Grid & List Views**: Opsi tombol gaya tampilan (kartu minimalis / *list* padat memanjang ke bawah).
+
+3. **Smart Filters & Search**:
+   - Panel klik "Filter" membuka filter kustomisasi multi-kondisi (Airline, Tipe Pesawat, Active/Prolong, Safe/Critical). 
+   - Terdapat **Live Search** untuk mencari *Registration Number* secara langsung (Text search).
+
+4. **Life Vest Replacement Plans**:
+   - Tersedia di sidebar sebagai menu tunggal (*Weekly, Monthly, Yearly*).
+   - Menampilkan *Timeline* kartu urgensi (Overdue, Critical, Warning) dan *Current Period*.
+   - Detail per-bulan dapat diekspansi secara interaktif untuk membedah kebutuhan pergantian spesifik tiap **Part Number (P/N)** pada suatu bulan.
+   - Seluruh plan dapat langsung di-*Export Excel* di kanan atas tabel.
+
+5. **Dark/Light Mode & Aesthetic**: Mendukung *switch* tema penuh dengan implementasi UI *Glassmorphism*, palet modern, dan animasi transisi.
 
 ---
 
@@ -297,7 +304,7 @@ lifevest-laravel/
 ## Teknologi
 
 - **Backend:** Laravel 12
-- **Frontend:** Vanilla CSS & JavaScript (Glassmorphism UI)
+- **Frontend:** Vanilla CSS & JavaScript (SPA Navigation, Glassmorphism UI, CSS Conic-Gradient Donut Charts)
 - **Database:** MySQL
 - **Build Tool:** Vite
 - **Timezone:** Asia/Jakarta (GMT+7)
