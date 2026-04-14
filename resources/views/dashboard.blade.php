@@ -502,7 +502,7 @@
                 $isPlanVisible = ($currentView === 'replacement-'.$interval);
             @endphp
             @if(count($plan) > 0)
-                <section class="replacement-section replacement-interval-section stats-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
+                <section class="replacement-section replacement-interval-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <h2>{{ $titleText }}</h2>
