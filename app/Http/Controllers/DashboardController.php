@@ -6,13 +6,24 @@ use App\Models\Seat;
 use App\Models\Aircraft;
 use App\Models\Airline;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
     public function __invoke()
     {
-        // Load from Database (All status: active & prolong) with airline relationship
+        $lastSeatUpdate = Seat::max('updated_at');
+        $lastAircraftUpdate = Aircraft::max('updated_at');
+        $lastAirlineUpdate = Airline::max('updated_at');
+        
+        $cacheKey = 'dashboard_data_' . md5($lastSeatUpdate . $lastAircraftUpdate . $lastAirlineUpdate);
+
+        $data = Cache::rememberForever($cacheKey, function () use ($lastSeatUpdate) {
+            // Load from Database (All status: active & prolong) with airline relationship
         $aircrafts = Aircraft::with('airline')->get();
+        // Fetch all seats once and group by registration to avoid N+1 issues
+        $allSeats = Seat::all();
+        $seatsByRegistration = $allSeats->groupBy('registration');
 
         $fleet = [];
         $totalStats = [
@@ -25,7 +36,7 @@ class DashboardController extends Controller
 
         foreach ($aircrafts as $aircraft) {
             $registration = $aircraft->registration;
-            $seats = Seat::where('registration', $registration)->get();
+            $seats = $seatsByRegistration->get($registration, collect());
 
             $stats = [
                 'safe' => 0,
@@ -136,7 +147,7 @@ class DashboardController extends Controller
                 'infant' => ['pn' => $aircraft->pn_infant, 'types' => ['spare-inf']],
             ];
 
-            $acSeats = Seat::where('registration', $reg)->get();
+            $acSeats = $seatsByRegistration->get($reg, collect());
 
             foreach ($pnMap as $category => $info) {
                 if (empty($info['pn']))
@@ -190,10 +201,14 @@ class DashboardController extends Controller
         });
 
         // ============================================================
-        // Build Monthly Replacement Plan
+        // Build Replacement Plans (Weekly, Monthly, Yearly)
         // Cutoff: Include all data up to end of March 2027
         // ============================================================
-        $monthlyPlan = [];
+        $replacementPlans = [
+            'weekly' => [],
+            'monthly' => [],
+            'yearly' => [],
+        ];
         $cutoff = \Carbon\Carbon::createFromDate(2027, 3, 31)->endOfDay(); // Include all data up to end of March 2027
 
         foreach ($aircrafts as $aircraft) {
@@ -205,7 +220,7 @@ class DashboardController extends Controller
                 'infant' => ['pn' => $aircraft->pn_infant, 'types' => ['spare-inf']],
             ];
 
-            $acSeats = Seat::where('registration', $reg)->whereNotNull('expiry_date')->get();
+            $acSeats = $seatsByRegistration->get($reg, collect())->filter(fn($s) => !is_null($s->expiry_date));
 
             foreach ($acSeats as $seat) {
                 $expiryDate = \Carbon\Carbon::parse($seat->expiry_date);
@@ -213,17 +228,6 @@ class DashboardController extends Controller
                 // Only include seats expiring within warning window (expired + < 180 days)
                 if ($expiryDate->gt($cutoff)) {
                     continue;
-                }
-
-                // Determine month key
-                if ($expiryDate->lt($today)) {
-                    $monthKey = 'overdue';
-                    $monthLabel = 'Overdue';
-                    $monthSort = '0000-00'; // Sort first
-                } else {
-                    $monthKey = $expiryDate->format('Y-m');
-                    $monthLabel = $expiryDate->format('F Y');
-                    $monthSort = $monthKey;
                 }
 
                 // Determine which P/N category this seat belongs to
@@ -241,84 +245,129 @@ class DashboardController extends Controller
                     continue;
                 }
 
-                // Initialize month bucket
-                if (!isset($monthlyPlan[$monthKey])) {
-                    $monthlyPlan[$monthKey] = [
-                        'key' => $monthKey,
-                        'label' => $monthLabel,
-                        'sort' => $monthSort,
-                        'total' => 0,
-                        'pn_breakdown' => [],
-                        'aircraft_breakdown' => [],
+                // Decide buckets for all 3 intervals
+                $intervals = [];
+                if ($expiryDate->lt($today)) {
+                    $intervals = [
+                        'weekly'  => ['key' => 'overdue', 'label' => 'Overdue', 'sort' => '0000-00'],
+                        'monthly' => ['key' => 'overdue', 'label' => 'Overdue', 'sort' => '0000-00'],
+                        'yearly'  => ['key' => 'overdue', 'label' => 'Overdue', 'sort' => '0000-00'],
+                    ];
+                } else {
+                    $weekStart = $expiryDate->copy()->startOfWeek();
+                    $weekEnd = $expiryDate->copy()->endOfWeek();
+                    $intervals['weekly'] = [
+                        'key' => $expiryDate->format('o-\WW'),
+                        'label' => $weekStart->format('d M') . ' - ' . $weekEnd->format('d M Y'),
+                        'sort' => $expiryDate->format('o-W'),
+                        'start_date' => $weekStart,
+                    ];
+                    $intervals['monthly'] = [
+                        'key' => $expiryDate->format('Y-m'),
+                        'label' => $expiryDate->format('F Y'),
+                        'sort' => $expiryDate->format('Y-m'),
+                        'start_date' => $expiryDate->copy()->startOfMonth(),
+                    ];
+                    $intervals['yearly'] = [
+                        'key' => $expiryDate->format('Y'),
+                        'label' => $expiryDate->format('Y'),
+                        'sort' => $expiryDate->format('Y'),
+                        'start_date' => $expiryDate->copy()->startOfYear(),
                     ];
                 }
 
-                $monthlyPlan[$monthKey]['total']++;
+                foreach ($intervals as $intervalName => $bucketInfo) {
+                    $bucketKey = $bucketInfo['key'];
 
-                // P/N breakdown
-                $pnKey = $seatPn . '|' . $seatCategory;
-                if (!isset($monthlyPlan[$monthKey]['pn_breakdown'][$pnKey])) {
-                    $monthlyPlan[$monthKey]['pn_breakdown'][$pnKey] = [
-                        'pn' => $seatPn,
-                        'category' => $seatCategory,
-                        'count' => 0,
-                        'aircraft' => [],
-                    ];
-                }
-                $monthlyPlan[$monthKey]['pn_breakdown'][$pnKey]['count']++;
+                    if (!isset($replacementPlans[$intervalName][$bucketKey])) {
+                        $replacementPlans[$intervalName][$bucketKey] = [
+                            'key' => $bucketKey,
+                            'label' => $bucketInfo['label'],
+                            'sort' => $bucketInfo['sort'],
+                            'start_date' => $bucketInfo['start_date'] ?? null,
+                            'total' => 0,
+                            'pn_breakdown' => [],
+                            'aircraft_breakdown' => [],
+                        ];
+                    }
 
-                // Aircraft breakdown within P/N
-                if (!isset($monthlyPlan[$monthKey]['pn_breakdown'][$pnKey]['aircraft'][$reg])) {
-                    $monthlyPlan[$monthKey]['pn_breakdown'][$pnKey]['aircraft'][$reg] = 0;
-                }
-                $monthlyPlan[$monthKey]['pn_breakdown'][$pnKey]['aircraft'][$reg]++;
+                    $replacementPlans[$intervalName][$bucketKey]['total']++;
 
-                // Aircraft total breakdown
-                if (!isset($monthlyPlan[$monthKey]['aircraft_breakdown'][$reg])) {
-                    $monthlyPlan[$monthKey]['aircraft_breakdown'][$reg] = [
-                        'type' => $acType,
-                        'count' => 0,
-                    ];
+                    // P/N breakdown
+                    $pnKey = $seatPn . '|' . $seatCategory;
+                    if (!isset($replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey])) {
+                        $replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey] = [
+                            'pn' => $seatPn,
+                            'category' => $seatCategory,
+                            'count' => 0,
+                            'aircraft' => [],
+                        ];
+                    }
+                    $replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey]['count']++;
+
+                    if (!isset($replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey]['aircraft'][$reg])) {
+                        $replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey]['aircraft'][$reg] = 0;
+                    }
+                    $replacementPlans[$intervalName][$bucketKey]['pn_breakdown'][$pnKey]['aircraft'][$reg]++;
+
+                    // Aircraft total breakdown
+                    if (!isset($replacementPlans[$intervalName][$bucketKey]['aircraft_breakdown'][$reg])) {
+                        $replacementPlans[$intervalName][$bucketKey]['aircraft_breakdown'][$reg] = [
+                            'type' => $acType,
+                            'count' => 0,
+                        ];
+                    }
+                    $replacementPlans[$intervalName][$bucketKey]['aircraft_breakdown'][$reg]['count']++;
                 }
-                $monthlyPlan[$monthKey]['aircraft_breakdown'][$reg]['count']++;
             }
         }
 
-        // Sort by month (overdue first, then chronological)
-        uasort($monthlyPlan, function ($a, $b) {
-            return strcmp($a['sort'], $b['sort']);
-        });
-
-        // Determine urgency level for each month
-        // Match Seat model exactly: expired=overdue, <90d=critical, <180d=warning
-        $currentMonth = $today->format('Y-m');
         $criticalBoundary = $today->copy()->addDays(89);  // < 90 days
         $warningBoundary  = $today->copy()->addDays(179); // < 180 days
 
-        foreach ($monthlyPlan as $key => &$month) {
-            $month['isCurrentMonth'] = ($key === $currentMonth);
+        foreach (['weekly', 'monthly', 'yearly'] as $intervalName) {
+            uasort($replacementPlans[$intervalName], function ($a, $b) {
+                return strcmp($a['sort'], $b['sort']);
+            });
 
-            if ($key === 'overdue') {
-                $month['urgency'] = 'overdue'; // 🟣 Expired - purple
-            } else {
-                $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $key)->startOfMonth();
-                if ($monthStart->lte($criticalBoundary)) {
-                    $month['urgency'] = 'critical'; // 🔴 < 90 days
+            foreach ($replacementPlans[$intervalName] as $key => &$bucket) {
+                if ($key === 'overdue') {
+                    $bucket['urgency'] = 'overdue';
+                    $bucket['isCurrentMonth'] = false;
                 } else {
-                    $month['urgency'] = 'warning';  // 🟡 90-180 days
-                }
-            }
-        }
-        unset($month);
+                    $start = $bucket['start_date'];
+                    
+                    if ($start->lte($criticalBoundary)) {
+                        $bucket['urgency'] = 'critical';
+                    } else {
+                        $bucket['urgency'] = 'warning';
+                    }
 
-        return view('dashboard', [
+                    if ($intervalName === 'weekly') {
+                        $bucket['isCurrentMonth'] = ($key === $today->format('o-\WW'));
+                    } elseif ($intervalName === 'monthly') {
+                        $bucket['isCurrentMonth'] = ($key === $today->format('Y-m'));
+                    } else {
+                        $bucket['isCurrentMonth'] = ($key === $today->format('Y'));
+                    }
+                }
+                unset($bucket['start_date']); // Don't need this in frontend
+            }
+            unset($bucket); // Break reference
+        }
+
+        return [
             'fleet' => $fleet,
             'fleetByAirline' => $fleetByAirline,
             'totalStats' => $totalStats,
             'perFleetStats' => $perFleetStats,
-            'lastUpdate' => $lastUpdate ? \Carbon\Carbon::parse($lastUpdate) : null,
+            'lastUpdate' => $lastSeatUpdate ? \Carbon\Carbon::parse($lastSeatUpdate) : null,
             'pnSummary' => $pnSummary,
-            'monthlyPlan' => $monthlyPlan,
-        ]);
+            'replacementPlans' => $replacementPlans,
+            // also export old monthlyPlan for fallback if necessary, or just skip it
+        ];
+    }); // End Cache
+
+        return view('dashboard', $data);
     }
 }

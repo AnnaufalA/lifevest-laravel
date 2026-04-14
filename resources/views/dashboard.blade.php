@@ -24,9 +24,8 @@
             
             .summary-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
             .airline-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
-            .replacement-section { display: {{ $currentView === 'life-vest-summary' ? 'block' : 'none' }}; }
-            .monthly-plan-section { display: {{ $currentView === 'monthly-plan' ? 'block' : 'none' }}; }
-            .stats-section { display: {{ $currentView === 'monthly-plan' ? 'block' : 'none' }}; }
+            #life-vest-summary-section { display: {{ $currentView === 'life-vest-summary' ? 'block' : 'none' }}; }
+            .stats-section { display: {{ str_starts_with($currentView, 'replacement-') ? 'block' : 'none' }}; }
             
             /* Filter only shown in full view */
             #top { display: none !important; }
@@ -121,13 +120,6 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                 <h2>Fleet Overview</h2>
-                @if(count($pnSummary) > 0)
-                    <a href="#replacement-summary" class="btn-jump-pn" title="Jump to Replacement Summary">P/N Summary ↓</a>
-                @endif
-                @if(count($monthlyPlan) > 0)
-                    <a href="#monthly-plan" class="btn-jump-pn" title="Jump to Monthly Plan">Monthly Plan ↓</a>
-                @endif
-                <a href="#quick-stats" class="btn-jump-pn" title="Jump to Quick Stats">Quick Stats ↓</a>
             </div>
 
             <!-- Fleet Multi-Select Dropdown -->
@@ -285,7 +277,7 @@
 
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
-        <section class="replacement-section" id="replacement-summary">
+        <section class="replacement-section" id="life-vest-summary-section">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Life Vest Replacement Summary</h2>
                 <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
@@ -363,128 +355,138 @@
         </section>
     @endif
 
-    <!-- Monthly Replacement Plan -->
-    @if(count($monthlyPlan) > 0)
-        <section class="monthly-plan-section" id="monthly-plan">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <h2>Monthly Replacement Plan</h2>
-                    <span class="monthly-plan-subtitle">Timeline kebutuhan penggantian life vest per bulan</span>
-                </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <a href="{{ route('reports.excel') }}" class="btn-jump-success" title="Download Excel Report">
-                        Export Excel
-                    </a>
-                    <button type="button" id="toggleAllMonths" class="btn-jump-pn" style="cursor: pointer;">Expand All</button>
-                    <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
-                </div>
-            </div>
-
-            {{-- Grand Total Summary --}}
+    <!-- Replacement Plans -->
+    @if(isset($replacementPlans))
+        @foreach(['weekly', 'monthly', 'yearly'] as $interval)
             @php
-                $grandTotal = collect($monthlyPlan)->sum('total');
-                $overdueTotal = isset($monthlyPlan['overdue']) ? $monthlyPlan['overdue']['total'] : 0;
+                $plan = $replacementPlans[$interval];
+                $titleText = ucfirst($interval) . ' Replacement Plan';
+                $subtitleText = 'Timeline kebutuhan penggantian life vest per ' . ($interval === 'weekly' ? 'minggu' : ($interval === 'monthly' ? 'bulan' : 'tahun'));
+                $isPlanVisible = ($currentView === 'replacement-'.$interval);
             @endphp
-            <div class="monthly-grand-summary">
-                <div class="monthly-grand-item">
-                    <span class="monthly-grand-value">{{ $grandTotal }}</span>
-                    <span class="monthly-grand-label">Total Life Vests</span>
-                </div>
-                <div class="monthly-grand-item overdue">
-                    <span class="monthly-grand-value">{{ $overdueTotal }}</span>
-                    <span class="monthly-grand-label">Overdue</span>
-                </div>
-                <div class="monthly-grand-item">
-                    <span class="monthly-grand-value">{{ count($monthlyPlan) - (isset($monthlyPlan['overdue']) ? 1 : 0) }}</span>
-                    <span class="monthly-grand-label">Months Ahead</span>
-                </div>
-            </div>
-
-            {{-- Monthly Timeline --}}
-            <div class="monthly-timeline">
-                @foreach($monthlyPlan as $monthKey => $month)
-                    <div class="monthly-card {{ $month['urgency'] }}" data-month="{{ $monthKey }}">
-                        {{-- Month Header (clickable) --}}
-                        <div class="monthly-card-header" onclick="toggleMonth('{{ $monthKey }}')">
-                            <div class="monthly-card-left">
-                                <span class="monthly-urgency-dot {{ $month['urgency'] }}"></span>
-                                <div>
-                                    <div class="monthly-card-title">
-                                        {{ $month['label'] }}
-                                        @if($month['urgency'] === 'overdue')
-                                            <span class="monthly-badge overdue">OVERDUE</span>
-                                        @elseif($month['urgency'] === 'critical')
-                                            <span class="monthly-badge critical">CRITICAL</span>
-                                        @elseif($month['urgency'] === 'warning')
-                                            <span class="monthly-badge warning">WARNING</span>
-                                        @endif
-                                        @if($month['isCurrentMonth'] ?? false)
-                                            <span class="monthly-badge current-month">THIS MONTH</span>
-                                        @endif
-                                    </div>
-                                    <div class="monthly-card-meta">
-                                        {{ count($month['pn_breakdown']) }} Part Number(s) • {{ count($month['aircraft_breakdown']) }} Aircraft
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="monthly-card-right">
-                                <span class="monthly-card-total">{{ $month['total'] }}</span>
-                                <span class="monthly-card-unit">vests</span>
-                                <button type="button" class="btn-jump-success" onclick="event.stopPropagation(); exportMonthlyExcel('{{ $monthKey }}')" title="Export to Excel">
-                                    Export to Excel
-                                </button>
-                                <span class="monthly-card-arrow" id="arrow-{{ $monthKey }}">▼</span>
-                            </div>
+            @if(count($plan) > 0)
+                <section class="replacement-section replacement-interval-section" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <h2>{{ $titleText }}</h2>
+                            <span class="monthly-plan-subtitle">{{ $subtitleText }}</span>
                         </div>
-
-                        {{-- Month Detail (collapsible) --}}
-                        <div class="monthly-card-body" id="body-{{ $monthKey }}" style="display: none;">
-                            {{-- P/N Breakdown --}}
-                            @foreach($month['pn_breakdown'] as $pnKey => $pnData)
-                                <div class="monthly-pn-row">
-                                    <div class="monthly-pn-header" onclick="togglePnDetails('{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}'); event.stopPropagation();">
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; flex: 1;">
-                                            <span class="monthly-pn-toggle" id="toggle-{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}">▶</span>
-                                            <div class="monthly-pn-info">
-                                                <span class="monthly-pn-name">{{ $pnData['pn'] }}</span>
-                                                <span class="monthly-pn-category {{ $pnData['category'] }}">{{ strtoupper($pnData['category']) }}</span>
-                                            </div>
-                                        </div>
-                                        <span class="monthly-pn-count">× {{ $pnData['count'] }}</span>
-                                    </div>
-                                    <div class="monthly-aircraft-list" id="details-{{ $monthKey }}-{{ str_replace('|', '-', $pnKey) }}" style="display: none;">
-                                        @foreach($pnData['aircraft'] as $reg => $count)
-                                            <a href="{{ route('aircraft.show', $reg) }}" class="monthly-aircraft-chip" title="Open {{ $reg }}">
-                                                {{ $reg }}: {{ $count }}
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-
-                            {{-- Aircraft Summary --}}
-                            <div class="monthly-aircraft-summary">
-                                <div class="monthly-aircraft-summary-title">Aircraft Summary:</div>
-                                <div class="monthly-aircraft-summary-list">
-                                    @foreach($month['aircraft_breakdown'] as $reg => $acData)
-                                        <a href="{{ route('aircraft.show', $reg) }}" class="monthly-ac-summary-chip">
-                                            <span class="monthly-ac-reg">{{ $reg }}</span>
-                                            <span class="monthly-ac-type">{{ $acData['type'] }}</span>
-                                            <span class="monthly-ac-count">{{ $acData['count'] }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <a href="{{ route('reports.excel') }}" class="btn-jump-success" title="Download Excel Report">
+                                Export Excel
+                            </a>
+                            <button type="button" class="btn-jump-pn toggleAllPlanBtn" data-interval="{{ $interval }}" style="cursor: pointer;">Expand All</button>
+                            <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
                         </div>
                     </div>
-                @endforeach
-            </div>
 
-            {{-- Embed monthly plan data for Excel export --}}
-            <script>
-                window.monthlyPlanData = @json($monthlyPlan);
-            </script>
-        </section>
+                    {{-- Grand Total Summary --}}
+                    @php
+                        $grandTotal = collect($plan)->sum('total');
+                        $overdueTotal = isset($plan['overdue']) ? $plan['overdue']['total'] : 0;
+                    @endphp
+                    <div class="monthly-grand-summary">
+                        <div class="monthly-grand-item">
+                            <span class="monthly-grand-value">{{ $grandTotal }}</span>
+                            <span class="monthly-grand-label">Total Life Vests</span>
+                        </div>
+                        <div class="monthly-grand-item overdue">
+                            <span class="monthly-grand-value">{{ $overdueTotal }}</span>
+                            <span class="monthly-grand-label">Overdue</span>
+                        </div>
+                        <div class="monthly-grand-item">
+                            <span class="monthly-grand-value">{{ count($plan) - (isset($plan['overdue']) ? 1 : 0) }}</span>
+                            <span class="monthly-grand-label">Periods Ahead</span>
+                        </div>
+                    </div>
+
+                    {{-- Timeline --}}
+                    <div class="monthly-timeline" id="timeline-{{$interval}}">
+                        @foreach($plan as $bucketKey => $bucket)
+                            <div class="monthly-card {{ $bucket['urgency'] }}" data-month="{{ $bucketKey }}">
+                                {{-- Header (clickable) --}}
+                                <div class="monthly-card-header" onclick="toggleMonth('{{ $interval }}-{{ $bucketKey }}')">
+                                    <div class="monthly-card-left">
+                                        <span class="monthly-urgency-dot {{ $bucket['urgency'] }}"></span>
+                                        <div>
+                                            <div class="monthly-card-title">
+                                                {{ $bucket['label'] }}
+                                                @if($bucket['urgency'] === 'overdue')
+                                                    <span class="monthly-badge overdue">OVERDUE</span>
+                                                @elseif($bucket['urgency'] === 'critical')
+                                                    <span class="monthly-badge critical">CRITICAL</span>
+                                                @elseif($bucket['urgency'] === 'warning')
+                                                    <span class="monthly-badge warning">WARNING</span>
+                                                @endif
+                                                @if($bucket['isCurrentMonth'] ?? false)
+                                                    <span class="monthly-badge current-month">CURRENT PERIOD</span>
+                                                @endif
+                                            </div>
+                                            <div class="monthly-card-meta">
+                                                {{ count($bucket['pn_breakdown']) }} Part Number(s) • {{ count($bucket['aircraft_breakdown']) }} Aircraft
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="monthly-card-right">
+                                        <span class="monthly-card-total">{{ $bucket['total'] }}</span>
+                                        <span class="monthly-card-unit">vests</span>
+                                        <button type="button" class="btn-jump-success" onclick="event.stopPropagation(); exportMonthlyExcel('{{ $bucketKey }}')" title="Export to Excel">
+                                            Export to Excel
+                                        </button>
+                                        <span class="monthly-card-arrow" id="arrow-{{ $interval }}-{{ $bucketKey }}">▼</span>
+                                    </div>
+                                </div>
+
+                                {{-- Detail (collapsible) --}}
+                                <div class="monthly-card-body" id="body-{{ $interval }}-{{ $bucketKey }}" style="display: none;">
+                                    {{-- P/N Breakdown --}}
+                                    @foreach($bucket['pn_breakdown'] as $pnKey => $pnData)
+                                        <div class="monthly-pn-row">
+                                            <div class="monthly-pn-header" onclick="togglePnDetails('{{ $interval }}-{{ $bucketKey }}-{{ str_replace('|', '-', $pnKey) }}'); event.stopPropagation();">
+                                                <div style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; flex: 1;">
+                                                    <span class="monthly-pn-toggle" id="toggle-{{ $interval }}-{{ $bucketKey }}-{{ str_replace('|', '-', $pnKey) }}">▶</span>
+                                                    <div class="monthly-pn-info">
+                                                        <span class="monthly-pn-name">{{ $pnData['pn'] }}</span>
+                                                        <span class="monthly-pn-category {{ $pnData['category'] }}">{{ strtoupper($pnData['category']) }}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="monthly-pn-count">× {{ $pnData['count'] }}</span>
+                                            </div>
+                                            <div class="monthly-aircraft-list" id="details-{{ $interval }}-{{ $bucketKey }}-{{ str_replace('|', '-', $pnKey) }}" style="display: none;">
+                                                @foreach($pnData['aircraft'] as $reg => $count)
+                                                    <a href="{{ route('aircraft.show', $reg) }}" class="monthly-aircraft-chip" title="Open {{ $reg }}">
+                                                        {{ $reg }}: {{ $count }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- Aircraft Summary --}}
+                                    <div class="monthly-aircraft-summary">
+                                        <div class="monthly-aircraft-summary-title">Aircraft Summary:</div>
+                                        <div class="monthly-aircraft-summary-list">
+                                            @foreach($bucket['aircraft_breakdown'] as $reg => $acData)
+                                                <a href="{{ route('aircraft.show', $reg) }}" class="monthly-ac-summary-chip">
+                                                    <span class="monthly-ac-reg">{{ $reg }}</span>
+                                                    <span class="monthly-ac-type">{{ $acData['type'] }}</span>
+                                                    <span class="monthly-ac-count">{{ $acData['count'] }}</span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+        @endforeach
+        
+        {{-- Map specific data for Excel export function (Currently Monthly, as default) --}}
+        <script>
+            window.monthlyPlanData = @json($replacementPlans['monthly'] ?? []);
+        </script>
     @endif
 
     <!-- Quick Stats -->
@@ -790,19 +792,21 @@
                 });
             });
 
-            // Monthly Plan - Toggle All
-            const toggleAllBtn = document.getElementById('toggleAllMonths');
-            if (toggleAllBtn) {
+            // Replacement Plan - Toggle All
+            document.querySelectorAll('.toggleAllPlanBtn').forEach(toggleBtn => {
                 let allExpanded = false;
-                toggleAllBtn.addEventListener('click', function() {
+                toggleBtn.addEventListener('click', function() {
+                    const interval = this.dataset.interval;
+                    const section = document.getElementById(`timeline-${interval}`);
+                    
                     allExpanded = !allExpanded;
-                    document.querySelectorAll('.monthly-card-body').forEach(body => {
+                    section.querySelectorAll('.monthly-card-body').forEach(body => {
                         body.style.display = allExpanded ? 'block' : 'none';
                     });
-                    document.querySelectorAll('.monthly-card-arrow').forEach(arrow => {
+                    section.querySelectorAll('.monthly-card-arrow').forEach(arrow => {
                         arrow.style.transform = allExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
                     });
-                    document.querySelectorAll('.monthly-card').forEach(card => {
+                    section.querySelectorAll('.monthly-card').forEach(card => {
                         if (allExpanded) {
                             card.classList.add('expanded');
                         } else {
@@ -811,7 +815,104 @@
                     });
                     this.textContent = allExpanded ? 'Collapse All' : 'Expand All';
                 });
-            }
+            });
+
+            // SPA-like tab switching for instantaneous load times between Dashboard views
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav-item');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // Check if the link points to the dashboard
+                    const isDashboardLink = link.href.includes('view=') && (link.href.includes('/dashboard') || link.href.includes('localhost') || link.href.includes('127.0.0.1'));
+                    if (isDashboardLink) {
+                        try {
+                            const url = new URL(link.href);
+                            const targetView = url.searchParams.get('view') || 'fleet-overview';
+                            
+                            // Only handle the dashboard views
+                            if (['fleet-overview', 'life-vest-summary', 'replacement-weekly', 'replacement-monthly', 'replacement-yearly', 'all'].includes(targetView)) {
+                                const currentUrl = new URL(window.location.href);
+                                const currentView = currentUrl.searchParams.get('view') || 'fleet-overview';
+                                
+                                // Prevent full page reload
+                                e.preventDefault();
+                                
+                                if (targetView !== currentView) {
+                                    // Change the URL without reloading
+                                    history.pushState(null, '', url.href);
+                                    
+                                    // Update active styling on sidebar
+                                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                                    // Notice: we also need to activate the parent 'Replacement Plan' if a submenu is clicked
+                                    if (targetView.startsWith('replacement-')) {
+                                        const parentDropdownMenu = link.closest('.dropdown-submenu');
+                                        if (parentDropdownMenu) {
+                                            const toggleBtn = parentDropdownMenu.previousElementSibling;
+                                            if (toggleBtn) toggleBtn.classList.add('active');
+                                        }
+                                    }
+                                    link.classList.add('active');
+                                    
+                                    // Toggle sections
+                                    document.querySelectorAll('.summary-section, .airline-section').forEach(el => {
+                                        el.style.display = (targetView === 'fleet-overview' || targetView === 'all') ? 'block' : 'none';
+                                    });
+                                    document.querySelectorAll('#life-vest-summary-section').forEach(el => {
+                                        el.style.display = (targetView === 'life-vest-summary' || targetView === 'all') ? 'block' : 'none';
+                                    });
+                                    // Toggle Replacement Plan sections
+                                    document.querySelectorAll('.replacement-interval-section').forEach(el => {
+                                        const planInterval = 'replacement-' + el.dataset.interval;
+                                        el.style.display = (targetView === planInterval || targetView === 'all') ? 'block' : 'none';
+                                    });
+                                    document.querySelectorAll('.stats-section').forEach(el => {
+                                        el.style.display = (targetView.startsWith('replacement-') || targetView === 'all') ? 'block' : 'none';
+                                    });
+                                    
+                                    // Scroll behavior for a fresh feel
+                                    window.scrollTo({top: 0, behavior: 'instant'});
+                                }
+                            }
+                        } catch(err) {
+                            console.error('Routing error:', err);
+                        }
+                    }
+                });
+            });
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', (e) => {
+                const url = new URL(window.location.href);
+                if (url.pathname === '/' || url.pathname.includes('dashboard')) {
+                    const targetView = url.searchParams.get('view') || 'fleet-overview';
+                    
+                    // Update active styling on sidebar
+                    sidebarLinks.forEach(l => {
+                        l.classList.remove('active');
+                        if (l.href.includes(`view=${targetView}`)) {
+                            l.classList.add('active');
+                        }
+                    });
+                    
+                    // Toggle sections
+                    document.querySelectorAll('.summary-section, .airline-section').forEach(el => {
+                        el.style.display = (targetView === 'fleet-overview' || targetView === 'all') ? 'block' : 'none';
+                    });
+                    document.querySelectorAll('#life-vest-summary-section').forEach(el => {
+                        // Re-add id strictly to life-vest-summary if it was using replacement-section previously
+                        el.style.display = (targetView === 'life-vest-summary' || targetView === 'all') ? 'block' : 'none';
+                    });
+                    document.querySelectorAll('.replacement-interval-section').forEach(el => {
+                        const planInterval = 'replacement-' + el.dataset.interval;
+                        el.style.display = (targetView === planInterval || targetView === 'all') ? 'block' : 'none';
+                    });
+                    document.querySelectorAll('.stats-section').forEach(el => {
+                        el.style.display = (targetView.startsWith('replacement-') || targetView === 'all') ? 'block' : 'none';
+                    });
+                }
+            });
+
+
 
             /*
             // Auto-expand overdue and critical (Disabled by user request)

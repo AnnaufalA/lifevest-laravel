@@ -76,17 +76,21 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <span>Life Vest Summary</span>
                 </a>
-                <a href="{{ route('dashboard', ['view' => 'monthly-plan']) }}" class="sidebar-nav-item {{ request()->query('view') === 'monthly-plan' ? 'active' : '' }}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                    <span>Monthly Plan</span>
-                </a>
+                <div class="sidebar-nav-dropdown">
+                    <button type="button" class="sidebar-nav-item dropdown-toggle {{ str_starts_with(request()->query('view', ''), 'replacement-') ? 'active' : '' }}" style="width: 100%; border: none; background: transparent; cursor: pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        <span style="flex-grow: 1; text-align: left;">Replacement Plan</span>
+                        <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.2s; transform: {{ str_starts_with(request()->query('view', ''), 'replacement-') ? 'rotate(180deg)' : 'rotate(0deg)' }};"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="dropdown-submenu" style="display: {{ str_starts_with(request()->query('view', ''), 'replacement-') ? 'block' : 'none' }}; padding-left: 28px; margin-top: 4px;">
+                        <a href="{{ route('dashboard', ['view' => 'replacement-weekly']) }}" class="sidebar-nav-item submenu-item {{ request()->query('view') === 'replacement-weekly' ? 'active' : '' }}" style="padding: 0.5rem 0.75rem; min-height: unset; font-size: 0.9em; margin-bottom: 2px;">Weekly</a>
+                        <a href="{{ route('dashboard', ['view' => 'replacement-monthly']) }}" class="sidebar-nav-item submenu-item {{ request()->query('view') === 'replacement-monthly' ? 'active' : '' }}" style="padding: 0.5rem 0.75rem; min-height: unset; font-size: 0.9em; margin-bottom: 2px;">Monthly</a>
+                        <a href="{{ route('dashboard', ['view' => 'replacement-yearly']) }}" class="sidebar-nav-item submenu-item {{ request()->query('view') === 'replacement-yearly' ? 'active' : '' }}" style="padding: 0.5rem 0.75rem; min-height: unset; font-size: 0.9em;">Yearly</a>
+                    </div>
+                </div>
                 <a href="{{ route('fleet.index') }}" class="sidebar-nav-item {{ request()->routeIs('fleet.*') ? 'active' : '' }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17v-8c0-1.105-.895-2-2-2H7c-1.105 0-2 .895-2 2v8M9 8V6c0-1.105.895-2 2-2h2c1.105 0 2 .895 2 2v2m-11 0h14m-7 6v4m-4-4v4"/></svg>
                     <span>Fleet Management</span>
-                </a>
-                <a href="{{ route('reports.excel') }}" class="sidebar-nav-item" title="Download Replacement Plan Excel">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-                    <span>Export Report</span>
                 </a>
             </nav>
 
@@ -177,12 +181,28 @@
             });
 
             // Close sidebar on nav item click (mobile)
-            document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+            document.querySelectorAll('.sidebar-nav-item:not(.dropdown-toggle)').forEach(item => {
                 item.addEventListener('click', () => {
                     if (window.innerWidth < 768) {
                         sidebar.classList.remove('open');
                         sidebarOverlay.classList.remove('show');
                         document.body.style.overflow = '';
+                    }
+                });
+            });
+
+            // Sidebar Dropdown Toggle
+            document.querySelectorAll('.dropdown-toggle').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const submenu = this.nextElementSibling;
+                    const arrow = this.querySelector('.dropdown-arrow');
+                    
+                    if (submenu.style.display === 'block') {
+                        submenu.style.display = 'none';
+                        if (arrow) arrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        submenu.style.display = 'block';
+                        if (arrow) arrow.style.transform = 'rotate(180deg)';
                     }
                 });
             });
