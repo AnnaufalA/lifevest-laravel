@@ -275,12 +275,15 @@
         </section>
     @endforeach
 
+    <div class="airline-section" style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; width: 100%;">
+        <a href="#" onclick="document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-jump-pn" style="display: inline-block; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
+    </div>
+
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
         <section class="replacement-section" id="life-vest-summary-section">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Life Vest Replacement Summary</h2>
-                <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
             </div>
             <div class="replacement-grid">
                 @foreach($pnSummary as $idx => $item)
@@ -376,7 +379,6 @@
                                 Export Excel
                             </a>
                             <button type="button" class="btn-jump-pn toggleAllPlanBtn" data-interval="{{ $interval }}" style="cursor: pointer;">Expand All</button>
-                            <a href="#top" class="btn-jump-pn">Back to Top ↑</a>
                         </div>
                     </div>
 
@@ -430,9 +432,6 @@
                                     <div class="monthly-card-right">
                                         <span class="monthly-card-total">{{ $bucket['total'] }}</span>
                                         <span class="monthly-card-unit">vests</span>
-                                        <button type="button" class="btn-jump-success" onclick="event.stopPropagation(); exportMonthlyExcel('{{ $bucketKey }}')" title="Export to Excel">
-                                            Export to Excel
-                                        </button>
                                         <span class="monthly-card-arrow" id="arrow-{{ $interval }}-{{ $bucketKey }}">▼</span>
                                     </div>
                                 </div>
@@ -955,93 +954,6 @@
             }
         }
 
-        // Monthly Plan - Export to Excel
-        function exportMonthlyExcel(monthKey) {
-            if (typeof XLSX === 'undefined') {
-                alert('Library Excel belum termuat. Coba refresh halaman.');
-                return;
-            }
 
-            const data = window.monthlyPlanData;
-            if (!data || !data[monthKey]) {
-                alert('Data tidak ditemukan untuk bulan ini.');
-                return;
-            }
-
-            const month = data[monthKey];
-            const label = month.label;
-            const wb = XLSX.utils.book_new();
-
-            // === Sheet 1: Part Number Breakdown ===
-            const pnRows = [];
-            const pnBreakdown = month.pn_breakdown;
-
-            for (const pnKey in pnBreakdown) {
-                const pn = pnBreakdown[pnKey];
-                const aircraft = pn.aircraft;
-
-                for (const reg in aircraft) {
-                    pnRows.push({
-                        'Part Number': pn.pn,
-                        'Category': pn.category.toUpperCase(),
-                        'Aircraft': reg,
-                        'Qty': aircraft[reg],
-                    });
-                }
-            }
-
-            // Add total row
-            pnRows.push({});
-            pnRows.push({
-                'Part Number': 'TOTAL',
-                'Category': '',
-                'Aircraft': '',
-                'Qty': month.total,
-            });
-
-            const ws1 = XLSX.utils.json_to_sheet(pnRows);
-
-            // Set column widths
-            ws1['!cols'] = [
-                { wch: 20 },  // Part Number
-                { wch: 10 },  // Category
-                { wch: 12 },  // Aircraft
-                { wch: 6 },   // Qty
-            ];
-
-            XLSX.utils.book_append_sheet(wb, ws1, 'Part Number Breakdown');
-
-            // === Sheet 2: Aircraft Summary ===
-            const acRows = [];
-            const acBreakdown = month.aircraft_breakdown;
-
-            for (const reg in acBreakdown) {
-                acRows.push({
-                    'Registration': reg,
-                    'Aircraft Type': acBreakdown[reg].type,
-                    'Qty': acBreakdown[reg].count,
-                });
-            }
-
-            acRows.push({});
-            acRows.push({
-                'Registration': 'TOTAL',
-                'Aircraft Type': '',
-                'Qty': month.total,
-            });
-
-            const ws2 = XLSX.utils.json_to_sheet(acRows);
-            ws2['!cols'] = [
-                { wch: 14 },  // Registration
-                { wch: 16 },  // Aircraft Type
-                { wch: 6 },   // Qty
-            ];
-
-            XLSX.utils.book_append_sheet(wb, ws2, 'Aircraft Summary');
-
-            // Generate filename
-            const filename = `Life_Vest_Replacement_${label.replace(/\s+/g, '_')}.xlsx`;
-            XLSX.writeFile(wb, filename);
-        }
     </script>
 @endpush

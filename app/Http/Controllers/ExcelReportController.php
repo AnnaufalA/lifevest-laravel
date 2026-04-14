@@ -435,10 +435,27 @@ class ExcelReportController extends Controller
                 $sheet->getStyle("{$cl}{$row}:{$cl}{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
 
-            // Apply Background & Font colors per row
-            // We loop manually, but using much fewer operations than before.
+            // Apply Background & Font colors by chunking identical statuses
+            // This drops the styling operations from 10,000 down to ~4 (because data is sorted by date => status)
+            $statusBlocks = [];
+            $currentStatus = $statusMap[0] ?? '';
+            $blockStart = $row;
             $currentRow = $row;
+
             foreach ($statusMap as $status) {
+                if ($status !== $currentStatus) {
+                    $statusBlocks[] = ['status' => $currentStatus, 'start' => $blockStart, 'end' => $currentRow - 1];
+                    $currentStatus = $status;
+                    $blockStart = $currentRow;
+                }
+                $currentRow++;
+            }
+            if (!empty($statusMap)) {
+                $statusBlocks[] = ['status' => $currentStatus, 'start' => $blockStart, 'end' => $currentRow - 1];
+            }
+
+            foreach ($statusBlocks as $block) {
+                $status = $block['status'];
                 $bgColor = match ($status) {
                     'EXPIRED'  => $this->colorExpired,
                     'CRITICAL' => $this->colorCritical,
@@ -446,8 +463,7 @@ class ExcelReportController extends Controller
                     'SAFE'     => $this->colorSafe,
                     default    => $this->colorLightGray,
                 };
-                $sheet->getStyle("A{$currentRow}:L{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($bgColor);
-
+                
                 $statusFontColor = match ($status) {
                     'EXPIRED'  => 'FF7B1FA2',
                     'CRITICAL' => 'FFC62828',
@@ -455,9 +471,12 @@ class ExcelReportController extends Controller
                     'SAFE'     => 'FF2E7D32',
                     default    => 'FF000000',
                 };
-                $sheet->getStyle("L{$currentRow}")->getFont()->setBold(true)->getColor()->setARGB($statusFontColor);
-                
-                $currentRow++;
+
+                $sheet->getStyle("A{$block['start']}:L{$block['end']}")
+                    ->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($bgColor);
+
+                $sheet->getStyle("L{$block['start']}:L{$block['end']}")
+                    ->getFont()->setBold(true)->getColor()->setARGB($statusFontColor);
             }
         } else {
             $lastDataRow = $row - 1;
