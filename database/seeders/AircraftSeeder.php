@@ -183,11 +183,36 @@ class AircraftSeeder extends Seeder
             ['registration' => 'PK-GTK', 'type' => 'A320-251N', 'layout' => 'a320a', 'status' => 'active', 'airline_id' => 2],
         ];
 
+        $i = 1;
         foreach ($aircraft as $data) {
+            // Assign Authentic Part Numbers based on index to hit required volumes
+            if ($i <= 60) {
+                $data['pn_adult'] = 'P0723-103W';
+                $data['pn_crew'] = ($i % 2 == 0) ? 'P0723-103WC' : 'P01074-201WC';
+            } elseif ($i <= 110) {
+                $data['pn_adult'] = 'P01074-201W';
+                $data['pn_crew'] = ($i % 5 == 0) ? '63600-505:70167' : 'P0723-103WC';
+            } else {
+                $data['pn_adult'] = 'P01074-221W';
+                $data['pn_crew'] = ($i % 10 == 0) ? 'P01074-205WC' : 'P01074-201WC';
+            }
+            
+            $data['pn_infant'] = 'P0640-101';
+            
+            // Set Icon
+            if (str_contains($data['type'], '737') || str_contains($data['type'], '320')) {
+                $data['icon'] = '✈️';
+            } elseif (str_contains($data['type'], '777') || str_contains($data['type'], '330')) {
+                $data['icon'] = '🛫';
+            } else {
+                $data['icon'] = '🛩️';
+            }
+
             Aircraft::updateOrCreate(
                 ['registration' => $data['registration']],
                 $data
             );
+            $i++;
         }
     }
 }

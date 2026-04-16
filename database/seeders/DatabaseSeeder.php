@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AirlineSeeder::class,
             AircraftSeeder::class,
+            AdminUserSeeder::class,
+            SeatSeeder::class,
         ]);
 
         // Optional: Create test user

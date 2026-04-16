@@ -66,7 +66,7 @@
                 @yield('header-right')
             </div>
 
-            <!-- Right: Update Info -->
+            <!-- Right: Update Info + User -->
             <div class="navbar-right">
                 @if(isset($lastUpdate))
                     <div class="navbar-update">
@@ -74,6 +74,35 @@
                         <span class="update-value">{{ $lastUpdate->format('d M Y, H:i') }}</span>
                     </div>
                 @endif
+
+                @auth
+                    <div class="navbar-user-menu" id="navbarUserMenu">
+                        <button type="button" class="navbar-user-btn" id="navbarUserBtn" title="{{ Auth::user()->name }}">
+                            <div class="navbar-user-avatar">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <span class="navbar-user-name">{{ Auth::user()->name }}</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="navbar-user-dropdown" id="navbarUserDropdown">
+                            <div class="navbar-user-dropdown-header">
+                                <div style="font-weight: 600; color: var(--text-primary);">{{ Auth::user()->name }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ Auth::user()->email }}</div>
+                                <div style="margin-top: 0.35rem;">
+                                    <span class="navbar-role-badge navbar-role-{{ Auth::user()->role }}">{{ ucfirst(Auth::user()->role) }}</span>
+                                </div>
+                            </div>
+                            <div class="navbar-user-dropdown-divider"></div>
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="navbar-user-dropdown-item navbar-logout-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
             </div>
         </div>
     </nav>
@@ -113,10 +142,31 @@
                         <a href="{{ route('dashboard', ['view' => 'replacement-yearly']) }}" class="sidebar-nav-item submenu-item {{ request()->query('view') === 'replacement-yearly' ? 'active' : '' }}" style="padding: 0.5rem 0.75rem; min-height: unset; font-size: 0.9em;">Yearly</a>
                     </div>
                 </div>
+                @if(Auth::user() && Auth::user()->isAdmin())
                 <a href="{{ route('fleet.index') }}" class="sidebar-nav-item {{ request()->routeIs('fleet.*') ? 'active' : '' }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17v-8c0-1.105-.895-2-2-2H7c-1.105 0-2 .895-2 2v8M9 8V6c0-1.105.895-2 2-2h2c1.105 0 2 .895 2 2v2m-11 0h14m-7 6v4m-4-4v4"/></svg>
                     <span>Fleet Management</span>
                 </a>
+                @endif
+
+                @if(Auth::user() && Auth::user()->isSuperAdmin())
+                <div class="sidebar-section-label" style="padding: 1.5rem 1.25rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">System Management</div>
+                
+                <a href="{{ route('superadmin.users') }}" class="sidebar-nav-item {{ request()->routeIs('superadmin.users') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>User Accounts</span>
+                </a>
+                <a href="#" class="sidebar-nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Bulk Import</span>
+                </a>
+                {{-- 
+                <a href="#" class="sidebar-nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>System Settings</span>
+                </a>
+                --}}
+                @endif
             </nav>
 
             <div class="sidebar-footer">
@@ -235,6 +285,22 @@
                     }
                 });
             });
+
+            // Navbar User Dropdown Toggle
+            const userBtn = document.getElementById('navbarUserBtn');
+            const userDropdown = document.getElementById('navbarUserDropdown');
+            if (userBtn && userDropdown) {
+                userBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
         });
     </script>
 </body>
