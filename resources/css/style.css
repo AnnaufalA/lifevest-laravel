@@ -2617,3 +2617,51 @@ html {
     box-shadow: 0 4px 8px rgba(16, 185, 129, 0.15);
 }
 
+.btn-premium-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-top: 1px solid rgba(239, 68, 68, 0.4);
+    color: var(--danger);
+}
+
+.btn-premium-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .btn-premium-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #dc2626;
+}
+
+[data-theme="light"] .btn-premium-danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.15);
+}
+
+.btn-premium-warning {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-top: 1px solid rgba(245, 158, 11, 0.4);
+    color: var(--warning);
+}
+
+.btn-premium-warning:hover {
+    background: rgba(245, 158, 11, 0.25);
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 6px 12px rgba(245, 158, 11, 0.2);
+}
+
+[data-theme="light"] .btn-premium-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #d97706;
+}
+
+[data-theme="light"] .btn-premium-warning:hover {
+    background: rgba(245, 158, 11, 0.15);
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.15);
+}
+

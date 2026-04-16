@@ -635,7 +635,6 @@
     border-left: 3px solid var(--warning);
 }
 
-/* Card Header */
 .monthly-card-header {
     display: flex;
     justify-content: space-between;
@@ -643,7 +642,6 @@
     padding: 0.85rem 1.15rem;
     cursor: pointer;
     transition: background var(--transition-fast);
-    user-select: none;
 }
 
 .monthly-card-header:hover {

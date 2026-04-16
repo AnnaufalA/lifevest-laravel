@@ -3,11 +3,11 @@
 <!-- Toolbar Component -->
 <div class="toolbar">
     <div class="toolbar-left">
-        <button class="btn-jump-pn" id="btnSetDate" disabled>
+        <button class="btn-premium" id="btnSetDate" disabled>
             Set Date
         </button>
         <div class="divider"></div>
-        <button class="btn-jump-secondary" id="btnClearSelection" style="border: none; background: transparent; padding-left: 0;">
+        <button class="btn-premium" id="btnClearSelection" style="background: transparent; border: 1px solid transparent; box-shadow: none;">
              Clear Selection
         </button>
         <div class="divider"></div>
@@ -17,17 +17,17 @@
         <p class="toolbar-hint">Klik nomor baris atau huruf kolom untuk select cepat</p>
         @if($registration && Route::has('reports.pdf'))
             <div class="divider"></div>
-            <a href="{{ route('reports.pdf', $registration) }}" target="_blank" class="btn-jump-danger">
+            <a href="{{ route('reports.pdf', $registration) }}" target="_blank" class="btn-premium btn-premium-danger">
                 Export PDF
             </a>
         @endif
         @if($registration && Route::has('reports.blank'))
-            <a href="{{ route('reports.blank', $registration) }}" target="_blank" class="btn-jump-secondary">
+            <a href="{{ route('reports.blank', $registration) }}" target="_blank" class="btn-premium">
                 Blank Form
             </a>
         @endif
         @if($registration && Route::has('aircraft.batchInput'))
-            <a href="{{ route('aircraft.batchInput', $registration) }}" class="btn-jump-warning">
+            <a href="{{ route('aircraft.batchInput', $registration) }}" class="btn-premium btn-premium-warning">
                 Batch Input
             </a>
         @endif

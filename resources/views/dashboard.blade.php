@@ -384,10 +384,10 @@
 
             @foreach($airline['types'] as $baseType => $typeGroup)
                 <section class="fleet-section" style="margin-left: 0.5rem;">
-                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 700; color: var(--text-secondary); cursor: pointer; user-select: none;"
+                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 700; color: var(--text-secondary); cursor: pointer;"
                         onclick="const cards = this.nextElementSibling; const isHidden = cards.style.display==='none'; cards.style.display=isHidden?(document.body.classList.contains('list-view-active')?'flex':'grid'):'none'; this.querySelector('.collapse-icon').style.transform=isHidden?'rotate(90deg)':'rotate(0deg)';">
                         <span class="collapse-icon" style="font-size: 0.7em; transition: transform 0.2s; transform: rotate(0deg); display: inline-block;">▶</span>
-                        {{ $typeGroup['icon'] }} {{ $typeGroup['name'] }}
+                         {{ $typeGroup['name'] }}
                         <span class="type-count"
                             style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">({{ count($typeGroup['aircraft']) }})</span>
                     </h3>
@@ -408,7 +408,6 @@
                                         </div>
                                         <div class="fleet-card-reg">{{ $registration }}</div>
                                     </div>
-                                    <div class="fleet-card-icon">{{ $aircraft['icon'] }}</div>
                                 </div>
                                 <div class="fleet-card-stats">
                                     <div class="fleet-stat safe">
@@ -563,10 +562,6 @@
                         <option value="crew">Crew Only</option>
                         <option value="infant">Infant Only</option>
                     </select>
-                    <a href="{{ route('reports.summary') }}" class="btn-premium btn-premium-success" title="Download Summary Excel">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Export
-                    </a>
                 </div>
             </div>
 
@@ -609,10 +604,16 @@
 
             {{-- Detailed Table --}}
             <div class="replacement-card" style="padding: 1.5rem; border-left: none; overflow-x: auto;">
-                <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 700; color: var(--text-primary);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 0.5rem;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                    Breakdown per Part Number
-                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-primary);">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 0.5rem;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                        Breakdown per Part Number
+                    </h3>
+                    <a href="{{ route('reports.summary') }}" class="btn-premium btn-premium-success" title="Download Summary Excel">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Export
+                    </a>
+                </div>
                 <table class="fleet-table" style="width: 100%;" id="pnInsightsTable">
                     <thead>
                         <tr>
