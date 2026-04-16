@@ -76,8 +76,8 @@
     --border-subtle: rgba(15, 23, 42, 0.06);
     
     --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --text-secondary: #0f172a;
+    --text-muted: #1e293b;
     
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
@@ -1757,7 +1757,7 @@ body {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .fleet-td {
@@ -2260,7 +2260,7 @@ body {
 }
 
 [data-theme="light"] .sidebar-nav-item {
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 [data-theme="light"] .sidebar-nav-item:hover {
@@ -2279,7 +2279,7 @@ body {
 }
 
 [data-theme="light"] .theme-label {
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 [data-theme="light"] .theme-slider {
@@ -2292,7 +2292,7 @@ body {
 }
 
 [data-theme="light"] .sidebar-close-btn {
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 [data-theme="light"] .sidebar-close-btn:hover {

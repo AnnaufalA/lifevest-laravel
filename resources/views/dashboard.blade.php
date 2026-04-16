@@ -88,11 +88,15 @@
             .summary-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
             .airline-section { display: {{ $currentView === 'fleet-overview' ? 'block' : 'none' }}; }
             #life-vest-summary-section { display: {{ $currentView === 'life-vest-summary' ? 'block' : 'none' }}; }
-            .stats-section { display: {{ str_starts_with($currentView, 'replacement-') ? 'block' : 'none' }}; }
+            #top-pn-insights-section { display: {{ $currentView === 'top-pn-insights' ? 'block' : 'none' }}; }
+            .replacement-interval-section { display: none; }
+            @if(str_starts_with($currentView, 'replacement-'))
+                #replacement-{{ str_replace('replacement-', '', $currentView) }}-plan { display: block; }
+            @endif
             
             /* Filter only shown in full view */
-            #top { display: none !important; }
-            #filterPanel { display: none !important; }
+            #top { display: {{ ($currentView === 'fleet-overview' || $currentView === 'all') ? 'flex' : 'none' }}; }
+            #filterPanel { display: none; }
             
             /* Back button for full-screen view */
             .view-back-btn {
@@ -379,7 +383,7 @@
 
             @foreach($airline['types'] as $baseType => $typeGroup)
                 <section class="fleet-section" style="margin-left: 0.5rem;">
-                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none;"
+                    <h3 style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.65rem; font-size: 1rem; font-weight: 700; color: var(--text-secondary); cursor: pointer; user-select: none;"
                         onclick="const cards = this.nextElementSibling; const isHidden = cards.style.display==='none'; cards.style.display=isHidden?(document.body.classList.contains('list-view-active')?'flex':'grid'):'none'; this.querySelector('.collapse-icon').style.transform=isHidden?'rotate(90deg)':'rotate(0deg)';">
                         <span class="collapse-icon" style="font-size: 0.7em; transition: transform 0.2s; transform: rotate(0deg); display: inline-block;">▶</span>
                         {{ $typeGroup['icon'] }} {{ $typeGroup['name'] }}
@@ -456,20 +460,16 @@
     @endforeach
 
     <div class="airline-section" style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; width: 100%;">
-        <a href="#" onclick="document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-premium" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
+        <a href="#" onclick="(document.querySelector('.dashboard-content') || document.querySelector('.main-content') || window).scrollTo({top: 0, behavior: 'smooth'}); return false;" class="btn-premium" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.5rem;">Back to Top ↑</a>
     </div>
     
     </div> <!-- End Fleet Details Container -->
 
     <!-- Life Vest Replacement Summary -->
     @if(count($pnSummary) > 0)
-        <section class="replacement-section animate-view" id="life-vest-summary-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-                <a href="{{ route('reports.summary') }}" class="btn-premium btn-premium-success" title="Download Summary Dashboard">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Export Summary
-                </a>
-            </div>
+        <section class="replacement-section animate-view" id="life-vest-summary-section"
+            style="display: {{ $currentView === 'life-vest-summary' ? 'block' : 'none' }} !important;">
+            <h2 style="margin-bottom: 1.5rem;">Life Vest Replacement Summary</h2>
             <div class="replacement-grid">
                 @foreach($pnSummary as $idx => $item)
                     @php
@@ -543,6 +543,101 @@
         </section>
     @endif
 
+    <!-- ============================================= -->
+    <!-- TOP P/N INSIGHTS SECTION                      -->
+    <!-- ============================================= -->
+    @if(count($pnSummary) > 0)
+        <section class="replacement-section animate-view" id="top-pn-insights-section"
+            style="display: {{ $currentView === 'top-pn-insights' ? 'block' : 'none' }} !important;">
+            {{-- Header --}}
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <h2 style="margin: 0;">Top P/N Insights</h2>
+                    <p style="margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.85rem;">Analisis Part Number yang paling banyak memerlukan penggantian</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <select id="pnCategoryFilter" class="btn-premium" style="border-radius: 8px; padding: 0.45rem 0.9rem; font-size: 0.85rem; cursor: pointer; background: var(--bg-card); color: var(--text-primary);">
+                        <option value="all">All Categories</option>
+                        <option value="adult">Adult Only</option>
+                        <option value="crew">Crew Only</option>
+                        <option value="infant">Infant Only</option>
+                    </select>
+                    <a href="{{ route('reports.summary') }}" class="btn-premium btn-premium-success" title="Download Summary Excel">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Export
+                    </a>
+                </div>
+            </div>
+
+            {{-- Summary Cards --}}
+            @php
+                $totalExpired = collect($pnSummary)->sum('expired');
+                $totalCritical = collect($pnSummary)->sum('critical');
+                $totalWarning = collect($pnSummary)->sum('warning');
+                $totalActionRequired = $totalExpired + $totalCritical + $totalWarning;
+            @endphp
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+                <div class="replacement-card" style="border-left: 3px solid var(--primary); text-align: center; padding: 1rem;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">{{ $totalActionRequired }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Total Action Required</div>
+                </div>
+                <div class="replacement-card" style="border-left: 3px solid #8b5cf6; text-align: center; padding: 1rem;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #c4b5fd;">{{ $totalExpired }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Expired</div>
+                </div>
+                <div class="replacement-card" style="border-left: 3px solid #ef4444; text-align: center; padding: 1rem;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #f87171;">{{ $totalCritical }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Critical</div>
+                </div>
+                <div class="replacement-card" style="border-left: 3px solid #f59e0b; text-align: center; padding: 1rem;">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #fbbf24;">{{ $totalWarning }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Warning</div>
+                </div>
+            </div>
+
+            {{-- Chart Container --}}
+            <div class="replacement-card" style="padding: 1.5rem; margin-bottom: 1.5rem; border-left: none;">
+                <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 700; color: var(--text-primary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 0.5rem;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    Part Numbers by Urgency Level
+                </h3>
+                <div style="position: relative; height: 360px;">
+                    <canvas id="pnInsightsChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Detailed Table --}}
+            <div class="replacement-card" style="padding: 1.5rem; border-left: none; overflow-x: auto;">
+                <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 700; color: var(--text-primary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 0.5rem;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    Breakdown per Part Number
+                </h3>
+                <table class="fleet-table" style="width: 100%;" id="pnInsightsTable">
+                    <thead>
+                        <tr>
+                            <th class="fleet-th">#</th>
+                            <th class="fleet-th">Part Number</th>
+                            <th class="fleet-th">Category</th>
+                            <th class="fleet-th" style="text-align: center;">Expired</th>
+                            <th class="fleet-th" style="text-align: center;">Critical</th>
+                            <th class="fleet-th" style="text-align: center;">Warning</th>
+                            <th class="fleet-th" style="text-align: center;">Total Action</th>
+                            <th class="fleet-th">Aircraft Affected</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pnInsightsTableBody">
+                        {{-- Populated by JavaScript --}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    @endif
+
+    {{-- Inject P/N data for JavaScript (always available) --}}
+    <script>
+        window.__pnSummary = @json($pnSummary);
+    </script>
+
     <!-- Replacement Plans -->
     @if(isset($replacementPlans))
         @foreach(['weekly', 'monthly', 'yearly'] as $interval)
@@ -553,7 +648,8 @@
                 $isPlanVisible = ($currentView === 'replacement-'.$interval);
             @endphp
             @if(count($plan) > 0)
-                <section class="replacement-section replacement-interval-section animate-view" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan" style="display: {{ $isPlanVisible ? 'block' : 'none' }}">
+                <section class="replacement-section replacement-interval-section animate-view" data-interval="{{ $interval }}" id="replacement-{{ $interval }}-plan"
+                    style="display: {{ $isPlanVisible ? 'block' : 'none' }} !important;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <h2>{{ $titleText }}</h2>
@@ -1013,6 +1109,81 @@
 
             // SPA-like tab switching for instantaneous load times between Dashboard views
             const sidebarLinks = document.querySelectorAll('.sidebar-nav-item');
+
+            // Shared utility to sync dashboard view state
+            function syncDashboardView(targetView) {
+                // 1. Update active styling on sidebar
+                sidebarLinks.forEach(l => {
+                    l.classList.remove('active');
+                    if (l.href) {
+                        const isTarget = l.href.includes(`view=${targetView}`) || 
+                                       (targetView === 'fleet-overview' && !l.href.includes('view=') && l.href.includes('/dashboard'));
+                        
+                        if (isTarget) {
+                            l.classList.add('active');
+                            
+                            // Handle parent dropdown highlight
+                            if (targetView.startsWith('replacement-')) {
+                                const parentDropdownMenu = l.closest('.dropdown-submenu');
+                                if (parentDropdownMenu) {
+                                    const toggleBtn = parentDropdownMenu.previousElementSibling;
+                                    if (toggleBtn) toggleBtn.classList.add('active');
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // 2. Hide all main dashboard sections
+                const sections = [
+                    '.summary-section', '.airline-section', '.master-airline-section', 
+                    '#airline-fleet-details', '#life-vest-summary-section', 
+                    '#top-pn-insights-section', '.replacement-interval-section', 
+                    '.stats-section', '.view-back-btn'
+                ];
+                sections.forEach(s => {
+                    document.querySelectorAll(s).forEach(el => el.style.display = 'none');
+                });
+                const filterTop = document.getElementById('top');
+                if (filterTop) filterTop.style.display = 'none';
+
+                // 3. Toggle target sections
+                if (targetView === 'fleet-overview' || targetView === 'all') {
+                    document.querySelectorAll('.summary-section').forEach(el => el.style.display = 'block');
+                    if (targetView === 'all') {
+                        document.querySelectorAll('.airline-section').forEach(el => el.style.display = 'block');
+                        document.getElementById('airline-fleet-details').style.display = 'block';
+                    } else {
+                        hideAirlineDetails();
+                    }
+                    if (filterTop) filterTop.style.display = 'flex';
+                }
+
+                if (targetView === 'life-vest-summary' || targetView === 'all') {
+                    document.querySelectorAll('#life-vest-summary-section').forEach(el => el.style.display = 'block');
+                }
+
+                if (targetView === 'top-pn-insights' || targetView === 'all') {
+                    document.querySelectorAll('#top-pn-insights-section').forEach(el => el.style.display = 'block');
+                }
+
+                if (targetView.startsWith('replacement-') || targetView === 'all') {
+                    document.querySelectorAll('.replacement-interval-section').forEach(el => {
+                        if (targetView === 'all' || ('replacement-' + el.dataset.interval) === targetView) {
+                            el.style.display = 'block';
+                        }
+                    });
+                    document.querySelectorAll('.stats-section').forEach(el => el.style.display = 'block');
+                }
+
+                // Toggle Back button
+                if (targetView !== 'fleet-overview' && targetView !== 'all') {
+                    document.querySelectorAll('.view-back-btn').forEach(el => el.style.display = 'flex');
+                }
+
+                // Scroll behavior
+                window.scrollTo({top: 0, behavior: 'instant'});
+            }
             
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -1024,7 +1195,7 @@
                             const targetView = url.searchParams.get('view') || 'fleet-overview';
                             
                             // Only handle the dashboard views
-                            if (['fleet-overview', 'life-vest-summary', 'replacement-weekly', 'replacement-monthly', 'replacement-yearly', 'all'].includes(targetView)) {
+                            if (['fleet-overview', 'life-vest-summary', 'top-pn-insights', 'replacement-weekly', 'replacement-monthly', 'replacement-yearly', 'all'].includes(targetView)) {
                                 const currentUrl = new URL(window.location.href);
                                 const currentView = currentUrl.searchParams.get('view') || 'fleet-overview';
                                 
@@ -1034,50 +1205,7 @@
                                 if (targetView !== currentView) {
                                     // Change the URL without reloading
                                     history.pushState(null, '', url.href);
-                                    
-                                    // Update active styling on sidebar
-                                    sidebarLinks.forEach(l => l.classList.remove('active'));
-                                    // Notice: we also need to activate the parent 'Replacement Plan' if a submenu is clicked
-                                    if (targetView.startsWith('replacement-')) {
-                                        const parentDropdownMenu = link.closest('.dropdown-submenu');
-                                        if (parentDropdownMenu) {
-                                            const toggleBtn = parentDropdownMenu.previousElementSibling;
-                                            if (toggleBtn) toggleBtn.classList.add('active');
-                                        }
-                                    }
-                                    link.classList.add('active');
-                                    
-                                    // Toggle sections
-                                    document.querySelectorAll('.summary-section').forEach(el => {
-                                        el.style.display = (targetView === 'fleet-overview' || targetView === 'all') ? 'block' : 'none';
-                                    });
-                                    document.querySelectorAll('.airline-section').forEach(el => {
-                                        el.style.display = targetView === 'all' ? 'block' : '';
-                                    });
-                                    
-                                    if (targetView === 'fleet-overview') {
-                                        hideAirlineDetails(); // Return to master deck when clicking sidebar 'Fleet Overview'
-                                    } else {
-                                        document.getElementById('airline-master-overview').style.display = 'none';
-                                        document.getElementById('airline-fleet-details').style.display = 'none';
-                                        if (targetView === 'all') {
-                                            document.getElementById('airline-fleet-details').style.display = 'block';
-                                        }
-                                    }
-                                    document.querySelectorAll('#life-vest-summary-section').forEach(el => {
-                                        el.style.display = (targetView === 'life-vest-summary' || targetView === 'all') ? 'block' : 'none';
-                                    });
-                                    // Toggle Replacement Plan sections
-                                    document.querySelectorAll('.replacement-interval-section').forEach(el => {
-                                        const planInterval = 'replacement-' + el.dataset.interval;
-                                        el.style.display = (targetView === planInterval || targetView === 'all') ? 'block' : 'none';
-                                    });
-                                    document.querySelectorAll('.stats-section').forEach(el => {
-                                        el.style.display = (targetView.startsWith('replacement-') || targetView === 'all') ? 'block' : 'none';
-                                    });
-                                    
-                                    // Scroll behavior for a fresh feel
-                                    window.scrollTo({top: 0, behavior: 'instant'});
+                                    syncDashboardView(targetView);
                                 }
                             }
                         } catch(err) {
@@ -1092,30 +1220,7 @@
                 const url = new URL(window.location.href);
                 if (url.pathname === '/' || url.pathname.includes('dashboard')) {
                     const targetView = url.searchParams.get('view') || 'fleet-overview';
-                    
-                    // Update active styling on sidebar
-                    sidebarLinks.forEach(l => {
-                        l.classList.remove('active');
-                        if (l.href.includes(`view=${targetView}`)) {
-                            l.classList.add('active');
-                        }
-                    });
-                    
-                    // Toggle sections
-                    document.querySelectorAll('.summary-section, .airline-section').forEach(el => {
-                        el.style.display = (targetView === 'fleet-overview' || targetView === 'all') ? 'block' : 'none';
-                    });
-                    document.querySelectorAll('#life-vest-summary-section').forEach(el => {
-                        // Re-add id strictly to life-vest-summary if it was using replacement-section previously
-                        el.style.display = (targetView === 'life-vest-summary' || targetView === 'all') ? 'block' : 'none';
-                    });
-                    document.querySelectorAll('.replacement-interval-section').forEach(el => {
-                        const planInterval = 'replacement-' + el.dataset.interval;
-                        el.style.display = (targetView === planInterval || targetView === 'all') ? 'block' : 'none';
-                    });
-                    document.querySelectorAll('.stats-section').forEach(el => {
-                        el.style.display = (targetView.startsWith('replacement-') || targetView === 'all') ? 'block' : 'none';
-                    });
+                    syncDashboardView(targetView);
                 }
             });
 
@@ -1211,7 +1316,9 @@
             // View toggles handles display updates
             
             // Scroll to top
-            document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'});
+            const content = document.querySelector('.dashboard-content') || document.querySelector('.main-content');
+            if (content) content.scrollTo({top: 0, behavior: 'smooth'});
+            else window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function hideAirlineDetails() {
@@ -1229,7 +1336,199 @@
             document.querySelector('#airline-fleet-details').querySelectorAll('.fleet-cards').forEach(c => c.style.display = 'none'); 
             document.querySelector('#airline-fleet-details').querySelectorAll('.collapse-icon').forEach(i => i.style.transform = 'rotate(0deg)');
             
-            document.querySelector('.dashboard-content').scrollTo({top: 0, behavior: 'smooth'});
+            const content = document.querySelector('.dashboard-content') || document.querySelector('.main-content');
+            if (content) content.scrollTo({top: 0, behavior: 'smooth'});
+            else window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
+        // ====================================================
+        // TOP P/N INSIGHTS — Chart.js + Table
+        // ====================================================
+        (function() {
+            const rawData = window.__pnSummary || [];
+            if (!rawData.length) return;
+
+            let chartInstance = null;
+
+            function getFilteredData(category) {
+                let data = rawData.filter(item => {
+                    const action = item.expired + item.critical + item.warning;
+                    return action > 0;
+                });
+                if (category !== 'all') {
+                    data = data.filter(item => item.category === category);
+                }
+                // Sort by Total Action descending
+                data.sort((a, b) => {
+                    const aTotal = a.expired + a.critical + a.warning;
+                    const bTotal = b.expired + b.critical + b.warning;
+                    return bTotal - aTotal;
+                });
+                return data.slice(0, 15); // Top 15
+            }
+
+            function isDarkMode() {
+                return document.documentElement.getAttribute('data-theme') !== 'light';
+            }
+
+            function renderChart(data) {
+                const ctx = document.getElementById('pnInsightsChart');
+                if (!ctx) return;
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                const labels = data.map(d => d.pn + ' (' + d.category.toUpperCase() + ')');
+                const dark = isDarkMode();
+
+                chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Expired',
+                                data: data.map(d => d.expired),
+                                backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                                borderColor: 'rgba(139, 92, 246, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            },
+                            {
+                                label: 'Critical',
+                                data: data.map(d => d.critical),
+                                backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                                borderColor: 'rgba(239, 68, 68, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            },
+                            {
+                                label: 'Warning',
+                                data: data.map(d => d.warning),
+                                backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                                borderColor: 'rgba(245, 158, 11, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: dark ? '#e2e8f0' : '#000000',
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' },
+                                    usePointStyle: true,
+                                    pointStyle: 'rectRounded',
+                                    padding: 16,
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: dark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                                titleColor: dark ? '#e2e8f0' : '#0f172a',
+                                bodyColor: dark ? '#cbd5e1' : '#334155',
+                                borderColor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: true,
+                                titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: '700' },
+                                bodyFont: { family: "'Plus Jakarta Sans', sans-serif" },
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                                beginAtZero: true,
+                                ticks: {
+                                    color: dark ? '#94a3b8' : '#475569',
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
+                                    stepSize: 1,
+                                },
+                                grid: {
+                                    color: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                                },
+                            },
+                            y: {
+                                stacked: true,
+                                ticks: {
+                                    color: dark ? '#e2e8f0' : '#000000',
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' },
+                                },
+                                grid: {
+                                    display: false,
+                                },
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderTable(data) {
+                const tbody = document.getElementById('pnInsightsTableBody');
+                if (!tbody) return;
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="fleet-td" style="text-align: center; color: var(--text-muted); padding: 2rem;">Semua Part Number dalam kondisi aman untuk kategori ini.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach((item, idx) => {
+                    const totalAction = item.expired + item.critical + item.warning;
+                    const aircraftList = (item.aircraft || [])
+                        .map(ac => ac.reg)
+                        .slice(0, 8)
+                        .join(', ');
+                    const moreCount = (item.aircraft || []).length > 8 ? ' +' + ((item.aircraft || []).length - 8) + ' more' : '';
+
+                    html += `<tr>
+                        <td class="fleet-td" style="font-weight: 600; color: var(--text-secondary);">${idx + 1}</td>
+                        <td class="fleet-td" style="font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">${item.pn}</td>
+                        <td class="fleet-td">
+                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+                                background: ${item.category === 'adult' ? 'rgba(96,165,250,0.2)' : item.category === 'crew' ? 'rgba(251,191,36,0.2)' : 'rgba(244,114,182,0.2)'};
+                                color: ${item.category === 'adult' ? '#60a5fa' : item.category === 'crew' ? '#fbbf24' : '#f472b6'};">
+                                ${item.category}
+                            </span>
+                        </td>
+                        <td class="fleet-td" style="text-align: center; font-weight: 700; color: ${item.expired > 0 ? '#c4b5fd' : 'var(--text-muted)'};">${item.expired}</td>
+                        <td class="fleet-td" style="text-align: center; font-weight: 700; color: ${item.critical > 0 ? '#f87171' : 'var(--text-muted)'};">${item.critical}</td>
+                        <td class="fleet-td" style="text-align: center; font-weight: 700; color: ${item.warning > 0 ? '#fbbf24' : 'var(--text-muted)'};">${item.warning}</td>
+                        <td class="fleet-td" style="text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--primary);">${totalAction}</td>
+                        <td class="fleet-td" style="font-size: 0.8rem; color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${aircraftList}${moreCount}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            }
+
+            function updateAll() {
+                const category = document.getElementById('pnCategoryFilter')?.value || 'all';
+                const data = getFilteredData(category);
+                renderChart(data);
+                renderTable(data);
+            }
+
+            // Listen for filter changes
+            const filterEl = document.getElementById('pnCategoryFilter');
+            if (filterEl) {
+                filterEl.addEventListener('change', updateAll);
+            }
+
+            // Listen for theme changes to re-render chart
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', () => {
+                    setTimeout(updateAll, 100);
+                });
+            }
+
+            // Initial render
+            updateAll();
+        })();
     </script>
 @endpush

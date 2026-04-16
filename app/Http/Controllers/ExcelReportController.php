@@ -164,13 +164,14 @@ class ExcelReportController extends Controller
         $spreadsheet->setActiveSheetIndex(0);
 
         $filename = 'Replacement_Plan_' . date('Y-m-d_His') . '.xlsx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
+        $tempPath = storage_path('app/' . $filename);
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
+        $writer->save($tempPath);
+
+        return response()->download($tempPath, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 
     public function exportSummaryDashboard()
@@ -236,13 +237,14 @@ class ExcelReportController extends Controller
         $spreadsheet->setActiveSheetIndex(0);
 
         $filename = 'LifeVest_Summary_' . date('Y-m-d_His') . '.xlsx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
+        $tempPath = storage_path('app/' . $filename);
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
+        $writer->save($tempPath);
+
+        return response()->download($tempPath, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 
     private function buildSummarySheet(Spreadsheet $spreadsheet, array $allRows, Carbon $today, Carbon $threeMonthsBoundary): void

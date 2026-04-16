@@ -137,6 +137,8 @@ class DashboardController extends Controller
 
         // Build Part Number replacement summary
         $today = now()->startOfDay();
+        $sixMonths = $today->copy()->addMonths(6);
+        $threeMonths = $today->copy()->addMonths(3);
         $pnSummary = [];
 
         foreach ($aircrafts as $aircraft) {
@@ -157,12 +159,21 @@ class DashboardController extends Controller
                 $catSeats = $acSeats->filter(fn($s) => in_array($s->class_type, $info['types']));
                 $total = $catSeats->count();
 
-                $sixMonths = $today->copy()->addMonths(6);
-                $threeMonths = $today->copy()->addMonths(3);
+                $expired = 0;
+                $critical = 0;
+                $warning = 0;
 
-                $expired = $catSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->lt($today))->count();
-                $critical = $catSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->gte($today) && \Carbon\Carbon::parse($s->expiry_date)->lt($threeMonths))->count();
-                $warning = $catSeats->filter(fn($s) => $s->expiry_date && \Carbon\Carbon::parse($s->expiry_date)->gte($threeMonths) && \Carbon\Carbon::parse($s->expiry_date)->lt($sixMonths))->count();
+                foreach ($catSeats as $seat) {
+                    if (!$seat->expiry_date) continue;
+                    $expiry = \Carbon\Carbon::parse($seat->expiry_date);
+                    if ($expiry->lt($today)) {
+                        $expired++;
+                    } elseif ($expiry->lt($threeMonths)) {
+                        $critical++;
+                    } elseif ($expiry->lt($sixMonths)) {
+                        $warning++;
+                    }
+                }
 
                 $key = $pn . '|' . $category;
                 if (!isset($pnSummary[$key])) {
