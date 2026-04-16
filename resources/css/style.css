@@ -216,9 +216,8 @@ body {
 
 /* App Container */
 .app-container {
-    max-width: 1400px;
-    margin: 0 auto;
     padding: var(--spacing-md);
+    transition: margin-left 0.3s ease;
 }
 
 /* ========================================

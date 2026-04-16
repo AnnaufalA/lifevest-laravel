@@ -59,7 +59,7 @@ class DashboardController extends Controller
             $fleet[$registration] = [
                 'type' => $aircraft->type,
                 'registration' => $registration,
-                'icon' => $aircraft->icon ?? '✈️',
+                'icon' => $aircraft->icon ?? '',
                 'status' => $aircraft->status,
                 'stats' => $stats,
                 'health' => $healthPercent,

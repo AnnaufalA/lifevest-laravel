@@ -11,6 +11,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
+    <!-- Prevent FOUC & allow correct initial theme evaluation for scripts (ChartJS) -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <!-- CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Chart.js -->
@@ -23,6 +37,11 @@
         <div class="navbar-container">
             <!-- Left: Logo & Back Button -->
             <div class="navbar-left">
+                <!-- Desktop Sidebar Toggle Button -->
+                <button type="button" id="sidebarToggleDesktopBtn" class="sidebar-toggle-desktop" style="background: transparent; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-right: 0.5rem; padding: 0.25rem;" title="Toggle Sidebar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+
                 @if(!request()->routeIs('dashboard'))
                     <a href="{{ route('dashboard') }}" class="btn-back" title="Back to Dashboard">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -39,7 +58,7 @@
                     </div>
                     <span class="navbar-title">Life Vest Tracker</span>
                 </a>
-                <span class="navbar-badge">GMF AeroAsia</span>
+                <span class="navbar-badge" style="margin-left:auto;">GMF AeroAsia</span>
             </div>
 
             <!-- Center: Header area -->
@@ -113,7 +132,7 @@
         <!-- Sidebar Overlay (for mobile) -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Sidebar Toggle Button (mobile) -->
+        <!-- Sidebar Toggle Button (mobile only, visible via CSS) -->
         <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Open sidebar">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
@@ -144,11 +163,11 @@
             const sidebar = document.getElementById('sidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+            const sidebarToggleDesktopBtn = document.getElementById('sidebarToggleDesktopBtn');
             const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
 
             // Theme Toggle (only in sidebar)
             const savedTheme = localStorage.getItem('theme') || 'light';
-            html.setAttribute('data-theme', savedTheme);
             if (toggleSidebar) toggleSidebar.checked = (savedTheme === 'light');
 
             const handleThemeChange = () => {
@@ -158,6 +177,18 @@
             };
 
             if (toggleSidebar) toggleSidebar.addEventListener('change', handleThemeChange);
+
+            // Desktop Sidebar Toggle
+            const isDesktopSidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+            if (isDesktopSidebarCollapsed) {
+                document.body.classList.add('sidebar-collapsed');
+            }
+
+            sidebarToggleDesktopBtn?.addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-collapsed');
+                const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                localStorage.setItem('sidebar-collapsed', isCollapsed);
+            });
 
             // Sidebar Mobile Toggle
             sidebarToggleBtn?.addEventListener('click', () => {

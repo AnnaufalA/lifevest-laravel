@@ -131,6 +131,7 @@
         </style>
     @endif
 
+<div class="dashboard-content">
     <!-- Back Button for Full-Screen Views -->
     @if($isFullScreenView)
         <a href="{{ route('dashboard') }}" class="view-back-btn">
@@ -800,6 +801,7 @@
             </div>
         </div>
     </section>
+    </div>
 @endsection
 
 @push('scripts')
