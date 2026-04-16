@@ -71,13 +71,13 @@
     --bg-card: rgba(255, 255, 255, 0.85);
     --bg-card-solid: #ffffff;
     --bg-hover: #f1f5f9;
-    --bg-secondary: rgba(241, 245, 249, 0.8);
-    --border: rgba(15, 23, 42, 0.12);
-    --border-subtle: rgba(15, 23, 42, 0.06);
+    --bg-secondary: rgba(241, 245, 249, 1);
+    --border: rgba(15, 23, 42, 0.2);
+    --border-subtle: rgba(15, 23, 42, 0.12);
     
-    --text-primary: #0f172a;
-    --text-secondary: #0f172a;
-    --text-muted: #1e293b;
+    --text-primary: #000000;
+    --text-secondary: #000000;
+    --text-muted: #000000;
     
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
@@ -1751,12 +1751,12 @@ body {
 
 .fleet-th {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
     text-align: left;
-    font-weight: 600;
-    font-size: 0.75rem;
+    font-weight: 800;
+    font-size: 0.78rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--text-secondary);
 }
 
@@ -2261,6 +2261,7 @@ body {
 
 [data-theme="light"] .sidebar-nav-item {
     color: var(--text-secondary);
+    font-weight: 600;
 }
 
 [data-theme="light"] .sidebar-nav-item:hover {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -147,22 +147,14 @@
             const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
 
             // Theme Toggle (only in sidebar)
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                html.setAttribute('data-theme', 'light');
-                if (toggleSidebar) toggleSidebar.checked = true;
-            } else {
-                if (toggleSidebar) toggleSidebar.checked = false;
-            }
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            html.setAttribute('data-theme', savedTheme);
+            if (toggleSidebar) toggleSidebar.checked = (savedTheme === 'light');
 
             const handleThemeChange = () => {
-                if (toggleSidebar.checked) {
-                    html.setAttribute('data-theme', 'light');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    html.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'dark');
-                }
+                const currentTheme = toggleSidebar.checked ? 'light' : 'dark';
+                html.setAttribute('data-theme', currentTheme);
+                localStorage.setItem('theme', currentTheme);
             };
 
             if (toggleSidebar) toggleSidebar.addEventListener('change', handleThemeChange);

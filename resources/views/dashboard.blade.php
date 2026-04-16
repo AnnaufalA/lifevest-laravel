@@ -1368,7 +1368,7 @@
             }
 
             function isDarkMode() {
-                return document.documentElement.getAttribute('data-theme') !== 'light';
+                return document.documentElement.getAttribute('data-theme') === 'dark';
             }
 
             function renderChart(data) {
@@ -1421,8 +1421,8 @@
                             legend: {
                                 position: 'top',
                                 labels: {
-                                    color: dark ? '#e2e8f0' : '#000000',
-                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' },
+                                    color: dark ? '#cbd5e1' : '#000000',
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '900' },
                                     usePointStyle: true,
                                     pointStyle: 'rectRounded',
                                     padding: 16,
@@ -1445,8 +1445,8 @@
                                 stacked: true,
                                 beginAtZero: true,
                                 ticks: {
-                                    color: dark ? '#94a3b8' : '#475569',
-                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
+                                    color: dark ? '#94a3b8' : '#000000',
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '800' },
                                     stepSize: 1,
                                 },
                                 grid: {
@@ -1457,7 +1457,7 @@
                                 stacked: true,
                                 ticks: {
                                     color: dark ? '#e2e8f0' : '#000000',
-                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' },
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '900' },
                                 },
                                 grid: {
                                     display: false,
@@ -1477,6 +1477,7 @@
                     return;
                 }
 
+                const dark = isDarkMode();
                 let html = '';
                 data.forEach((item, idx) => {
                     const totalAction = item.expired + item.critical + item.warning;
@@ -1491,8 +1492,8 @@
                         <td class="fleet-td" style="font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">${item.pn}</td>
                         <td class="fleet-td">
                             <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;
-                                background: ${item.category === 'adult' ? 'rgba(96,165,250,0.2)' : item.category === 'crew' ? 'rgba(251,191,36,0.2)' : 'rgba(244,114,182,0.2)'};
-                                color: ${item.category === 'adult' ? '#60a5fa' : item.category === 'crew' ? '#fbbf24' : '#f472b6'};">
+                                background: ${item.category === 'adult' ? (dark ? 'rgba(96,165,250,0.2)' : 'rgba(37,99,235,0.15)') : item.category === 'crew' ? (dark ? 'rgba(251,191,36,0.2)' : 'rgba(217,119,6,0.15)') : (dark ? 'rgba(244,114,182,0.2)' : 'rgba(219,39,119,0.15)')};
+                                color: ${item.category === 'adult' ? (dark ? '#60a5fa' : '#2563eb') : item.category === 'crew' ? (dark ? '#fbbf24' : '#d97706') : (dark ? '#f472b6' : '#db2777')};">
                                 ${item.category}
                             </span>
                         </td>
@@ -1520,7 +1521,7 @@
             }
 
             // Listen for theme changes to re-render chart
-            const themeToggle = document.getElementById('themeToggle');
+            const themeToggle = document.getElementById('theme-toggle-sidebar');
             if (themeToggle) {
                 themeToggle.addEventListener('change', () => {
                     setTimeout(updateAll, 100);
