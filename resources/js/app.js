@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if we're on aircraft page
     if (!window.AIRCRAFT_CONFIG) return;
 
+    // Check if user is admin
+    const isAdmin = window.AIRCRAFT_CONFIG.isAdmin === true;
+
     // Get elements
     elements.btnSetDate = document.getElementById('btnSetDate');
     elements.btnClearSelection = document.getElementById('btnClearSelection');
@@ -40,7 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.modalInfo = document.getElementById('modalInfo');
     elements.toast = document.getElementById('toast');
 
-    // Setup event listeners
+    // If not admin, disable all editing interactions
+    if (!isAdmin) {
+        // Add readonly styling to all seats (remove pointer cursor)
+        document.querySelectorAll('.seat-card').forEach(seat => {
+            seat.style.cursor = 'default';
+        });
+        // Hide row/column click hints
+        document.querySelectorAll('.row-number').forEach(r => r.style.cursor = 'default');
+        document.querySelectorAll('.col-header').forEach(c => c.style.cursor = 'default');
+        // Hide date modal entirely
+        if (elements.dateModal) elements.dateModal.style.display = 'none';
+        // Hide add spare buttons
+        document.querySelectorAll('.btn-add-spare').forEach(btn => btn.style.display = 'none');
+        // Hide delete spare buttons
+        document.querySelectorAll('.btn-delete-spare').forEach(btn => btn.style.display = 'none');
+        return; // Don't setup any event listeners
+    }
+
+    // Setup event listeners (admin only)
     setupEventListeners();
 });
 

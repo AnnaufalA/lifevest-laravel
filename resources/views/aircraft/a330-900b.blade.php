@@ -24,7 +24,8 @@
         window.AIRCRAFT_CONFIG = {
             registration: '{{ $registration }}',
             updateUrl: '{{ route('aircraft.updateSeats', $registration) }}',
-            csrfToken: '{{ csrf_token() }}'
+            csrfToken: '{{ csrf_token() }}',
+            isAdmin: {{ auth()->user() && auth()->user()->isAdmin() ? 'true' : 'false' }}
         };
     </script>
 @endpush
